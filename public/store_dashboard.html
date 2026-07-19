@@ -2939,6 +2939,26 @@
         let allCustomers = [];
         let activeGatewaySettings = null;
 
+        function normalizeGatewayUrl(url) {
+            const cleaned = String(url || '').trim();
+            if (!cleaned) return '';
+            return cleaned.replace(/\/+$/, '');
+        }
+
+        function resolveWhatsAppGatewayUrl() {
+            const configuredApiUrl = normalizeGatewayUrl(activeGatewaySettings?.whatsapp_api_url);
+            if (configuredApiUrl) return configuredApiUrl;
+
+            const configuredBotUrl = normalizeGatewayUrl(activeGatewaySettings?.whatsapp_bot_url);
+            if (configuredBotUrl) return configuredBotUrl;
+
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                return 'http://localhost:8001';
+            }
+
+            return '';
+        }
+
         // Supplier Filtering Helpers
         function escapeHtml(text) {
             if (!text) return '';
@@ -6471,8 +6491,17 @@
             document.getElementById('bulk-whatsapp-form').style.pointerEvents = 'none';
 
             try {
-                // Get WhatsApp gateway URL from settings
-                const whatsappGatewayUrl = activeGatewaySettings?.whatsapp_api_url || 'http://localhost:8001';
+                // Resolve WhatsApp gateway URL from settings with safe fallbacks.
+                const whatsappGatewayUrl = resolveWhatsAppGatewayUrl();
+                if (!whatsappGatewayUrl) {
+                    showToast(
+                        lang === 'ar'
+                            ? 'يرجى ضبط رابط WhatsApp Gateway في الإعدادات قبل الإرسال الجماعي.'
+                            : 'Please configure WhatsApp Gateway URL in settings before bulk sending.',
+                        'error'
+                    );
+                    return;
+                }
 
                 // Send bulk message request
                 const response = await fetch(`${whatsappGatewayUrl}/send-bulk-message`, {
