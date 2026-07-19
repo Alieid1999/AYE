@@ -1585,6 +1585,11 @@
                                 <textarea id="whatsapp-update-info-template-ar" rows="3" style="width:100%; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; font-family: inherit; font-size: 0.9rem; resize: vertical;" placeholder="Reminder to update name/address if they are empty or default."></textarea>
                                 <small style="color: var(--text-light); font-size: 0.8rem;">Template for the profile completion reminder sent as a second message in Arabic.</small>
                             </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="whatsapp-supplier-order-template-ar">Supplier Order Message (Arabic)</label>
+                                <textarea id="whatsapp-supplier-order-template-ar" rows="4" style="width:100%; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; font-family: inherit; font-size: 0.9rem; resize: vertical;" placeholder="Use {supplier_name} and {items} as placeholders."></textarea>
+                                <small style="color: var(--text-light); font-size: 0.8rem;">Template for WhatsApp message to suppliers in Arabic. Use <code>{supplier_name}</code> for the supplier's name and <code>{items}</code> for the list of items.</small>
+                            </div>
 
                             <div class="form-group" style="grid-column: span 2; margin-top: 15px;">
                                 <h4 style="font-size: 0.9rem; font-weight: bold; margin-bottom: 5px; color: var(--text-dark); border-bottom: 1px dashed var(--border-color); padding-bottom: 5px; text-align: start;">📨 WhatsApp Templates (English)</h4>
@@ -1598,6 +1603,11 @@
                                 <label for="whatsapp-update-info-template-en">Profile Completion Reminder (English)</label>
                                 <textarea id="whatsapp-update-info-template-en" rows="3" style="width:100%; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; font-family: inherit; font-size: 0.9rem; resize: vertical;" placeholder="Reminder to update name/address if they are empty or default."></textarea>
                                 <small style="color: var(--text-light); font-size: 0.8rem;">Template for the profile completion reminder sent as a second message in English.</small>
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="whatsapp-supplier-order-template-en">Supplier Order Message (English)</label>
+                                <textarea id="whatsapp-supplier-order-template-en" rows="4" style="width:100%; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; font-family: inherit; font-size: 0.9rem; resize: vertical;" placeholder="Use {supplier_name} and {items} as placeholders."></textarea>
+                                <small style="color: var(--text-light); font-size: 0.8rem;">Template for WhatsApp message to suppliers in English. Use <code>{supplier_name}</code> for the supplier's name and <code>{items}</code> for the list of items.</small>
                             </div>
                         </div>
 
@@ -2263,14 +2273,16 @@
                      const whatsapp_update_info_template_ar = localStorage.getItem('store_whatsapp_update_info_template_ar') || '';
                      const whatsapp_otp_template_en = localStorage.getItem('store_whatsapp_otp_template_en') || '';
                      const whatsapp_update_info_template_en = localStorage.getItem('store_whatsapp_update_info_template_en') || '';
+                     const whatsapp_supplier_order_template_ar = localStorage.getItem('store_whatsapp_supplier_order_template_ar') || '';
+                     const whatsapp_supplier_order_template_en = localStorage.getItem('store_whatsapp_supplier_order_template_en') || '';
                      const backup_email = localStorage.getItem('store_backup_email') || '';
                      const backup_drive_folder_id = localStorage.getItem('store_backup_drive_folder_id') || '';
                      const callmebot_api_key = '';
-                     callback({ telegram_api_url, gmail_script_url, telegram_api_key, telegram_admin_phone, whatsapp_admin_phone, whatsapp_bot_url, whatsapp_channel_link, whatsapp_otp_template_ar, whatsapp_update_info_template_ar, whatsapp_otp_template_en, whatsapp_update_info_template_en, backup_email, backup_drive_folder_id, callmebot_api_key });
+                     callback({ telegram_api_url, gmail_script_url, telegram_api_key, telegram_admin_phone, whatsapp_admin_phone, whatsapp_bot_url, whatsapp_channel_link, whatsapp_otp_template_ar, whatsapp_update_info_template_ar, whatsapp_otp_template_en, whatsapp_update_info_template_en, whatsapp_supplier_order_template_ar, whatsapp_supplier_order_template_en, backup_email, backup_drive_folder_id, callmebot_api_key });
                  };
                  getAndCallback();
                  const listener = (e) => {
-                     if (e.key && (e.key === 'store_telegram_api_url' || e.key === 'store_gmail_script_url' || e.key === 'store_telegram_api_key' || e.key === 'store_telegram_admin_phone' || e.key === 'store_whatsapp_admin_phone' || e.key === 'store_whatsapp_bot_url' || e.key === 'store_whatsapp_channel_link' || e.key === 'store_whatsapp_otp_template_ar' || e.key === 'store_whatsapp_update_info_template_ar' || e.key === 'store_whatsapp_otp_template_en' || e.key === 'store_whatsapp_update_info_template_en' || e.key === 'store_backup_email' || e.key === 'store_backup_drive_folder_id')) getAndCallback();
+                     if (e.key && e.key.startsWith('store_')) getAndCallback();
                  };
                  window.addEventListener('storage', listener);
                  window.addEventListener('local_gateways_changed', getAndCallback);
@@ -2292,6 +2304,8 @@
                  localStorage.setItem('store_whatsapp_update_info_template_ar', settings.whatsapp_update_info_template_ar || '');
                  localStorage.setItem('store_whatsapp_otp_template_en', settings.whatsapp_otp_template_en || '');
                  localStorage.setItem('store_whatsapp_update_info_template_en', settings.whatsapp_update_info_template_en || '');
+                 localStorage.setItem('store_whatsapp_supplier_order_template_ar', settings.whatsapp_supplier_order_template_ar || '');
+                 localStorage.setItem('store_whatsapp_supplier_order_template_en', settings.whatsapp_supplier_order_template_en || '');
                  localStorage.setItem('store_backup_email', settings.backup_email || '');
                  localStorage.setItem('store_backup_drive_folder_id', settings.backup_drive_folder_id || '');
                  
@@ -4000,7 +4014,9 @@
                 
                 const itemsListHTML = order.items.map(item => {
                     const itemCurrency = item.currency || 'USD';
-                    return `<li><strong>${item.title}</strong> × ${item.quantity} (${formatPrice(item.price, itemCurrency)})</li>`;
+                    const supplierBadge = item.supplierOrdered ? 
+                        ` <span class="badge-ordered-supplier" style="font-size: 0.75rem; background-color: #25d366; color: white; padding: 2px 6px; border-radius: 4px; font-weight: normal; margin-left: 5px; margin-right: 5px; display: inline-block;">${localStorage.getItem('store_lang') === 'ar' ? 'مطلوب من المورد' : 'Ordered'}</span>` : '';
+                    return `<li><strong>${item.title}</strong> × ${item.quantity} (${formatPrice(item.price, itemCurrency)})${supplierBadge}</li>`;
                 }).join('');
 
                 tr.innerHTML = `
@@ -4230,7 +4246,9 @@
             const date = order.createdAt ? new Date(order.createdAt).toLocaleString() : 'N/A';
             const itemsList = order.items.map(item => {
                 const itemCurrency = item.currency || 'USD';
-                return `<li><strong>${item.title}</strong> × ${item.quantity} (${formatPrice(item.price, itemCurrency)})</li>`;
+                const supplierBadge = item.supplierOrdered ? 
+                    ` <span class="badge-ordered-supplier" style="font-size: 0.75rem; background-color: #25d366; color: white; padding: 2px 6px; border-radius: 4px; font-weight: normal; margin-left: 5px; margin-right: 5px; display: inline-block;">${localStorage.getItem('store_lang') === 'ar' ? 'مطلوب من المورد' : 'Ordered'}</span>` : '';
+                return `<li><strong>${item.title}</strong> × ${item.quantity} (${formatPrice(item.price, itemCurrency)})${supplierBadge}</li>`;
             }).join('');
 
             const lang = localStorage.getItem('store_lang') || 'en';
@@ -4414,6 +4432,12 @@
                  if (document.getElementById('whatsapp-update-info-template-en')) {
                      document.getElementById('whatsapp-update-info-template-en').value = settings.whatsapp_update_info_template_en || '';
                  }
+                 if (document.getElementById('whatsapp-supplier-order-template-ar')) {
+                     document.getElementById('whatsapp-supplier-order-template-ar').value = settings.whatsapp_supplier_order_template_ar || '';
+                 }
+                 if (document.getElementById('whatsapp-supplier-order-template-en')) {
+                     document.getElementById('whatsapp-supplier-order-template-en').value = settings.whatsapp_supplier_order_template_en || '';
+                 }
                  if (document.getElementById('backup-email')) {
                      document.getElementById('backup-email').value = settings.backup_email || '';
                  }
@@ -4437,6 +4461,8 @@
                      whatsapp_update_info_template_ar: document.getElementById('whatsapp-update-info-template-ar') ? document.getElementById('whatsapp-update-info-template-ar').value : '',
                      whatsapp_otp_template_en: document.getElementById('whatsapp-otp-template-en') ? document.getElementById('whatsapp-otp-template-en').value : '',
                      whatsapp_update_info_template_en: document.getElementById('whatsapp-update-info-template-en') ? document.getElementById('whatsapp-update-info-template-en').value : '',
+                     whatsapp_supplier_order_template_ar: document.getElementById('whatsapp-supplier-order-template-ar') ? document.getElementById('whatsapp-supplier-order-template-ar').value : '',
+                     whatsapp_supplier_order_template_en: document.getElementById('whatsapp-supplier-order-template-en') ? document.getElementById('whatsapp-supplier-order-template-en').value : '',
                      backup_email: document.getElementById('backup-email') ? document.getElementById('backup-email').value.trim() : '',
                      backup_drive_folder_id: document.getElementById('backup-drive-folder-id') ? document.getElementById('backup-drive-folder-id').value.trim() : '',
                      gmail_script_url: document.getElementById('gmail-script-url').value.trim()
@@ -6202,6 +6228,70 @@
             }
         }
 
+        async function markSupplierItemsAsOrdered(supplierName) {
+            const pendingOrders = allOrders.filter(o => o.status === 'Pending');
+            const batch = isFirebaseActive ? db.batch() : null;
+            let localOrdersChanged = false;
+            
+            for (let order of pendingOrders) {
+                let orderUpdated = false;
+                const newItems = order.items.map(item => {
+                    const originalProd = allProducts.find(p => p.id === item.id);
+                    let itemSupplier = '';
+                    if (originalProd) {
+                        itemSupplier = (originalProd.supplier || '').trim();
+                    }
+                    if (!itemSupplier) {
+                        const currentLang = localStorage.getItem('store_lang') || 'en';
+                        itemSupplier = currentLang === 'ar' ? 'بدون مورد' : 'No Supplier';
+                    }
+                    
+                    if (itemSupplier.toLowerCase() === supplierName.toLowerCase() && !item.supplierOrdered) {
+                        orderUpdated = true;
+                        return { ...item, supplierOrdered: true };
+                    }
+                    return item;
+                });
+                
+                if (orderUpdated) {
+                    if (isFirebaseActive) {
+                        const orderRef = db.collection('orders').doc(order.id);
+                        batch.update(orderRef, { items: newItems });
+                    } else {
+                        localOrdersChanged = true;
+                        order.items = newItems;
+                    }
+                }
+            }
+            
+            if (isFirebaseActive && batch) {
+                await batch.commit();
+            } else if (localOrdersChanged) {
+                localStorage.setItem('mock_orders', JSON.stringify(allOrders));
+                window.dispatchEvent(new Event('local_orders_changed'));
+            }
+        }
+
+        window.handleSupplierOrder = async function(supplierName, phone, encodedMsg) {
+            const waUrl = `https://wa.me/${phone}?text=${encodedMsg}`;
+            window.open(waUrl, '_blank');
+
+            const currentLang = localStorage.getItem('store_lang') || 'en';
+            const confirmMsg = currentLang === 'ar' ? 
+                `هل تريد تصفير كميات الطلبات المعلقة لهذا المورد؟` : 
+                `Do you want to reset the quantities of pending orders for this supplier?`;
+            
+            if (confirm(confirmMsg)) {
+                try {
+                    await markSupplierItemsAsOrdered(supplierName);
+                    showToast(currentLang === 'ar' ? "تم تصفير الكميات وتحديث الطلبات مع المورد بنجاح!" : "Quantities reset and orders updated successfully!");
+                } catch (err) {
+                    console.error("Failed to reset supplier quantities:", err);
+                    showToast(currentLang === 'ar' ? "فشل تصفير الكميات: " + err.message : "Failed to reset quantities: " + err.message, "error");
+                }
+            }
+        }
+
         function renderPendingOrders() {
             const container = document.getElementById('pending-orders-container');
             if (!container) return;
@@ -6221,6 +6311,8 @@
             pendingOrders.forEach(order => {
                 if (order.items && Array.isArray(order.items)) {
                     order.items.forEach(item => {
+                        if (item.supplierOrdered) return;
+
                         const originalProd = allProducts.find(p => p.id === item.id);
                         
                         let supplierName = '';
@@ -6269,12 +6361,15 @@
             });
 
             const sortedSuppliers = Object.keys(supplierGroups).sort();
+            let renderedCards = 0;
             
             sortedSuppliers.forEach(supName => {
                 const group = supplierGroups[supName];
                 const itemsList = Object.values(group.items);
                 
                 if (itemsList.length === 0) return;
+
+                renderedCards++;
 
                 const card = document.createElement('div');
                 card.className = 'dashboard-card';
@@ -6321,23 +6416,31 @@
                         </div>
                     `;
 
-                    let messageText = currentLang === 'ar' ? 
-                        `مرحباً ${supName}،\nأود طلب البضاعة التالية لتلبية الطلبات المعلقة في متجرنا:\n\n` :
-                        `Hello ${supName},\nI would like to order the following items to fulfill pending orders at our store:\n\n`;
+                    let template = '';
+                    if (currentLang === 'ar') {
+                        template = activeGatewaySettings?.whatsapp_supplier_order_template_ar || 
+                            `مرحباً {supplier_name}،\nأود طلب البضاعة التالية لتلبية الطلبات المعلقة في متجرنا:\n\n{items}\n\nيرجى تأكيد توفرها وتجهيزها في أقرب وقت. شكراً لك!`;
+                    } else {
+                        template = activeGatewaySettings?.whatsapp_supplier_order_template_en || 
+                            `Hello {supplier_name},\nI would like to order the following items to fulfill pending orders at our store:\n\n{items}\n\nPlease confirm availability and prepare them as soon as possible. Thank you!`;
+                    }
 
+                    let itemsText = '';
                     itemsList.forEach((item, index) => {
-                        messageText += `${index + 1}. ${item.title} - ${currentLang === 'ar' ? 'العدد' : 'Qty'}: ${item.quantity}\n`;
+                        itemsText += `${index + 1}. ${item.title} - ${currentLang === 'ar' ? 'العدد' : 'Qty'}: ${item.quantity}\n`;
                     });
-                    
-                    messageText += currentLang === 'ar' ? `\nيرجى تأكيد توفرها وتجهيزها في أقرب وقت. شكراً لك!` : `\nPlease confirm availability and prepare them as soon as possible. Thank you!`;
+                    itemsText = itemsText.trim();
+
+                    const messageText = template
+                        .replace(/{supplier_name}/g, supName)
+                        .replace(/{items}/g, itemsText);
                     
                     const encodedText = encodeURIComponent(messageText);
-                    const waUrl = `https://wa.me/${cleanPhone}?text=${encodedText}`;
 
                     waButtonHtml = `
-                        <a href="${waUrl}" target="_blank" class="btn-submit" style="background-color:#25d366; color:white; width:auto; text-decoration:none; display:inline-flex; align-items:center; gap:8px; margin-top:0; border:none; border-radius:8px;">
+                        <button onclick="handleSupplierOrder('${escapeHtml(supName).replace(/'/g, "\\'")}', '${cleanPhone}', '${encodedText.replace(/'/g, "\\'")}')" class="btn-submit" style="background-color:#25d366; color:white; width:auto; border:none; border-radius:8px; display:inline-flex; align-items:center; gap:8px; margin-top:0; cursor:pointer;">
                             <i class="fa-brands fa-whatsapp"></i> <span>${currentLang === 'ar' ? 'طلب المنتجات عبر واتساب' : 'Order via WhatsApp'}</span>
-                        </a>
+                        </button>
                     `;
                 } else {
                     subtitleHtml = `
@@ -6390,6 +6493,11 @@
 
                 container.appendChild(card);
             });
+
+            if (renderedCards === 0) {
+                const msg = currentLang === 'ar' ? 'لا توجد طلبات معلقة حالياً.' : 'No pending orders at the moment.';
+                container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-light); font-weight:500;">${msg}</div>`;
+            }
         }
 
         // Bind orders tab filter listeners
