@@ -1,0 +1,35 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Backend Node.js services - ignore runtime files and cache
+whatsapp_bot/node_modules/
+whatsapp_bot/auth_info_baileys/
+whatsapp_gateway/
+telegram_gateway.py
+requirements.txt
+
+# Session files (contains active login credentials - DO NOT COMMIT!)
+*.session
+*.session-journal
+telegram_gateway_session.session*
+admin_chat_id.txt
+
+# Keep deployable static assets in public/ only (avoid root/public divergence)
+/index.html
+/store_dashboard.html
+/manifest.json
+/sw.js
+
+# Local environment variables and configs
+.env
+.env.*
+store_firebase_config
+mock_customers
+node_modules/
+dist/
+build/
+.DS_Store
+*.log
+

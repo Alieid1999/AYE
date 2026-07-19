@@ -1,0 +1,14 @@
+whatsapp_bot/
+whatsapp_gateway/
+telegram_gateway.py
+requirements.txt
+render.yaml
+firestore.rules
+firestore.indexes.json
+firebase.json
+.git/
+.github/
+__pycache__/
+*.py
+*.session
+*.session-journal

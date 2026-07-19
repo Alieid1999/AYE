@@ -1,0 +1,119 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Validators ────────────────────────────────────────────────────────────
+
+    function isValidProduct() {
+      return request.resource.data.keys().hasAll(['title', 'price', 'category'])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 200
+        && request.resource.data.price is number
+        && request.resource.data.price >= 0;
+    }
+
+    function isValidOrder() {
+      return request.resource.data.keys().hasAll(['customer', 'items', 'totalAmount'])
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.items.size() <= 50
+        && request.resource.data.totalAmount is number
+        && request.resource.data.totalAmount >= 0
+        && request.resource.data.customer is map;
+    }
+
+    function isValidCustomerCreate() {
+      return request.resource.data.keys().hasAll(['name', 'createdAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 100
+        && (!('password' in request.resource.data)
+            || (request.resource.data.password is string
+                && request.resource.data.password.size() <= 128));
+    }
+
+    function isValidCustomerUpdate() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['password', 'phone', 'name', 'address', 'savedProducts', 'orders'])
+        && (!('password' in request.resource.data)
+            || (request.resource.data.password is string
+                && request.resource.data.password.size() <= 128));
+    }
+
+    // ─── Helper: request comes from an authenticated session (admin dashboard) ─
+    // The dashboard signs in anonymously via Firebase Auth, giving it a valid
+    // request.auth token. Unauthenticated API callers (curl, scripts, etc.)
+    // have request.auth == null and are blocked from destructive operations.
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // ─── Products ──────────────────────────────────────────────────────────────
+    // • Public read  — the storefront must be able to display products
+    // • Write/Delete — require Firebase Auth (admin dashboard uses Anonymous Auth)
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update: if isSignedIn() && isValidProduct();
+      allow delete: if isSignedIn();
+    }
+
+    // ─── Orders ────────────────────────────────────────────────────────────────
+    // • get  — customers can look up a specific order by ID
+    // • list — only authenticated sessions (admin dashboard) may enumerate
+    // • create — any visitor (no account needed to place an order)
+    // • update — status field or customer info, only by authenticated admin
+    // • delete — never
+    match /orders/{orderId} {
+      allow get: if true;
+      allow list: if isSignedIn();
+      allow create: if isValidOrder();
+      allow update: if isSignedIn();
+      allow delete: if false;
+    }
+
+    // ─── Customer profiles ─────────────────────────────────────────────────────
+    // • get  — needed for sign-in lookups from the storefront
+    // • list — only authenticated admin may enumerate all customers
+    // • create / update — customers manage their own profile (no auth required
+    //   because the storefront has no Firebase Auth for end-users)
+    // • delete — never
+    match /customers/{customerId} {
+      allow get: if true;
+      allow list: if isSignedIn();
+      allow create: if isValidCustomerCreate();
+      allow update: if isValidCustomerUpdate();
+      allow delete: if false;
+    }
+
+    // ─── Store settings ────────────────────────────────────────────────────────
+    // • read  — storefront needs categories & gateway config for OTP & logo
+    // • write — only authenticated admin
+    match /settings/{docId} {
+      allow read: if docId in ['categories', 'gateways', 'logo'];
+      allow write: if isSignedIn() && docId in ['categories', 'gateways', 'logo'];
+    }
+
+    // ─── WhatsApp Session ──────────────────────────────────────────────────────
+    // • read/write — only authenticated admin
+    match /whatsapp_session/{docId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // ─── Suppliers ─────────────────────────────────────────────────────────────
+    match /suppliers/{supplierId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // ─── Product reviews ───────────────────────────────────────────────────────
+    // • read   — public storefront displays ratings/reviews
+    // • write  — allowed from storefront (customers), constrained shape/size
+    match /product_reviews/{productId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasOnly(['reviews', 'updatedAt'])
+        && request.resource.data.reviews is list
+        && request.resource.data.reviews.size() <= 500;
+      allow delete: if isSignedIn();
+    }
+  }
+}

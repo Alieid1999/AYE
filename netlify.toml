@@ -1,0 +1,18 @@
+# Netlify Configuration for AYE Store
+
+# Build settings
+[build]
+  # Public folder to deploy
+  publish = "public"
+  
+  # No build command needed - static files only
+  command = "echo 'Deploying static files from public directory'"
+  
+  # Ignore these directories during build
+  ignore = "git diff --quiet HEAD^ HEAD -- whatsapp_gateway whatsapp_bot"
+
+# Redirect rules
+[[redirects]]
+  from = "/*"
+  to = "/store_dashboard.html"
+  status = 200
