@@ -54,6 +54,7 @@ app.use((req, res, next) => {
 // ----------------------------------------------------
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "";
 const TELEGRAM_ADMIN_CHAT_ID = process.env.TELEGRAM_ADMIN_CHAT_ID || "";
+const TELEGRAM_GATEWAY_API_KEY = process.env.TELEGRAM_GATEWAY_API_KEY || "";
 const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY || "";
 const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID || "";
 
@@ -297,6 +298,28 @@ async function notifyTelegramAdmin(text) {
     } catch (err) {
         console.error('⚠️ Failed to notify Telegram admin:', err.message);
     }
+}
+
+function verifyTelegramApiKey(req, res) {
+    if (!TELEGRAM_GATEWAY_API_KEY) return true;
+    const provided = req.get('X-API-Key') || '';
+    if (provided !== TELEGRAM_GATEWAY_API_KEY) {
+        res.status(401).json({ success: false, error: 'Invalid or missing API key' });
+        return false;
+    }
+    return true;
+}
+
+function buildTelegramOrderKeyboard(orderId) {
+    if (!orderId) return undefined;
+    return {
+        inline_keyboard: [[
+            {
+                text: '👁️ View Order in Dashboard',
+                url: 'https://aye-commercial-4b871.web.app/store_dashboard.html#tab-orders'
+            }
+        ]]
+    };
 }
 
 // ----------------------------------------------------
@@ -971,6 +994,57 @@ app.post('/send-message', async (req, res) => {
     } catch (err) {
         console.error('[ERROR] Error sending storefront message:', err.message);
         res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// Telegram forwarder endpoint (admin notifications)
+app.post('/send-telegram', async (req, res) => {
+    if (!verifyTelegramApiKey(req, res)) return;
+
+    const { message, is_admin, order_id } = req.body || {};
+
+    if (!message) {
+        return res.status(400).json({ success: false, error: 'Missing message' });
+    }
+
+    // This gateway supports Telegram as an admin forwarder only.
+    if (is_admin === false) {
+        return res.status(400).json({
+            success: false,
+            error: 'This gateway supports Telegram admin forwarding only (set is_admin=true).'
+        });
+    }
+
+    if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_ADMIN_CHAT_ID) {
+        return res.status(503).json({ success: false, error: 'Telegram forwarder is not configured' });
+    }
+
+    try {
+        const payload = {
+            chat_id: TELEGRAM_ADMIN_CHAT_ID,
+            text: String(message),
+            disable_web_page_preview: true
+        };
+
+        const keyboard = buildTelegramOrderKeyboard(order_id);
+        if (keyboard) payload.reply_markup = keyboard;
+
+        const tgRes = await axios.post(
+            `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+            payload,
+            { timeout: 10000 }
+        );
+
+        return res.json({
+            success: true,
+            ok: true,
+            message: 'Notification sent to admin via Telegram bot',
+            telegram_message_id: tgRes?.data?.result?.message_id || null
+        });
+    } catch (err) {
+        const errorText = err?.response?.data?.description || err.message;
+        console.error('❌ Failed to forward /send-telegram message:', errorText);
+        return res.status(500).json({ success: false, error: errorText });
     }
 });
 
