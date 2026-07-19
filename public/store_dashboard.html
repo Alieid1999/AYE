@@ -6272,23 +6272,23 @@
             }
         }
 
-        window.handleSupplierOrder = async function(supplierName, phone, encodedMsg) {
+        window.handleSupplierOrder = function(supplierName, phone, encodedMsg) {
             const waUrl = `https://wa.me/${phone}?text=${encodedMsg}`;
             window.open(waUrl, '_blank');
 
             const currentLang = localStorage.getItem('store_lang') || 'en';
-            const confirmMsg = currentLang === 'ar' ? 
-                `هل تريد تصفير كميات الطلبات المعلقة لهذا المورد؟` : 
-                `Do you want to reset the quantities of pending orders for this supplier?`;
-            
-            if (confirm(confirmMsg)) {
-                try {
-                    await markSupplierItemsAsOrdered(supplierName);
-                    showToast(currentLang === 'ar' ? "تم تصفير الكميات وتحديث الطلبات مع المورد بنجاح!" : "Quantities reset and orders updated successfully!");
-                } catch (err) {
-                    console.error("Failed to reset supplier quantities:", err);
-                    showToast(currentLang === 'ar' ? "فشل تصفير الكميات: " + err.message : "Failed to reset quantities: " + err.message, "error");
-                }
+            showToast(currentLang === 'ar' ? 'تم فتح رسالة واتساب للمورد. اضغط "تم الاستلام" بعد الاستلام.' : 'WhatsApp message opened. Click "Received" after confirmation.');
+        }
+
+        window.confirmSupplierReceipt = async function(supplierName) {
+            const currentLang = localStorage.getItem('store_lang') || 'en';
+            try {
+                await markSupplierItemsAsOrdered(supplierName);
+                showToast(currentLang === 'ar' ? 'تم الاستلام وإخفاء المورد من الطلبات المعلقة.' : 'Marked as received and removed from pending list.');
+                renderPendingOrders();
+            } catch (err) {
+                console.error("Failed to mark supplier as received:", err);
+                showToast(currentLang === 'ar' ? "فشل تحديث حالة الاستلام: " + err.message : "Failed to update received status: " + err.message, "error");
             }
         }
 
@@ -6437,10 +6437,18 @@
                     
                     const encodedText = encodeURIComponent(messageText);
 
+                    const supplierNameForJs = escapeHtml(supName).replace(/'/g, "\\'");
+                    const encodedTextForJs = encodedText.replace(/'/g, "\\'");
+
                     waButtonHtml = `
-                        <button onclick="handleSupplierOrder('${escapeHtml(supName).replace(/'/g, "\\'")}', '${cleanPhone}', '${encodedText.replace(/'/g, "\\'")}')" class="btn-submit" style="background-color:#25d366; color:white; width:auto; border:none; border-radius:8px; display:inline-flex; align-items:center; gap:8px; margin-top:0; cursor:pointer;">
-                            <i class="fa-brands fa-whatsapp"></i> <span>${currentLang === 'ar' ? 'طلب المنتجات عبر واتساب' : 'Order via WhatsApp'}</span>
-                        </button>
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                            <button onclick="handleSupplierOrder('${supplierNameForJs}', '${cleanPhone}', '${encodedTextForJs}')" class="btn-submit" style="background-color:#25d366; color:white; width:auto; border:none; border-radius:8px; display:inline-flex; align-items:center; gap:8px; margin-top:0; cursor:pointer;">
+                                <i class="fa-brands fa-whatsapp"></i> <span>${currentLang === 'ar' ? 'طلب المنتجات عبر واتساب' : 'Order via WhatsApp'}</span>
+                            </button>
+                            <button onclick="confirmSupplierReceipt('${supplierNameForJs}')" class="btn-secondary" style="background:#ecfdf5; color:#047857; border:1px solid #10b981; border-radius:8px; display:inline-flex; align-items:center; gap:8px; margin-top:0; cursor:pointer; padding:10px 12px; font-weight:600;">
+                                <i class="fa-solid fa-circle-check"></i> <span>${currentLang === 'ar' ? 'تم الاستلام' : 'Received'}</span>
+                            </button>
+                        </div>
                     `;
                 } else {
                     subtitleHtml = `
