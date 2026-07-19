@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+telethon
+pytelegrambotapi
+requests
+selenium
+webdriver-manager

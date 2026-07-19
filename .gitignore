@@ -7,8 +7,6 @@ __pycache__/
 whatsapp_bot/node_modules/
 whatsapp_bot/auth_info_baileys/
 whatsapp_gateway/
-telegram_gateway.py
-requirements.txt
 
 # Session files (contains active login credentials - DO NOT COMMIT!)
 *.session
