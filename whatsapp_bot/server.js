@@ -707,10 +707,15 @@ async function connectToWhatsApp() {
             if (connection === 'close') {
                 isReady = false;
                 const statusCode = lastDisconnect?.error?.output?.statusCode;
+                const isConflict = statusCode === 440 || statusCode === 4401;
                 const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
-                console.log(`⚠️ WhatsApp connection closed (Status: ${statusCode}). Reconnecting: ${shouldReconnect}`);
-                if (shouldReconnect) {
-                    setTimeout(connectToWhatsApp, 5000);
+                
+                if (isConflict) {
+                    console.log(`⚠️ WhatsApp connection replaced/conflict (Status 440). Waiting 25 seconds before reconnecting to resolve multi-instance conflict...`);
+                    setTimeout(connectToWhatsApp, 25000);
+                } else if (shouldReconnect) {
+                    console.log(`⚠️ WhatsApp connection closed (Status: ${statusCode}). Reconnecting in 8s...`);
+                    setTimeout(connectToWhatsApp, 8000);
                 } else {
                     console.log('🔴 WhatsApp session logged out (401). Clearing session from Firestore and reconnecting to generate new QR...');
                     try {
@@ -1349,8 +1354,22 @@ async function renderTelegramOrderDetailsMessage(chatId, messageId, orderId) {
     }
 }
 
+let tgWebhookCleared = false;
+
 async function pollTelegramUpdates() {
     if (!TELEGRAM_BOT_TOKEN) return;
+
+    if (!tgWebhookCleared) {
+        try {
+            await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/deleteWebhook?drop_pending_updates=true`, {}, { timeout: 10000 });
+            console.log('🟢 Successfully cleared old Telegram webhooks to prevent 409 conflict errors.');
+            tgWebhookCleared = true;
+        } catch (webhookErr) {
+            console.warn('⚠️ Failed to clear Telegram webhook:', webhookErr.message);
+        }
+    }
+
+    let nextDelay = 2000;
     try {
         const res = await axios.get(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates`, {
             params: {
@@ -1370,11 +1389,14 @@ async function pollTelegramUpdates() {
             }
         }
     } catch (err) {
-        if (!err.message?.includes('timeout')) {
+        if (err.response && err.response.status === 409) {
+            console.log('⚠️ Telegram 409 Conflict: Another bot instance is polling this token. Backing off for 15 seconds...');
+            nextDelay = 15000;
+        } else if (!err.message?.includes('timeout')) {
             console.error('Telegram bot polling error:', err.message);
         }
     } finally {
-        setTimeout(pollTelegramUpdates, 2000);
+        setTimeout(pollTelegramUpdates, nextDelay);
     }
 }
 
