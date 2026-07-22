@@ -313,12 +313,34 @@ function verifyTelegramApiKey(req, res) {
 function buildTelegramOrderKeyboard(orderId) {
     if (!orderId) return undefined;
     return {
-        inline_keyboard: [[
-            {
-                text: '👁️ View Order in Dashboard',
-                url: 'https://aye-commercial-4b871.web.app/store_dashboard.html#tab-orders'
-            }
-        ]]
+        inline_keyboard: [
+            [
+                {
+                    text: '👁️ View Order Details',
+                    callback_data: `view_${orderId}`
+                }
+            ],
+            [
+                {
+                    text: 'Pending 🟡',
+                    callback_data: `set_Pending_${orderId}`
+                },
+                {
+                    text: 'Shipped 🔵',
+                    callback_data: `set_Shipped_${orderId}`
+                }
+            ],
+            [
+                {
+                    text: 'Delivered 🟢',
+                    callback_data: `set_Delivered_${orderId}`
+                },
+                {
+                    text: 'Cancelled 🔴',
+                    callback_data: `set_Cancelled_${orderId}`
+                }
+            ]
+        ]
     };
 }
 
@@ -1190,6 +1212,172 @@ app.get('/logs', (req, res) => {
     res.type('text/plain').send(logs.join('\n'));
 });
 
+// ----------------------------------------------------
+// 🤖 TELEGRAM BOT POLLING & CALLBACK QUERY HANDLERS
+// ----------------------------------------------------
+let tgPollOffset = 0;
+
+async function notifyCustomerWhatsAppStatus(phone, orderId, newStatus, customerName = '') {
+    if (!phone || !isReady || !sock) return;
+    try {
+        const cleanedPhone = normalizeDestinationPhone(phone);
+        if (!cleanedPhone) return;
+
+        let statusTextAr = newStatus;
+        if (newStatus === 'Pending') statusTextAr = 'قيد الانتظار 🟡';
+        else if (newStatus === 'Shipped') statusTextAr = 'تم الشحن 🔵';
+        else if (newStatus === 'Delivered') statusTextAr = 'تم التسليم 🟢';
+        else if (newStatus === 'Cancelled') statusTextAr = 'ملغى 🔴';
+
+        const text = 
+            `👋 مرحباً ${customerName || ''}\n\n` +
+            `📦 تم تحديث حالة طلبك رقم *#${orderId}* إلى:\n` +
+            `*${statusTextAr}*\n\n` +
+            `شكراً لربطك بمتجرنا! ✨`;
+
+        const lookup = await sock.onWhatsApp(cleanedPhone);
+        const recipient = Array.isArray(lookup) ? lookup[0] : null;
+        if (recipient && recipient.exists) {
+            const targetJid = recipient.jid || `${cleanedPhone}@s.whatsapp.net`;
+            await sock.sendMessage(targetJid, { text });
+            console.log(`🟢 WhatsApp status update notification sent to ${targetJid} for order #${orderId}`);
+        }
+    } catch (err) {
+        console.error(`⚠️ Failed to send WhatsApp status update notification: ${err.message}`);
+    }
+}
+
+async function handleTelegramCallbackQuery(callbackQuery) {
+    const callbackId = callbackQuery.id;
+    const data = callbackQuery.data || '';
+    const messageId = callbackQuery.message?.message_id;
+    const chatId = callbackQuery.message?.chat?.id;
+
+    const answerCallback = async (text, showAlert = false) => {
+        try {
+            await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/answerCallbackQuery`, {
+                callback_query_id: callbackId,
+                text,
+                show_alert: showAlert
+            }, { timeout: 10000 });
+        } catch (e) {
+            console.error('Error answering Telegram callback query:', e.message);
+        }
+    };
+
+    if (data.startsWith('set_')) {
+        const parts = data.split('_');
+        const newStatus = parts[1];
+        const orderId = parts[2];
+
+        await answerCallback(`🔄 Updating status to ${newStatus}...`);
+        const success = await dbClient.updateOrderStatus(orderId, newStatus);
+        if (success) {
+            await answerCallback(`✅ Order #${orderId} updated to ${newStatus}!`, true);
+
+            // Fetch order and notify customer on WhatsApp
+            try {
+                const order = await dbClient.getOrderById(orderId);
+                if (order && order.customer) {
+                    const customerPhone = order.customer.phone;
+                    const customerName = order.customer.name;
+                    if (customerPhone) {
+                        await notifyCustomerWhatsAppStatus(customerPhone, orderId, newStatus, customerName);
+                    }
+                }
+            } catch (notifyErr) {
+                console.error('Error in customer WhatsApp notification:', notifyErr.message);
+            }
+
+            // Edit Telegram message to update status display
+            await renderTelegramOrderDetailsMessage(chatId, messageId, orderId);
+        } else {
+            await answerCallback(`❌ Failed to update order status`, true);
+        }
+    } else if (data.startsWith('view_')) {
+        const orderId = data.split('_')[1];
+        await answerCallback('');
+        await renderTelegramOrderDetailsMessage(chatId, messageId, orderId);
+    }
+}
+
+async function renderTelegramOrderDetailsMessage(chatId, messageId, orderId) {
+    if (!chatId || !messageId || !orderId) return;
+    const order = await dbClient.getOrderById(orderId);
+    if (!order) return;
+
+    const status = order.status || 'Pending';
+    let statusEmoji = '🟡';
+    if (status === 'Shipped') statusEmoji = '🔵';
+    else if (status === 'Delivered') statusEmoji = '🟢';
+    else if (status === 'Cancelled') statusEmoji = '🔴';
+
+    const cust = order.customer || {};
+    const items = order.items || [];
+    let itemsText = '';
+    for (const item of items) {
+        itemsText += ` - ${item.title || 'Item'} x${item.quantity || 1} ($${(item.price || 0).toFixed(2)})\n`;
+    }
+
+    const custPhone = cust.phone || 'Auto-linking via WhatsApp...';
+    const detailsMsg = 
+        `📦 *Order Details #${order.id}*\n` +
+        `━━━━━━━━━━━━━━━━━━━\n` +
+        `👤 *Customer:* ${cust.name || 'N/A'}\n` +
+        `📞 *Phone:* \`${custPhone}\`\n` +
+        `📍 *Address:* ${cust.address || 'N/A'}\n` +
+        `📧 *Email:* ${cust.email || 'N/A'}\n` +
+        `━━━━━━━━━━━━━━━━━━━\n` +
+        `🛍️ *Items:*\n${itemsText}` +
+        `━━━━━━━━━━━━━━━━━━━\n` +
+        `💵 *Total:* $${(order.totalAmount || 0).toFixed(2)}\n` +
+        `🚦 *Status:* ${statusEmoji} ${status}\n` +
+        `📅 *Date:* ${(order.createdAt || '').slice(0, 19).replace('T', ' ')}\n`;
+
+    const keyboard = buildTelegramOrderKeyboard(order.id);
+
+    try {
+        await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/editMessageText`, {
+            chat_id: chatId,
+            message_id: messageId,
+            text: detailsMsg,
+            parse_mode: 'Markdown',
+            reply_markup: keyboard
+        }, { timeout: 10000 });
+    } catch (err) {
+        console.error('Failed to edit Telegram order details message:', err.message);
+    }
+}
+
+async function pollTelegramUpdates() {
+    if (!TELEGRAM_BOT_TOKEN) return;
+    try {
+        const res = await axios.get(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates`, {
+            params: {
+                offset: tgPollOffset,
+                timeout: 10,
+                allowed_updates: ['callback_query', 'message']
+            },
+            timeout: 15000
+        });
+
+        if (res.data && res.data.ok && Array.isArray(res.data.result)) {
+            for (const update of res.data.result) {
+                tgPollOffset = update.update_id + 1;
+                if (update.callback_query) {
+                    await handleTelegramCallbackQuery(update.callback_query);
+                }
+            }
+        }
+    } catch (err) {
+        if (!err.message?.includes('timeout')) {
+            console.error('Telegram bot polling error:', err.message);
+        }
+    } finally {
+        setTimeout(pollTelegramUpdates, 2000);
+    }
+}
+
 // Keep Alive Ping Loop to prevent sleep on Render
 async function startKeepAlivePing() {
     console.log("[Keep-Alive] Initializing Render ping loop...");
@@ -1210,9 +1398,10 @@ async function startKeepAlivePing() {
     }, 5 * 60 * 1000); // Ping every 5 minutes
 }
 
-// Start Express server and connect WhatsApp
+// Start Express server and connect WhatsApp & Telegram
 app.listen(port, () => {
-    console.log(`🚀 Express WhatsApp API Server listening on port ${port}`);
+    console.log(`🚀 Express Unified WhatsApp & Telegram API Server listening on port ${port}`);
     connectToWhatsApp();
+    pollTelegramUpdates();
     startKeepAlivePing();
 });

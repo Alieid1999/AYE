@@ -1,25 +1,25 @@
 services:
   - type: web
-    name: aye-telegram-gateway
-    env: python
+    name: market-anxk
+    env: node
     plan: free
     rootDir: .
-    buildCommand: pip install -r requirements.txt
-    startCommand: python telegram_gateway.py
+    buildCommand: npm install
+    startCommand: npm start
     healthCheckPath: /status
     autoDeploy: true
     envVars:
       - key: PORT
         value: 8000
-      - key: TELEGRAM_API_ID
-        sync: false
-      - key: TELEGRAM_API_HASH
-        sync: false
-      - key: TELEGRAM_SESSION
-        sync: false
-      - key: TELEGRAM_GATEWAY_API_KEY
+      - key: TELEGRAM_BOT_TOKEN
         sync: false
       - key: TELEGRAM_ADMIN_CHAT_ID
         sync: false
-      - key: WHATSAPP_GATEWAY_URL
+      - key: TELEGRAM_GATEWAY_API_KEY
+        sync: false
+      - key: FIREBASE_API_KEY
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: WHATSAPP_PAIRING_NUMBER
         sync: false
