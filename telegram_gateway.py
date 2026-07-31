@@ -1098,75 +1098,7 @@ def make_json_request(url, payload):
     with urllib.request.urlopen(req) as response:
         return json.loads(response.read().decode('utf-8'))
 
-@app.post("/post-social")
-async def post_to_social_media(request: SocialPostRequest):
-    results = {}
-    caption = f"{request.title}\n\nPrice: {request.price} {request.currency}\n\n{request.description}\n\nBuy here: {request.link}"
-    
-    # 1. Webhook Automation (Make.com/Zapier/TikTok)
-    if request.webhook_url:
-        try:
-            webhook_payload = {
-                "event": "product_created",
-                "title": request.title,
-                "price": request.price,
-                "currency": request.currency,
-                "image": request.image,
-                "description": request.description,
-                "link": request.link
-            }
-            res = make_json_request(request.webhook_url, webhook_payload)
-            results["webhook"] = {"success": True, "response": res}
-        except Exception as e:
-            results["webhook"] = {"success": False, "error": str(e)}
 
-    # 2. Direct Facebook Graph API Posting
-    if request.facebook_enabled and request.facebook_page_id and request.facebook_page_token:
-        try:
-            fb_url = f"https://graph.facebook.com/v19.0/{request.facebook_page_id}/photos"
-            if request.image.startswith("data:image"):
-                header, encoded = request.image.split(",", 1)
-                mime_type = header.split(";")[0].split(":")[1]
-                image_bytes = base64.b64decode(encoded)
-                files = {'source': ('image.png', image_bytes, mime_type)}
-                fields = {'message': caption, 'access_token': request.facebook_page_token}
-                res = make_multipart_request(fb_url, fields, files)
-            else:
-                fields = {'url': request.image, 'message': caption, 'access_token': request.facebook_page_token}
-                data = urllib.parse.urlencode(fields).encode('utf-8')
-                req = urllib.request.Request(fb_url, data=data, method='POST')
-                with urllib.request.urlopen(req) as response:
-                    res = json.loads(response.read().decode('utf-8'))
-            results["facebook"] = {"success": True, "response": res}
-        except Exception as e:
-            results["facebook"] = {"success": False, "error": str(e)}
-
-    # 3. Direct Instagram Graph API Posting
-    if request.instagram_enabled and request.instagram_business_id and request.instagram_token:
-        try:
-            if not request.image.startswith("data:image"):
-                container_url = f"https://graph.facebook.com/v19.0/{request.instagram_business_id}/media"
-                payload = {
-                    "image_url": request.image,
-                    "caption": caption,
-                    "access_token": request.instagram_token
-                }
-                container_res = make_json_request(container_url, payload)
-                
-                if "id" in container_res:
-                    publish_url = f"https://graph.facebook.com/v19.0/{request.instagram_business_id}/media_publish"
-                    pub_payload = {
-                        "creation_id": container_res["id"],
-                        "access_token": request.instagram_token
-                    }
-                    pub_res = make_json_request(publish_url, pub_payload)
-                    results["instagram"] = {"success": True, "response": pub_res}
-                else:
-                    results["instagram"] = {"success": False, "error": "Failed to create media container", "details": container_res}
-            else:
-                results["instagram"] = {"success": False, "error": "Instagram API does not support local base64 images directly. Please use automation webhook for full support."}
-        except Exception as e:
-            results["instagram"] = {"success": False, "error": str(e)}
 
 # Selenium Profile Directory in the project folder
 PROFILE_DIR = os.path.join(os.getcwd(), "whatsapp_selenium_profile")
@@ -1257,6 +1189,24 @@ def run_whatsapp_post_bg(channel_name: str, text: str, image_str: str):
 async def post_to_social_media(request: SocialPostRequest, background_tasks: BackgroundTasks):
     results = {}
     caption = f"{request.title}\n\nPrice: {request.price} {request.currency}\n\n{request.description}\n\nBuy here: {request.link}"
+    
+    # 0. Automation Webhook (Make.com/Zapier/Instagram Automation)
+    if request.webhook_url:
+        try:
+            webhook_payload = {
+                "event": "product_created",
+                "title": request.title,
+                "price": request.price,
+                "currency": request.currency,
+                "image": request.image,
+                "description": request.description,
+                "caption": caption,
+                "link": request.link
+            }
+            res = make_json_request(request.webhook_url, webhook_payload)
+            results["webhook"] = {"success": True, "response": res}
+        except Exception as e:
+            results["webhook"] = {"success": False, "error": str(e)}
     
     # 1. TikTok Direct API Posting
     if request.tiktok_enabled and request.tiktok_access_token:
