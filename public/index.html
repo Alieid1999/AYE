@@ -21,7 +21,8 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛍️</text></svg>">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="shortcut icon" href="icon.svg">
     
     <!-- PWA Settings -->
     <link rel="manifest" href="manifest.json">
@@ -2062,15 +2063,48 @@
         const reviewPhotoInput = document.getElementById('review-photo');
         const reviewCommentInput = document.getElementById('review-comment');
 
+        function setCookie(name, value, days = 365) {
+            const expires = new Date(Date.now() + days * 864e5).toUTCString();
+            document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/; SameSite=Lax';
+        }
+
+        function getCookie(name) {
+            const cookies = document.cookie.split('; ');
+            for (let i = 0; i < cookies.length; i++) {
+                const parts = cookies[i].split('=');
+                if (parts[0] === name) {
+                    return decodeURIComponent(parts.slice(1).join('='));
+                }
+            }
+            return '';
+        }
+
+        function deleteCookie(name) {
+            document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        }
+
+        function saveCustomerUser(userObj) {
+            currentUser = userObj;
+            if (userObj) {
+                const userStr = JSON.stringify(userObj);
+                setCookie('store_customer_user', userStr, 3650); // Persistent cookie (10 years)
+                localStorage.setItem('store_customer_user', userStr);
+                sessionStorage.setItem('store_customer_user', userStr);
+            } else {
+                deleteCookie('store_customer_user');
+                localStorage.removeItem('store_customer_user');
+                sessionStorage.removeItem('store_customer_user');
+            }
+        }
+
         let cart = JSON.parse(localStorage.getItem('store_cart')) || [];
         let currentUser = null;
         try {
-            currentUser = JSON.parse(sessionStorage.getItem('store_customer_user')) || null;
+            const savedUser = getCookie('store_customer_user') || localStorage.getItem('store_customer_user') || sessionStorage.getItem('store_customer_user');
+            currentUser = savedUser ? JSON.parse(savedUser) : null;
         } catch (e) {
             currentUser = null;
         }
-        // Clear legacy persistent auth so refresh doesn't auto-login from old versions.
-        localStorage.removeItem('store_customer_user');
         document.body.classList.add('auth-ui-pending');
 
         let hasReleasedAuthUILock = false;
@@ -3212,14 +3246,12 @@
                     window.dispatchEvent(new Event('local_customers_changed'));
                 }
 
-                // Set currentUser (exclude password)
-                currentUser = {
+                saveCustomerUser({
                     name: customerObj.name,
                     phone: customerObj.phone,
                     address: customerObj.address,
                     email: customerObj.email
-                };
-                sessionStorage.setItem('store_customer_user', JSON.stringify(currentUser));
+                });
 
                 showToast(lang === 'ar' ? 'تم تسجيل الدخول بنجاح! 🎉' : 'Authenticated successfully! 🎉');
                 closeAuthModal();
@@ -3322,7 +3354,7 @@
 
                 currentUser.name = newName;
                 currentUser.address = newAddress;
-                sessionStorage.setItem('store_customer_user', JSON.stringify(currentUser));
+                saveCustomerUser(currentUser);
 
                 showToast(lang === 'ar' ? 'تم تحديث الحساب بنجاح!' : 'Profile updated successfully!');
                 document.getElementById('edit-profile-modal').classList.remove('active');
@@ -3344,9 +3376,7 @@
             const msg = lang === 'ar' ? 'هل أنت متأكد من تسجيل الخروج؟' : 'Are you sure you want to sign out?';
             
             showConfirmModal(title, msg, () => {
-                sessionStorage.removeItem('store_customer_user');
-                localStorage.removeItem('store_customer_user');
-                currentUser = null;
+                saveCustomerUser(null);
                 showToast(lang === 'ar' ? 'تم تسجيل الخروج بنجاح!' : 'Signed out successfully!');
                 updateAuthUI();
                 fillCheckoutDetails();
@@ -4005,19 +4035,14 @@
 
         // Logo updates listener
         DBService.subscribeToLogo((logoDataUrl) => {
-            if (logoDataUrl) {
-                document.querySelectorAll('img[src="icon.svg"], img[src="./icon.svg"], img[alt*="Logo"], img[alt="Store"]').forEach(img => {
-                    img.src = logoDataUrl;
-                });
-                const appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
-                if (appleIcon) appleIcon.href = logoDataUrl;
-            } else {
-                document.querySelectorAll('img[src="icon.svg"], img[src="./icon.svg"]').forEach(img => {
-                    img.src = 'icon.svg';
-                });
-                const appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
-                if (appleIcon) appleIcon.href = 'icon.svg';
-            }
+            const logoUrl = logoDataUrl || 'icon.svg';
+            document.querySelectorAll('img[src="icon.svg"], img[src="./icon.svg"], img[alt*="Logo"], img[alt="Store"]').forEach(img => {
+                img.src = logoUrl;
+            });
+            const favicons = document.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]');
+            favicons.forEach(link => {
+                link.href = logoUrl;
+            });
         });
 
         // ----------------------------------------
@@ -4546,7 +4571,7 @@
                 }
                 
                 if (profileChanged) {
-                    sessionStorage.setItem('store_customer_user', JSON.stringify(currentUser));
+                    saveCustomerUser(currentUser);
                     updateAuthUI();
                     
                     const cleanPhone = currentUser.phone ? currentUser.phone.replace(/[^0-9]/g, '') : '';

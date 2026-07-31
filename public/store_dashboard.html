@@ -9,7 +9,8 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="shortcut icon" href="icon.svg">
     
     <style>
         /* Base Colors and Styling */
@@ -982,7 +983,8 @@
             <li data-tab="customers"><i class="fa-solid fa-users"></i> <span data-i18n="navCustomers">Customers</span></li>
             <!-- <li data-tab="importer"><i class="fa-solid fa-cloud-arrow-down"></i> <span data-i18n="navImporter">Product Importer</span></li> -->
             <!-- <li data-tab="guest-orders"><i class="fa-solid fa-user-secret"></i> <span data-i18n="navGuestOrders">Guest Orders</span></li> -->
-            <li data-tab="settings"><i class="fa-solid fa-gear"></i> <span data-i18n="navSettings">Settings</span></li>
+            <li data-tab="socialsync"><i class="fa-brands fa-instagram" style="color: #e1306c;"></i> <span data-i18n="navSocialSync">Instagram Auto-Posting</span></li>
+<li data-tab="settings"><i class="fa-solid fa-gear"></i> <span data-i18n="navSettings">Settings</span></li>
         </ul>
 
         <!-- Sidebar Footer: Language + Logout -->
@@ -1535,7 +1537,59 @@
             </section>
 
             <!-- 5. SETTINGS TAB -->
-            <section id="tab-settings" class="tab-content">
+            <!-- SOCIAL SYNC TAB -->
+<section id="tab-socialsync" class="tab-content">
+    <div class="dashboard-card">
+        <h2 class="card-title"><i class="fa-brands fa-instagram" style="color: #e1306c;"></i> <span data-i18n="socialSyncTitle">Social Media Auto-Posting (Instagram, Facebook & TikTok)</span></h2>
+        <p style="margin-bottom: 20px; font-size: 0.9rem; color: var(--text-light);" data-i18n="socialSyncDesc">
+            Automatically publish products to Instagram Business Account, Facebook Pages, and TikTok whenever a new product is added.
+        </p>
+        <form id="social-sync-settings-form-main">
+            <!-- Instagram Settings -->
+            <div style="background: #fdf2f8; border: 1px solid #fbcfe8; padding: 20px; border-radius: 14px; margin-bottom: 20px;">
+                <h3 style="font-size: 1.05rem; font-weight: bold; color: #be185d; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-brands fa-instagram" style="font-size: 1.3rem;"></i> Instagram Business Auto-Posting (النشر على إنستغرام)
+                </h3>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: bold; font-size: 0.95rem;">
+                        <input type="checkbox" id="social-ig-enable-main" style="width: 20px; height: 20px; accent-color: #e1306c;">
+                        <span data-i18n="socialSyncIgEnable">Enable Direct API Instagram Posting</span>
+                    </label>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="social-ig-id-main" data-i18n="socialSyncIgId">Instagram Business Account ID</label>
+                        <input type="text" id="social-ig-id-main" placeholder="e.g. 17841400000000000">
+                    </div>
+                    <div class="form-group">
+                        <label for="social-ig-token-main" data-i18n="socialSyncIgToken">Instagram Access Token (Graph API)</label>
+                        <input type="password" id="social-ig-token-main" placeholder="EAAG...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Automation Webhook URL -->
+            <div style="background: #f0f9ff; border: 1px solid #bae6fd; padding: 20px; border-radius: 14px; margin-bottom: 20px;">
+                <h3 style="font-size: 1.05rem; font-weight: bold; color: #0369a1; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-bolt" style="font-size: 1.2rem;"></i> Automation Webhook (Make.com / Zapier / Instagram Hook)
+                </h3>
+                <p style="font-size: 0.88rem; color: var(--text-light); margin-bottom: 15px;">
+                    Provide a Webhook URL (Make.com / Zapier) to auto-post directly to Instagram or other channels instantly.
+                </p>
+                <div class="form-group">
+                    <label for="social-webhook-url-main">Webhook URL</label>
+                    <input type="text" id="social-webhook-url-main" placeholder="https://hook.eu1.make.com/...">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" style="width: 100%; padding: 14px; font-size: 1rem;">
+                <i class="fa-solid fa-floppy-disk"></i> <span data-i18n="socialSyncSave">Save Social Sync Settings</span>
+            </button>
+        </form>
+    </div>
+</section>
+
+<section id="tab-settings" class="tab-content">
 
                 <!-- Categories Manager -->
                 <div class="dashboard-card">
@@ -1737,6 +1791,56 @@
                             </div>
                             <div id="gateway-test-result" style="display: none; padding: 12px; border-radius: 8px; font-size: 0.88rem; line-height: 1.5; margin-top: 10px; word-break: break-all;"></div>
                         </div>
+                    </form>
+                </div>
+
+                <!-- Social Media & Instagram Auto-Posting Settings -->
+                <div class="dashboard-card">
+                    <h2 class="card-title"><i class="fa-brands fa-instagram" style="color: #e1306c;"></i> <span data-i18n="socialSyncTitle">Social Media Auto-Posting (Instagram, Facebook & TikTok)</span></h2>
+                    <p style="margin-bottom: 20px; font-size: 0.9rem; color: var(--text-light);" data-i18n="socialSyncDesc">
+                        Automatically publish products to Instagram Business Account, Facebook Pages, and TikTok whenever a new product is added.
+                    </p>
+                    <form id="social-sync-settings-form">
+                        <!-- Instagram Settings -->
+                        <div style="background: #fdf2f8; border: 1px solid #fbcfe8; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                            <h3 style="font-size: 1rem; font-weight: bold; color: #be185d; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-brands fa-instagram"></i> Instagram Business Auto-Posting
+                            </h3>
+                            <div class="form-group" style="margin-bottom: 12px;">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: bold;">
+                                    <input type="checkbox" id="social-ig-enable" style="width: 18px; height: 18px; accent-color: #e1306c;">
+                                    <span data-i18n="socialSyncIgEnable">Enable Direct API Instagram Posting</span>
+                                </label>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="social-ig-id" data-i18n="socialSyncIgId">Instagram Business Account ID</label>
+                                    <input type="text" id="social-ig-id" placeholder="e.g. 17841400000000000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="social-ig-token" data-i18n="socialSyncIgToken">Instagram Access Token (Graph API)</label>
+                                    <input type="password" id="social-ig-token" placeholder="EAAG...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Webhook URL (Make / Zapier / Instagram Automation) -->
+                        <div style="background: #f0f9ff; border: 1px solid #bae6fd; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                            <h3 style="font-size: 1rem; font-weight: bold; color: #0369a1; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-bolt"></i> Automation Webhook (Make.com / Zapier / Webhook)
+                            </h3>
+                            <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 12px;">
+                                Alternatively, provide a Webhook URL (Make.com / Zapier) to auto-post directly to Instagram or other channels.
+                            </p>
+                            <div class="form-group">
+                                <label for="social-webhook-url">Webhook URL</label>
+                                <input type="text" id="social-webhook-url" placeholder="https://hook.eu1.make.com/...">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit" style="width: 100%;">
+                            <i class="fa-solid fa-floppy-disk"></i> <span data-i18n="socialSyncSave">Save Social Sync Settings</span>
+                        </button>
                     </form>
                 </div>
 
@@ -4905,6 +5009,79 @@
                  };
                  await DBService.saveGatewaySettings(settings);
                  showToast('Gateway settings saved successfully!');
+              });
+
+              const socialSyncForms = [
+              document.getElementById('social-sync-settings-form'),
+              document.getElementById('social-sync-settings-form-main')
+          ].filter(Boolean);
+
+          if (socialSyncForms.length > 0) {
+              DBService.subscribeToSocialSyncSettings((settings) => {
+                  activeSocialSettings = settings || {};
+                  ['social-ig-enable', 'social-ig-enable-main'].forEach(id => {
+                      const el = document.getElementById(id);
+                      if (el) el.checked = !!settings.instagram_enabled;
+                  });
+                  ['social-ig-id', 'social-ig-id-main'].forEach(id => {
+                      const el = document.getElementById(id);
+                      if (el) el.value = settings.instagram_business_id || '';
+                  });
+                  ['social-ig-token', 'social-ig-token-main'].forEach(id => {
+                      const el = document.getElementById(id);
+                      if (el) el.value = settings.instagram_token || '';
+                  });
+                  ['social-webhook-url', 'social-webhook-url-main'].forEach(id => {
+                      const el = document.getElementById(id);
+                      if (el) el.value = settings.webhook_url || '';
+                  });
+              });
+
+              socialSyncForms.forEach(form => {
+                  form.addEventListener('submit', async (e) => {
+                      e.preventDefault();
+                      const isMain = form.id.includes('main');
+                      const settings = {
+                          instagram_enabled: document.getElementById(isMain ? 'social-ig-enable-main' : 'social-ig-enable')?.checked || false,
+                          instagram_business_id: document.getElementById(isMain ? 'social-ig-id-main' : 'social-ig-id')?.value.trim() || '',
+                          instagram_token: document.getElementById(isMain ? 'social-ig-token-main' : 'social-ig-token')?.value.trim() || '',
+                          webhook_url: document.getElementById(isMain ? 'social-webhook-url-main' : 'social-webhook-url')?.value.trim() || ''
+                      };
+                      await DBService.saveSocialSyncSettings(settings);
+                      showToast(localStorage.getItem('store_lang') === 'ar' ? 'تم حفظ إعدادات النشر على إنستغرام بنجاح! 🎉' : 'Instagram Auto-Posting settings saved successfully! 🎉');
+                  });
+              });
+          }
+          const socialSyncForm_legacy = null;
+              if (socialSyncForm) {
+                  DBService.subscribeToSocialSyncSettings((settings) => {
+                      activeSocialSettings = settings || {};
+                      if (document.getElementById('social-ig-enable')) {
+                          document.getElementById('social-ig-enable').checked = !!settings.instagram_enabled;
+                      }
+                      if (document.getElementById('social-ig-id')) {
+                          document.getElementById('social-ig-id').value = settings.instagram_business_id || '';
+                      }
+                      if (document.getElementById('social-ig-token')) {
+                          document.getElementById('social-ig-token').value = settings.instagram_token || '';
+                      }
+                      if (document.getElementById('social-webhook-url')) {
+                          document.getElementById('social-webhook-url').value = settings.webhook_url || '';
+                      }
+                  });
+
+                  socialSyncForm.addEventListener('submit', async (e) => {
+                      e.preventDefault();
+                      const settings = {
+                          instagram_enabled: document.getElementById('social-ig-enable') ? document.getElementById('social-ig-enable').checked : false,
+                          instagram_business_id: document.getElementById('social-ig-id') ? document.getElementById('social-ig-id').value.trim() : '',
+                          instagram_token: document.getElementById('social-ig-token') ? document.getElementById('social-ig-token').value.trim() : '',
+                          webhook_url: document.getElementById('social-webhook-url') ? document.getElementById('social-webhook-url').value.trim() : ''
+                      };
+                      await DBService.saveSocialSyncSettings(settings);
+                      showToast(localStorage.getItem('store_lang') === 'ar' ? 'تم حفظ إعدادات النشر التلقائي بنجاح! 🎉' : 'Social Auto-Posting settings saved successfully! 🎉');
+                  });
+              }
              });
 
                            // Manual Backup & Restore Logic
