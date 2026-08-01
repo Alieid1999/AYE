@@ -2872,45 +2872,50 @@
             usdItems.forEach(item => totalUSD += Number(item.price) * item.quantity);
             lbpItems.forEach(item => totalLBP += Number(item.price) * item.quantity);
 
+            const exchangeRate = Number(gatewaySettings?.usd_exchange_rate) || 89000;
+            let grandTotalUSD = totalUSD + (totalLBP > 0 ? (totalLBP / exchangeRate) : 0);
+
             let msg = '';
             if (lang === 'ar') {
-                msg = `*طلب جديد في المتجر!*\n\n` +
-                      (orderData.id ? `*رقم المعاملة:* ${orderData.id}\n` : '') +
-                      `*العميل:* ${orderData.customer.name}\n` +
-                      (orderData.customer.phone ? `*الهاتف:* ${orderData.customer.phone}\n` : '') +
-                      `*العنوان:* ${orderData.customer.address}\n\n`;
+                msg = `*🛒 طلب جديد في المتجر!*\n\n` +
+                      (orderData.id ? `*رقم الطلب:* \`${orderData.id}\`\n` : '') +
+                      `*اسم الزبون:* ${orderData.customer.name}\n` +
+                      (orderData.customer.phone ? `*رقم الهاتف:* ${orderData.customer.phone}\n` : '') +
+                      `*📍 عنوان الدليفري:* ${orderData.customer.address || 'غير محدد'}\n\n`;
 
                 if (orderData.items.length > 0) {
-                    msg += `*المنتجات:*\n`;
+                    msg += `*📦 المنتجات المطلوبة:*\n`;
                     orderData.items.forEach(item => {
                         const priceFormatted = formatPrice(item.price, item.currency);
                         const subtotalFormatted = formatPrice(item.price * item.quantity, item.currency);
-                        msg += `- *${item.title}* (x${item.quantity}) - ${priceFormatted} (المجموع: ${subtotalFormatted})\n`;
+                        msg += `• *${item.title}* (x${item.quantity}) - ${priceFormatted} (المجموع: ${subtotalFormatted})\n`;
                     });
                     msg += `\n`;
                 }
 
-                if (totalUSD > 0) msg += `*إجمالي الدولار:* ${formatPrice(totalUSD, 'USD')}\n`;
-                if (totalLBP > 0) msg += `*إجمالي اللبناني:* ${formatPrice(totalLBP, 'LBP')}\n`;
+                if (totalUSD > 0) msg += `*إجمالي بالدولار:* $${totalUSD.toFixed(2)}\n`;
+                if (totalLBP > 0) msg += `*إجمالي باللبناني:* ${formatPrice(totalLBP, 'LBP')}\n`;
+                msg += `*💵 الإجمالي النهائي بالدولار:* $${grandTotalUSD.toFixed(2)} (سعر الصرف: 1$ = ${exchangeRate.toLocaleString()} LBP)\n`;
             } else {
-                msg = `*New Order Received!*\n\n` +
-                      (orderData.id ? `*Transaction Number:* ${orderData.id}\n` : '') +
-                      `*Customer:* ${orderData.customer.name}\n` +
+                msg = `*🛒 New Order Received!*\n\n` +
+                      (orderData.id ? `*Order ID:* \`${orderData.id}\`\n` : '') +
+                      `*Customer Name:* ${orderData.customer.name}\n` +
                       (orderData.customer.phone ? `*Phone:* ${orderData.customer.phone}\n` : '') +
-                      `*Address:* ${orderData.customer.address}\n\n`;
+                      `*📍 Delivery Address:* ${orderData.customer.address || 'N/A'}\n\n`;
 
                 if (orderData.items.length > 0) {
-                    msg += `*Items:*\n`;
+                    msg += `*📦 Items:*\n`;
                     orderData.items.forEach(item => {
                         const priceFormatted = formatPrice(item.price, item.currency);
                         const subtotalFormatted = formatPrice(item.price * item.quantity, item.currency);
-                        msg += `- *${item.title}* (x${item.quantity}) - ${priceFormatted} (Subtotal: ${subtotalFormatted})\n`;
+                        msg += `• *${item.title}* (x${item.quantity}) - ${priceFormatted} (Subtotal: ${subtotalFormatted})\n`;
                     });
                     msg += `\n`;
                 }
 
-                if (totalUSD > 0) msg += `*Total USD:* ${formatPrice(totalUSD, 'USD')}\n`;
-                if (totalLBP > 0) msg += `*Total LBP:* ${formatPrice(totalLBP, 'LBP')}\n`;
+                if (totalUSD > 0) msg += `*Subtotal USD:* $${totalUSD.toFixed(2)}\n`;
+                if (totalLBP > 0) msg += `*Subtotal LBP:* ${formatPrice(totalLBP, 'LBP')}\n`;
+                msg += `*💵 Total Amount in USD:* $${grandTotalUSD.toFixed(2)} (Rate: 1$ = ${exchangeRate.toLocaleString()} LBP)\n`;
             }
 
             try {
@@ -2955,55 +2960,60 @@
                 totalLBP += Number(item.price) * item.quantity;
             });
 
+            const exchangeRate = Number(gatewaySettings?.usd_exchange_rate) || 89000;
+            let grandTotalUSD = totalUSD + (totalLBP > 0 ? (totalLBP / exchangeRate) : 0);
+
             let msg = '';
             const isGuest = !currentUser;
 
             if (lang === 'ar') {
-                msg = `*طلب جديد في المتجر!*\n\n` +
-                      (orderData.id ? `*رقم المعاملة:* ${orderData.id}\n` : '') +
-                      `*العميل:* ${orderData.customer.name}\n` +
-                      (orderData.customer.phone ? `*الهاتف:* ${orderData.customer.phone}\n` : '') +
-                      `*العنوان:* ${orderData.customer.address}\n\n`;
+                msg = `*🛒 طلب جديد في المتجر!*\n\n` +
+                      (orderData.id ? `*رقم الطلب:* \`${orderData.id}\`\n` : '') +
+                      `*اسم الزبون:* ${orderData.customer.name}\n` +
+                      (orderData.customer.phone ? `*رقم الهاتف:* ${orderData.customer.phone}\n` : '') +
+                      `*📍 عنوان الدليفري:* ${orderData.customer.address || 'غير محدد'}\n\n`;
 
                 if (orderData.items.length > 0) {
-                    msg += `*المنتجات:*\n`;
+                    msg += `*📦 المنتجات المطلوبة:*\n`;
                     orderData.items.forEach(item => {
                         const priceFormatted = formatPrice(item.price, item.currency);
                         const subtotalFormatted = formatPrice(item.price * item.quantity, item.currency);
-                        msg += `- *${item.title}* (x${item.quantity}) - ${priceFormatted} (المجموع: ${subtotalFormatted})\n`;
+                        msg += `• *${item.title}* (x${item.quantity}) - ${priceFormatted} (المجموع: ${subtotalFormatted})\n`;
                     });
                     msg += `\n`;
                 }
 
                 if (totalUSD > 0) {
-                    msg += `*إجمالي الدولار:* ${formatPrice(totalUSD, 'USD')}\n`;
+                    msg += `*إجمالي بالدولار:* $${totalUSD.toFixed(2)}\n`;
                 }
                 if (totalLBP > 0) {
-                    msg += `*إجمالي اللبناني:* ${formatPrice(totalLBP, 'LBP')}\n`;
+                    msg += `*إجمالي باللبناني:* ${formatPrice(totalLBP, 'LBP')}\n`;
                 }
+                msg += `*💵 الإجمالي النهائي بالدولار:* $${grandTotalUSD.toFixed(2)} (سعر الصرف: 1$ = ${exchangeRate.toLocaleString()} LBP)\n`;
             } else {
-                msg = `*New Order Received!*\n\n` +
-                      (orderData.id ? `*Transaction Number:* ${orderData.id}\n` : '') +
-                      `*Customer:* ${orderData.customer.name}\n` +
+                msg = `*🛒 New Order Received!*\n\n` +
+                      (orderData.id ? `*Order ID:* \`${orderData.id}\`\n` : '') +
+                      `*Customer Name:* ${orderData.customer.name}\n` +
                       (orderData.customer.phone ? `*Phone:* ${orderData.customer.phone}\n` : '') +
-                      `*Address:* ${orderData.customer.address}\n\n`;
+                      `*📍 Delivery Address:* ${orderData.customer.address || 'N/A'}\n\n`;
 
                 if (orderData.items.length > 0) {
-                    msg += `*Items:*\n`;
+                    msg += `*📦 Items:*\n`;
                     orderData.items.forEach(item => {
                         const priceFormatted = formatPrice(item.price, item.currency);
                         const subtotalFormatted = formatPrice(item.price * item.quantity, item.currency);
-                        msg += `- *${item.title}* (x${item.quantity}) - ${priceFormatted} (Subtotal: ${subtotalFormatted})\n`;
+                        msg += `• *${item.title}* (x${item.quantity}) - ${priceFormatted} (Subtotal: ${subtotalFormatted})\n`;
                     });
                     msg += `\n`;
                 }
 
                 if (totalUSD > 0) {
-                    msg += `*Total USD:* ${formatPrice(totalUSD, 'USD')}\n`;
+                    msg += `*Subtotal USD:* $${totalUSD.toFixed(2)}\n`;
                 }
                 if (totalLBP > 0) {
-                    msg += `*Total LBP:* ${formatPrice(totalLBP, 'LBP')}\n`;
+                    msg += `*Subtotal LBP:* ${formatPrice(totalLBP, 'LBP')}\n`;
                 }
+                msg += `*💵 Total Amount in USD:* $${grandTotalUSD.toFixed(2)} (Rate: 1$ = ${exchangeRate.toLocaleString()} LBP)\n`;
             }
 
             const cleanedPhone = whatsappPhone.replace(/\D/g, '');
@@ -3765,6 +3775,7 @@
                      const telegram_admin_phone = localStorage.getItem('store_telegram_admin_phone') || '';
                      const whatsapp_admin_phone = localStorage.getItem('store_whatsapp_admin_phone') || '';
                      const whatsapp_bot_url = localStorage.getItem('store_whatsapp_bot_url') || '';
+                     const usd_exchange_rate = localStorage.getItem('store_usd_exchange_rate') || '89000';
                      callback({
                           telegram_api_url,
                           gmail_script_url,
@@ -3772,6 +3783,7 @@
                           telegram_admin_phone,
                           whatsapp_admin_phone,
                           whatsapp_bot_url,
+                          usd_exchange_rate,
                           whatsapp_otp_template_ar: localStorage.getItem('store_whatsapp_otp_template_ar') || '',
                           whatsapp_update_info_template_ar: localStorage.getItem('store_whatsapp_update_info_template_ar') || '',
                           whatsapp_otp_template_en: localStorage.getItem('store_whatsapp_otp_template_en') || '',
@@ -3780,7 +3792,7 @@
                  };
                  getAndCallback();
                  const listener = (e) => {
-                     if (e.key && (e.key === 'store_telegram_api_url' || e.key === 'store_gmail_script_url' || e.key === 'store_telegram_api_key' || e.key === 'store_telegram_admin_phone' || e.key === 'store_whatsapp_admin_phone' || e.key === 'store_whatsapp_bot_url' || e.key === 'store_whatsapp_otp_template_ar' || e.key === 'store_whatsapp_update_info_template_ar' || e.key === 'store_whatsapp_otp_template_en' || e.key === 'store_whatsapp_update_info_template_en')) getAndCallback();
+                     if (e.key && e.key.startsWith('store_')) getAndCallback();
                  };
                  window.addEventListener('storage', listener);
                  window.addEventListener('local_gateways_changed', getAndCallback);

@@ -1702,6 +1702,11 @@
                                 <small style="color: var(--text-light); font-size: 0.8rem;">URL for bulk WhatsApp messaging (usually same as WhatsApp Bot URL). Used for sending messages to multiple customers at once.</small>
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
+                                <label for="usd-exchange-rate">💵 USD Exchange Rate (سعر صرف الدولار بالنسبة لليرة)</label>
+                                <input type="number" id="usd-exchange-rate" placeholder="e.g. 89000" step="any" autocomplete="off">
+                                <small style="color: var(--text-light); font-size: 0.8rem;">Enter exchange rate for 1 USD in LBP (e.g. 89000). Used to calculate USD equivalent totals on WhatsApp & Telegram order messages.</small>
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
                                 <label for="whatsapp-channel-link">WhatsApp Channel Invite Link (Optional - For Auto Posting)</label>
                                 <input type="text" id="whatsapp-channel-link" placeholder="e.g. https://whatsapp.com/channel/0029VaXXXXXX" autocomplete="off">
                                 <small style="color: var(--text-light); font-size: 0.8rem;">Provide your public WhatsApp Channel invite link to automatically publish new products to the channel. Make sure your bot's phone number is an admin of the channel.</small>
@@ -2780,6 +2785,7 @@
                      const whatsapp_admin_phone = localStorage.getItem('store_whatsapp_admin_phone') || '';
                      const whatsapp_bot_url = localStorage.getItem('store_whatsapp_bot_url') || '';
                      const whatsapp_channel_link = localStorage.getItem('store_whatsapp_channel_link') || '';
+                     const usd_exchange_rate = localStorage.getItem('store_usd_exchange_rate') || '89000';
                      const whatsapp_otp_template_ar = localStorage.getItem('store_whatsapp_otp_template_ar') || '';
                      const whatsapp_update_info_template_ar = localStorage.getItem('store_whatsapp_update_info_template_ar') || '';
                      const whatsapp_otp_template_en = localStorage.getItem('store_whatsapp_otp_template_en') || '';
@@ -2789,7 +2795,7 @@
                      const backup_email = localStorage.getItem('store_backup_email') || '';
                      const backup_drive_folder_id = localStorage.getItem('store_backup_drive_folder_id') || '';
                      const callmebot_api_key = '';
-                     callback({ telegram_api_url, gmail_script_url, telegram_api_key, telegram_admin_phone, whatsapp_admin_phone, whatsapp_bot_url, whatsapp_channel_link, whatsapp_otp_template_ar, whatsapp_update_info_template_ar, whatsapp_otp_template_en, whatsapp_update_info_template_en, whatsapp_supplier_order_template_ar, whatsapp_supplier_order_template_en, backup_email, backup_drive_folder_id, callmebot_api_key });
+                     callback({ telegram_api_url, gmail_script_url, telegram_api_key, telegram_admin_phone, whatsapp_admin_phone, whatsapp_bot_url, whatsapp_channel_link, usd_exchange_rate, whatsapp_otp_template_ar, whatsapp_update_info_template_ar, whatsapp_otp_template_en, whatsapp_update_info_template_en, whatsapp_supplier_order_template_ar, whatsapp_supplier_order_template_en, backup_email, backup_drive_folder_id, callmebot_api_key });
                  };
                  getAndCallback();
                  const listener = (e) => {
@@ -2811,6 +2817,7 @@
                  localStorage.setItem('store_whatsapp_admin_phone', settings.whatsapp_admin_phone || '');
                  localStorage.setItem('store_whatsapp_bot_url', settings.whatsapp_bot_url || '');
                  localStorage.setItem('store_whatsapp_channel_link', settings.whatsapp_channel_link || '');
+                 localStorage.setItem('store_usd_exchange_rate', settings.usd_exchange_rate || '89000');
                  localStorage.setItem('store_whatsapp_otp_template_ar', settings.whatsapp_otp_template_ar || '');
                  localStorage.setItem('store_whatsapp_update_info_template_ar', settings.whatsapp_update_info_template_ar || '');
                  localStorage.setItem('store_whatsapp_otp_template_en', settings.whatsapp_otp_template_en || '');
@@ -5284,6 +5291,9 @@
                  if (document.getElementById('whatsapp-channel-link')) {
                      document.getElementById('whatsapp-channel-link').value = settings.whatsapp_channel_link || '';
                  }
+                 if (document.getElementById('usd-exchange-rate')) {
+                     document.getElementById('usd-exchange-rate').value = settings.usd_exchange_rate || '89000';
+                 }
                  if (document.getElementById('whatsapp-otp-template-ar')) {
                      document.getElementById('whatsapp-otp-template-ar').value = settings.whatsapp_otp_template_ar || '';
                  }
@@ -5321,6 +5331,7 @@
                      whatsapp_bot_url: document.getElementById('whatsapp-bot-url') ? document.getElementById('whatsapp-bot-url').value.trim() : '',
                      whatsapp_api_url: document.getElementById('whatsapp-api-url') ? document.getElementById('whatsapp-api-url').value.trim() : '',
                      whatsapp_channel_link: document.getElementById('whatsapp-channel-link') ? document.getElementById('whatsapp-channel-link').value.trim() : '',
+                     usd_exchange_rate: document.getElementById('usd-exchange-rate') ? document.getElementById('usd-exchange-rate').value.trim() : '89000',
                      whatsapp_otp_template_ar: document.getElementById('whatsapp-otp-template-ar') ? document.getElementById('whatsapp-otp-template-ar').value : '',
                      whatsapp_update_info_template_ar: document.getElementById('whatsapp-update-info-template-ar') ? document.getElementById('whatsapp-update-info-template-ar').value : '',
                      whatsapp_otp_template_en: document.getElementById('whatsapp-otp-template-en') ? document.getElementById('whatsapp-otp-template-en').value : '',
