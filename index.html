@@ -2873,7 +2873,9 @@
             lbpItems.forEach(item => totalLBP += Number(item.price) * item.quantity);
 
             const exchangeRate = Number(gatewaySettings?.usd_exchange_rate) || 89000;
-            let grandTotalUSD = totalUSD + (totalLBP > 0 ? (totalLBP / exchangeRate) : 0);
+            const deliveryFeeUSD = Number(gatewaySettings?.delivery_fee_usd) || 0;
+            let subtotalUSD = totalUSD + (totalLBP > 0 ? (totalLBP / exchangeRate) : 0);
+            let grandTotalUSD = subtotalUSD + deliveryFeeUSD;
 
             let msg = '';
             if (lang === 'ar') {
@@ -2893,9 +2895,10 @@
                     msg += `\n`;
                 }
 
-                if (totalUSD > 0) msg += `*إجمالي بالدولار:* $${totalUSD.toFixed(2)}\n`;
-                if (totalLBP > 0) msg += `*إجمالي باللبناني:* ${formatPrice(totalLBP, 'LBP')}\n`;
-                msg += `*💵 الإجمالي النهائي بالدولار:* $${grandTotalUSD.toFixed(2)} (سعر الصرف: 1$ = ${exchangeRate.toLocaleString()} LBP)\n`;
+                if (totalUSD > 0) msg += `*مجموع المنتجات بالدولار:* $${totalUSD.toFixed(2)}\n`;
+                if (totalLBP > 0) msg += `*مجموع المنتجات باللبناني:* ${formatPrice(totalLBP, 'LBP')}\n`;
+                if (deliveryFeeUSD > 0) msg += `*🚚 تكلفة الدليفري:* $${deliveryFeeUSD.toFixed(2)}\n`;
+                msg += `*💵 الإجمالي النهائي مع الدليفري:* $${grandTotalUSD.toFixed(2)} (سعر الصرف: 1$ = ${exchangeRate.toLocaleString()} LBP)\n`;
             } else {
                 msg = `*🛒 New Order Received!*\n\n` +
                       (orderData.id ? `*Order ID:* \`${orderData.id}\`\n` : '') +
@@ -2915,7 +2918,8 @@
 
                 if (totalUSD > 0) msg += `*Subtotal USD:* $${totalUSD.toFixed(2)}\n`;
                 if (totalLBP > 0) msg += `*Subtotal LBP:* ${formatPrice(totalLBP, 'LBP')}\n`;
-                msg += `*💵 Total Amount in USD:* $${grandTotalUSD.toFixed(2)} (Rate: 1$ = ${exchangeRate.toLocaleString()} LBP)\n`;
+                if (deliveryFeeUSD > 0) msg += `*🚚 Delivery Fee:* $${deliveryFeeUSD.toFixed(2)}\n`;
+                msg += `*💵 Grand Total with Delivery:* $${grandTotalUSD.toFixed(2)} (Rate: 1$ = ${exchangeRate.toLocaleString()} LBP)\n`;
             }
 
             try {
@@ -2961,7 +2965,9 @@
             });
 
             const exchangeRate = Number(gatewaySettings?.usd_exchange_rate) || 89000;
-            let grandTotalUSD = totalUSD + (totalLBP > 0 ? (totalLBP / exchangeRate) : 0);
+            const deliveryFeeUSD = Number(gatewaySettings?.delivery_fee_usd) || 0;
+            let subtotalUSD = totalUSD + (totalLBP > 0 ? (totalLBP / exchangeRate) : 0);
+            let grandTotalUSD = subtotalUSD + deliveryFeeUSD;
 
             let msg = '';
             const isGuest = !currentUser;
@@ -2984,12 +2990,15 @@
                 }
 
                 if (totalUSD > 0) {
-                    msg += `*إجمالي بالدولار:* $${totalUSD.toFixed(2)}\n`;
+                    msg += `*مجموع المنتجات بالدولار:* $${totalUSD.toFixed(2)}\n`;
                 }
                 if (totalLBP > 0) {
-                    msg += `*إجمالي باللبناني:* ${formatPrice(totalLBP, 'LBP')}\n`;
+                    msg += `*مجموع المنتجات باللبناني:* ${formatPrice(totalLBP, 'LBP')}\n`;
                 }
-                msg += `*💵 الإجمالي النهائي بالدولار:* $${grandTotalUSD.toFixed(2)} (سعر الصرف: 1$ = ${exchangeRate.toLocaleString()} LBP)\n`;
+                if (deliveryFeeUSD > 0) {
+                    msg += `*🚚 تكلفة الدليفري:* $${deliveryFeeUSD.toFixed(2)}\n`;
+                }
+                msg += `*💵 الإجمالي النهائي مع الدليفري:* $${grandTotalUSD.toFixed(2)} (سعر الصرف: 1$ = ${exchangeRate.toLocaleString()} LBP)\n`;
             } else {
                 msg = `*🛒 New Order Received!*\n\n` +
                       (orderData.id ? `*Order ID:* \`${orderData.id}\`\n` : '') +
@@ -3013,7 +3022,10 @@
                 if (totalLBP > 0) {
                     msg += `*Subtotal LBP:* ${formatPrice(totalLBP, 'LBP')}\n`;
                 }
-                msg += `*💵 Total Amount in USD:* $${grandTotalUSD.toFixed(2)} (Rate: 1$ = ${exchangeRate.toLocaleString()} LBP)\n`;
+                if (deliveryFeeUSD > 0) {
+                    msg += `*🚚 Delivery Fee:* $${deliveryFeeUSD.toFixed(2)}\n`;
+                }
+                msg += `*💵 Grand Total with Delivery:* $${grandTotalUSD.toFixed(2)} (Rate: 1$ = ${exchangeRate.toLocaleString()} LBP)\n`;
             }
 
             const cleanedPhone = whatsappPhone.replace(/\D/g, '');
