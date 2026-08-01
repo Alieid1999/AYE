@@ -6391,7 +6391,7 @@
         // ─────────────────────────────────────────────────────────────────────
         const DEFAULT_PASSWORD = 'admin123';
         const SESSION_KEY      = 'admin_session_token';
-        const ADMIN_PW_KEY     = 'admin_password_hash'; // stores hash, never plain text
+        // ADMIN_PW_KEY is declared at the top of script
         const loginOverlay     = document.getElementById('login-overlay');
 
         /** SHA-256 hash with a per-app salt */
