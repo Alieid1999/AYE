@@ -5133,6 +5133,7 @@
         const systemLang = (() => { const l = (navigator.language || navigator.userLanguage || 'en').toLowerCase(); return l.startsWith('ar') ? 'ar' : l.startsWith('fr') ? 'fr' : 'en'; })();
         applyStoreLanguage(localStorage.getItem('store_lang') || systemLang);
         fillCheckoutDetails();
+        updateAuthUI();
 
         // ─────────────────────────────────────────────────────────────────────
         // PWA INSTALLATION CONTROLLER (Android, Windows, iOS)
