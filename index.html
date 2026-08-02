@@ -5303,6 +5303,33 @@
             });
         }
 
+        // Close iOS and Windows Instruction Modals
+        const pwaIosModal = document.getElementById('pwa-ios-modal');
+        const pwaIosCloseBtn = document.getElementById('pwa-ios-close-btn');
+        if (pwaIosCloseBtn) {
+            pwaIosCloseBtn.addEventListener('click', () => {
+                if (pwaIosModal) pwaIosModal.classList.remove('active');
+            });
+        }
+        if (pwaIosModal) {
+            pwaIosModal.addEventListener('click', (e) => {
+                if (e.target === pwaIosModal) pwaIosModal.classList.remove('active');
+            });
+        }
+
+        const pwaWinModal = document.getElementById('pwa-win-modal');
+        const pwaWinCloseBtn = document.getElementById('pwa-win-close-btn');
+        if (pwaWinCloseBtn) {
+            pwaWinCloseBtn.addEventListener('click', () => {
+                if (pwaWinModal) pwaWinModal.classList.remove('active');
+            });
+        }
+        if (pwaWinModal) {
+            pwaWinModal.addEventListener('click', (e) => {
+                if (e.target === pwaWinModal) pwaWinModal.classList.remove('active');
+            });
+        }
+
         // Gmail/Google Sign-In Incentive Modal Logic
         window.closeGmailIncentiveModal = function() {
             const modal = document.getElementById('gmail-incentive-modal');
