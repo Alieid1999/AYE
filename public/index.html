@@ -1539,7 +1539,8 @@
                     <form id="auth-signin-form" class="checkout-form" onsubmit="handleSignIn(event)">
                         <div class="form-group" style="margin-bottom: 15px;">
                             <label for="auth-signin-login" style="font-weight: 600; font-size: 0.9rem;" data-i18n="phoneNumber">Phone Number</label>
-                            <input type="tel" id="auth-signin-login" required data-i18n-placeholder="phonePlaceholder" placeholder="Phone Number (e.g. +96170123456)">
+                            <input type="tel" id="auth-signin-login" required data-i18n-placeholder="phonePlaceholder" placeholder="Phone Number (e.g. +96170123456)" oninput="checkPhoneLiveInstant(this.value)">
+                            <div id="phone-live-status" style="margin-top: 6px; font-size: 0.85rem; font-weight: 600; display: none; transition: all 0.2s;"></div>
                         </div>
                         
                         <!-- Captcha Challenge for Sign In -->
@@ -2497,12 +2498,69 @@
             window.onAuthSuccess = onSuccessCallback;
         }
 
-        function switchAuthTab(tab) {
-            if (authStep1) authStep1.style.display = 'block';
-            if (authStep2) authStep2.style.display = 'none';
-            const authStepSignin = document.getElementById('auth-step-signin');
-            if (authStepSignin) authStepSignin.style.display = 'block';
-            generateSigninCaptcha();
+        // Global memory cache for zero-delay instant response
+        let globalCustomersMemoryMap = null;
+
+        async function prefetchCustomersMap() {
+            if (globalCustomersMemoryMap) return;
+            const localCache = JSON.parse(localStorage.getItem('customer_cache') || '{}');
+            globalCustomersMemoryMap = { ...localCache };
+
+            if (typeof isFirebaseActive !== 'undefined' && isFirebaseActive && typeof db !== 'undefined') {
+                try {
+                    const snapshot = await db.collection('customers').get();
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        const cleanId = doc.id.replace(/[^0-9]/g, '');
+                        globalCustomersMemoryMap[cleanId] = data;
+                        if (data.phone) {
+                            const cleanPhone = data.phone.replace(/[^0-9]/g, '');
+                            globalCustomersMemoryMap[cleanPhone] = data;
+                        }
+                    });
+                    localStorage.setItem('customer_cache', JSON.stringify(globalCustomersMemoryMap));
+                } catch (e) {
+                    console.log("Prefetch background notice:", e.message);
+                }
+            }
+        }
+
+        // Prefetch on page load & when auth modal opens
+        window.addEventListener('DOMContentLoaded', prefetchCustomersMap);
+
+        function checkPhoneLiveInstant(val) {
+            const statusEl = document.getElementById('phone-live-status');
+            if (!statusEl) return;
+            const lang = localStorage.getItem('store_lang') || 'en';
+            
+            if (!val || val.trim().length < 6) {
+                statusEl.style.display = 'none';
+                return;
+            }
+
+            const cleanInput = val.replace(/[^0-9]/g, '');
+            if (cleanInput.length < 6) {
+                statusEl.style.display = 'none';
+                return;
+            }
+
+            // Check memory cache instantly (0ms)
+            const map = globalCustomersMemoryMap || JSON.parse(localStorage.getItem('customer_cache') || '{}');
+            const foundUser = map[cleanInput] || Object.values(map).find(u => u.phone && u.phone.replace(/[^0-9]/g, '') === cleanInput);
+
+            statusEl.style.display = 'block';
+            if (foundUser) {
+                const nameStr = foundUser.name ? foundUser.name : (lang === 'ar' ? 'مسجل' : 'Registered');
+                statusEl.style.color = '#10b981';
+                statusEl.innerHTML = lang === 'ar' 
+                    ? `<i class="fa-solid fa-circle-check"></i> أهلاً بك مجدداً (${nameStr})! حسابك مسجل.` 
+                    : `<i class="fa-solid fa-circle-check"></i> Welcome back (${nameStr})! Account found.`;
+            } else {
+                statusEl.style.color = '#3b82f6';
+                statusEl.innerHTML = lang === 'ar' 
+                    ? `<i class="fa-solid fa-user-plus"></i> رقم جديد. سيتم إنشاء حساب جديد لك تلقائياً عند المتابعة.` 
+                    : `<i class="fa-solid fa-user-plus"></i> New number. Account will be created automatically upon continue.`;
+            }
         }
 
 
@@ -2527,38 +2585,32 @@
             const cleanPhoneInput = normalizedLoginPhone.replace(/[^0-9]/g, '');
             let foundUser = null;
 
-            // Check Local Customer Cache first for instant response
-            const localCache = JSON.parse(localStorage.getItem('customer_cache') || '{}');
-            if (localCache[cleanPhoneInput]) {
-                foundUser = localCache[cleanPhoneInput];
+            // Check Memory Cache / Local Storage Cache first for instant 0ms response
+            const map = globalCustomersMemoryMap || JSON.parse(localStorage.getItem('customer_cache') || '{}');
+            if (map[cleanPhoneInput]) {
+                foundUser = map[cleanPhoneInput];
+            } else {
+                foundUser = Object.values(map).find(c => c.phone && c.phone.replace(/[^0-9]/g, '') === cleanPhoneInput);
             }
 
-            if (isFirebaseActive) {
+            if (!foundUser && isFirebaseActive) {
                 try {
-                    // Quick async check in Firestore to get latest or fill cache if not found locally
-                    const fetchPromise = (async () => {
-                        let userDoc = null;
-                        const doc = await db.collection('customers').doc(cleanPhoneInput).get();
-                        if (doc.exists) {
-                            userDoc = doc.data();
-                        } else {
-                            const snapshot = await db.collection('customers')
-                                .where('phone', '==', normalizedLoginPhone)
-                                .limit(1)
-                                .get();
-                            if (!snapshot.empty) {
-                                userDoc = snapshot.docs[0].data();
-                            }
+                    let doc = await db.collection('customers').doc(cleanPhoneInput).get();
+                    if (doc.exists) {
+                        foundUser = doc.data();
+                    } else {
+                        const snapshot = await db.collection('customers')
+                            .where('phone', '==', normalizedLoginPhone)
+                            .limit(1)
+                            .get();
+                        if (!snapshot.empty) {
+                            foundUser = snapshot.docs[0].data();
                         }
-                        if (userDoc) {
-                            localCache[cleanPhoneInput] = userDoc;
-                            localStorage.setItem('customer_cache', JSON.stringify(localCache));
-                        }
-                        return userDoc;
-                    })();
-
-                    if (!foundUser) {
-                        foundUser = await fetchPromise;
+                    }
+                    if (foundUser) {
+                        if (!globalCustomersMemoryMap) globalCustomersMemoryMap = {};
+                        globalCustomersMemoryMap[cleanPhoneInput] = foundUser;
+                        localStorage.setItem('customer_cache', JSON.stringify(globalCustomersMemoryMap));
                     }
                 } catch (err) {
                     console.error("Firestore lookup error during sign in:", err);
