@@ -1,7 +1,5 @@
 fastapi
 uvicorn
-telethon
 pytelegrambotapi
+telethon
 requests
-selenium
-webdriver-manager

@@ -1,25 +1,10 @@
 services:
   - type: web
     name: aye-market-bot
-    env: node
+    env: python
     plan: free
     rootDir: .
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: pip install -r requirements.txt && npm install
+    startCommand: uvicorn telegram_gateway:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /status
     autoDeploy: true
-    envVars:
-      - key: PORT
-        value: 8000
-      - key: TELEGRAM_BOT_TOKEN
-        sync: false
-      - key: TELEGRAM_ADMIN_CHAT_ID
-        sync: false
-      - key: TELEGRAM_GATEWAY_API_KEY
-        sync: false
-      - key: FIREBASE_API_KEY
-        sync: false
-      - key: FIREBASE_PROJECT_ID
-        sync: false
-      - key: WHATSAPP_PAIRING_NUMBER
-        sync: false
