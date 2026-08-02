@@ -2228,7 +2228,7 @@
                 saveProductReviews();
                 filterAndRenderStore();
             } catch (err) {
-                console.warn('Could not load reviews from Firestore:', err);
+                // Fallback to local storage reviews if Firestore rules restrict direct read
             }
         }
 
@@ -3875,7 +3875,6 @@
                 if (isFirebaseActive) {
                     // Prevent public storefront from attempting to list all orders
                     if (!window.ALLOW_PUBLIC_ORDERS) {
-                        console.warn('Public orders subscription blocked by configuration; using fallback.');
                         return this._fallbackOrdersSubscribe(callback);
                     }
                     return db.collection('orders').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
