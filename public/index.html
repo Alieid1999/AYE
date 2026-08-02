@@ -5189,10 +5189,12 @@
         // Immediate install prompt logic on entry
         function triggerImmediateInstallPrompt() {
             if (!isStandalone()) {
+                const installModal = document.getElementById('pwa-install-modal');
+                const iosModal = document.getElementById('pwa-ios-modal');
                 if (isIos()) {
-                    if (pwaIosModal) pwaIosModal.classList.add('active');
-                } else if (pwaInstallModal) {
-                    pwaInstallModal.classList.add('active');
+                    if (iosModal) iosModal.classList.add('active');
+                } else {
+                    if (installModal) installModal.classList.add('active');
                 }
             }
         }
