@@ -5270,19 +5270,14 @@
         // Click event on Install button inside top bar
         if (pwaTopInstallBtn) {
             pwaTopInstallBtn.addEventListener('click', async () => {
-                const iosModal = document.getElementById('pwa-ios-modal');
-                const winModal = document.getElementById('pwa-win-modal');
-
                 if (deferredPrompt) {
                     deferredPrompt.prompt();
                     const { outcome } = await deferredPrompt.userChoice;
                     console.log(`User response to install prompt: ${outcome}`);
                     deferredPrompt = null;
-                    if (pwaTopBar) pwaTopBar.classList.remove('active');
-                } else if (isIos()) {
-                    if (iosModal) iosModal.classList.add('active');
                 } else {
-                    if (winModal) winModal.classList.add('active');
+                    // Alert user if browser doesn't support or has already installed
+                    showToast(localStorage.getItem('store_lang') === 'ar' ? 'التطبيق مثبت بالفعل أو افتح القائمة للتثبيت' : 'App is already installed or open menu to install');
                 }
             });
         }
