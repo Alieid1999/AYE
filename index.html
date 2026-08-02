@@ -5292,6 +5292,8 @@
                     if (winModal) winModal.classList.add('active');
                 }
             });
+        }
+
         // Close top bar button
         const pwaTopCloseBtn = document.getElementById('pwa-top-close-btn');
         if (pwaTopCloseBtn) {
@@ -5382,7 +5384,19 @@
 
     </script>
 
-
+    <!-- PWA Top Install Bar (Matching screenshot style) -->
+    <div class="pwa-top-bar" id="pwa-top-bar">
+        <div class="pwa-top-left">
+            <div class="pwa-top-icon">
+                <img src="icon.svg" alt="App Icon">
+            </div>
+            <div class="pwa-top-info">
+                <span class="pwa-top-title" id="pwa-top-title">Install Store App Online Free</span>
+                <span class="pwa-top-sub" id="pwa-top-domain">store.app</span>
+            </div>
+        </div>
+        <button type="button" class="pwa-top-btn" id="pwa-top-install-btn">Install</button>
+    </div>
 
     <!-- PWA iOS Share Sheet Instruction Modal -->
     <div class="pwa-ios-modal" id="pwa-ios-modal">
