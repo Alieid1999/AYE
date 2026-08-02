@@ -5185,26 +5185,15 @@
         const pwaModalBtnInstall = document.getElementById('pwa-modal-btn-install');
         const pwaModalBtnClose = document.getElementById('pwa-modal-btn-close');
 
-        // Immediate install prompt logic on entry
+        // Immediate install prompt logic on entry (disabled auto-popup)
         function triggerImmediateInstallPrompt() {
-            if (!isStandalone()) {
-                const installModal = document.getElementById('pwa-install-modal');
-                const iosModal = document.getElementById('pwa-ios-modal');
-                if (isIos()) {
-                    if (iosModal) iosModal.classList.add('active');
-                } else {
-                    if (installModal) installModal.classList.add('active');
-                }
-            }
+            // Auto popup disabled per user request
         }
 
         // Handle beforeinstallprompt event (Android & Windows Desktop/Chrome/Edge)
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            if (!isStandalone()) {
-                if (pwaInstallModal) pwaInstallModal.classList.add('active');
-            }
         });
 
         // Prompt user immediately when DOM is loaded or page loads
