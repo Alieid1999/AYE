@@ -403,11 +403,8 @@ def check_for_new_orders():
                             f"💵 *Total:* ${total:.2f}\n"
                         )
                         
-                        markup = types.InlineKeyboardMarkup()
-                        markup.add(types.InlineKeyboardButton("👁️ View Order Details", callback_data=f"view_{order_id}"))
-                        
                         try:
-                            bot.send_message(admin_chat_id, notify_msg, parse_mode="Markdown", reply_markup=markup)
+                            bot.send_message(admin_chat_id, notify_msg, parse_mode="Markdown")
                         except Exception as send_err:
                             print(f"Failed to send background notification: {send_err}")
         except Exception as poll_err:
@@ -415,8 +412,8 @@ def check_for_new_orders():
 
 def get_main_keyboard():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    btn_active = types.KeyboardButton("📋 Active Orders")
-    btn_history = types.KeyboardButton("📜 History")
+    btn_active = types.KeyboardButton("📦 View Orders")
+    btn_history = types.KeyboardButton("📜 View History")
     markup.add(btn_active, btn_history)
     return markup
 
@@ -484,8 +481,8 @@ def setup_bot():
         welcome_text = (
             "👋 Welcome to AYE Store Admin Bot!\n\n"
             "Here you can manage your store orders directly:\n"
-            "• *Active Orders* (Pending status)\n"
-            "• *History* (All orders list)\n\n"
+            "• *View Orders* (Pending & Shipped orders)\n"
+            "• *View History* (Delivered & Cancelled orders)\n\n"
             "Use the buttons below to navigate."
         )
         bot.send_message(
@@ -495,58 +492,59 @@ def setup_bot():
             reply_markup=get_main_keyboard()
         )
 
-    @bot.message_handler(func=lambda msg: msg.text == "📋 Active Orders")
+    @bot.message_handler(func=lambda msg: msg.text in ["📦 View Orders", "📋 Active Orders"])
     def show_active_orders(message):
-        sent_msg = bot.send_message(message.chat.id, "🔄 Fetching active orders...")
-        orders = db_client.get_orders(status_filter="Pending")
+        sent_msg = bot.send_message(message.chat.id, "🔄 Fetching orders...")
+        all_orders = db_client.get_orders()
+        # View Orders contains pending and shipped orders
+        orders = [o for o in all_orders if o.get("status", "Pending") in ["Pending", "Shipped"]]
         
         if not orders:
             bot.edit_message_text(
                 chat_id=message.chat.id,
                 message_id=sent_msg.message_id,
-                text="✅ No pending active orders found."
+                text="✅ No active (Pending / Shipped) orders found."
             )
             return
 
         markup = types.InlineKeyboardMarkup(row_width=1)
         for o in orders:
+            status = o.get("status", "Pending")
+            status_emoji = "🟡" if status == "Pending" else "🔵"
             cust_name = o.get("customer", {}).get("name", "Unknown")
             total = o.get("totalAmount", 0)
-            btn_text = f"📦 #{o['id']} - {cust_name} (${total:.2f})"
+            btn_text = f"{status_emoji} #{o['id']} - {cust_name} (${total:.2f})"
             markup.add(types.InlineKeyboardButton(text=btn_text, callback_data=f"view_{o['id']}"))
 
         bot.edit_message_text(
             chat_id=message.chat.id,
             message_id=sent_msg.message_id,
-            text=f"📋 *Active Orders ({len(orders)} pending):*\nSelect an order to view details and manage status:",
+            text=f"📦 *Active Orders ({len(orders)} total):*\nSelect an order to view details and manage status:",
             parse_mode="Markdown",
             reply_markup=markup
         )
 
-    @bot.message_handler(func=lambda msg: msg.text == "📜 History")
+    @bot.message_handler(func=lambda msg: msg.text in ["📜 View History", "📜 History"])
     def show_history(message):
         sent_msg = bot.send_message(message.chat.id, "🔄 Fetching orders history...")
-        orders = db_client.get_orders()
+        all_orders = db_client.get_orders()
+        # View History contains delivered and cancelled orders
+        orders = [o for o in all_orders if o.get("status", "Pending") in ["Delivered", "Cancelled"]]
         
         if not orders:
             bot.edit_message_text(
                 chat_id=message.chat.id,
                 message_id=sent_msg.message_id,
-                text="📭 No orders found in the database."
+                text="📭 No completed or cancelled orders in history."
             )
             return
 
-        orders_slice = orders[:25]
-        text = f"📜 *Latest Orders History ({len(orders_slice)} shown):*\n\n"
+        orders_slice = orders[:30]
         markup = types.InlineKeyboardMarkup(row_width=1)
         
         for o in orders_slice:
             status = o.get("status", "Pending")
-            status_emoji = "🟡"
-            if status == "Shipped": status_emoji = "🔵"
-            elif status == "Delivered": status_emoji = "🟢"
-            elif status == "Cancelled": status_emoji = "🔴"
-            
+            status_emoji = "🟢" if status == "Delivered" else "🔴"
             cust_name = o.get("customer", {}).get("name", "Unknown")
             total = o.get("totalAmount", 0)
             
@@ -556,7 +554,7 @@ def setup_bot():
         bot.edit_message_text(
             chat_id=message.chat.id,
             message_id=sent_msg.message_id,
-            text=text + "Click any order to view details or modify status:",
+            text=f"📜 *History Orders ({len(orders_slice)} shown):*\nClick any order to view details:",
             parse_mode="Markdown",
             reply_markup=markup
         )
@@ -927,10 +925,6 @@ async def send_telegram_message(
                 if request.order_id:
                     markup = {
                         "inline_keyboard": [
-                            [{
-                                "text": "👁️ View Order Details",
-                                "callback_data": f"view_{request.order_id}"
-                            }],
                             [{
                                 "text": "Pending 🟡",
                                 "callback_data": f"set_Pending_{request.order_id}"

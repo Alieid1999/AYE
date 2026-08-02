@@ -5186,20 +5186,33 @@
         const pwaModalBtnInstall = document.getElementById('pwa-modal-btn-install');
         const pwaModalBtnClose = document.getElementById('pwa-modal-btn-close');
 
+        // Immediate install prompt logic on entry
+        function triggerImmediateInstallPrompt() {
+            if (!isStandalone()) {
+                if (isIos()) {
+                    if (pwaIosModal) pwaIosModal.classList.add('active');
+                } else if (pwaInstallModal) {
+                    pwaInstallModal.classList.add('active');
+                }
+            }
+        }
+
         // Handle beforeinstallprompt event (Android & Windows Desktop/Chrome/Edge)
         window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevent Chrome 67 and earlier from automatically showing the prompt
             e.preventDefault();
-            // Stash the event so it can be triggered later.
             deferredPrompt = e;
-            
-            // Show the install modal if not already installed and not dismissed this session
-            if (!isStandalone() && !sessionStorage.getItem('pwa_modal_dismissed')) {
-                setTimeout(() => {
-                    if (pwaInstallModal) pwaInstallModal.classList.add('active');
-                }, 1000); // Show popup modal 1 second after trigger
+            if (!isStandalone()) {
+                if (pwaInstallModal) pwaInstallModal.classList.add('active');
             }
         });
+
+        // Prompt user immediately when DOM is loaded or page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', triggerImmediateInstallPrompt);
+        } else {
+            triggerImmediateInstallPrompt();
+        }
+        window.addEventListener('load', triggerImmediateInstallPrompt);
 
         // Click event on custom install button inside modal
         if (pwaModalBtnInstall) {
