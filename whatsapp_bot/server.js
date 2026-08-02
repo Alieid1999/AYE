@@ -316,12 +316,6 @@ function buildTelegramOrderKeyboard(orderId) {
         inline_keyboard: [
             [
                 {
-                    text: '👁️ View Order Details',
-                    callback_data: `view_${orderId}`
-                }
-            ],
-            [
-                {
                     text: 'Pending 🟡',
                     callback_data: `set_Pending_${orderId}`
                 },
@@ -1231,6 +1225,102 @@ async function notifyCustomerWhatsAppStatus(phone, orderId, newStatus, customerN
     }
 }
 
+async function handleTelegramMessage(message) {
+    const text = message.text || '';
+    const chatId = message.chat?.id;
+    if (!chatId) return;
+
+    const mainKeyboard = {
+        keyboard: [
+            [{ text: '📦 View Orders' }, { text: '📜 View History' }]
+        ],
+        resize_keyboard: true
+    };
+
+    if (text === '/start') {
+        const welcomeText = 
+            `👋 *Welcome to AYE Store Admin Bot!*\n\n` +
+            `Here you can manage your store orders directly:\n` +
+            `• *View Orders* (Pending & Shipped orders)\n` +
+            `• *View History* (Delivered & Cancelled orders)\n\n` +
+            `Use the buttons below to navigate.`;
+        try {
+            await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                chat_id: chatId,
+                text: welcomeText,
+                parse_mode: 'Markdown',
+                reply_markup: mainKeyboard
+            }, { timeout: 10000 });
+        } catch (err) {
+            console.error('Error sending Telegram welcome message:', err.message);
+        }
+    } else if (text === '📦 View Orders' || text === '📋 Active Orders') {
+        try {
+            const allOrders = await dbClient.getOrders() || [];
+            const activeOrders = allOrders.filter(o => o.status === 'Pending' || o.status === 'Shipped');
+
+            if (activeOrders.length === 0) {
+                await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    chat_id: chatId,
+                    text: '✅ No active (Pending / Shipped) orders found.',
+                    reply_markup: mainKeyboard
+                }, { timeout: 10000 });
+                return;
+            }
+
+            const inlineKeyboard = {
+                inline_keyboard: activeOrders.map(o => {
+                    const statusEmoji = o.status === 'Shipped' ? '🔵' : '🟡';
+                    const custName = o.customer?.name || 'Unknown';
+                    const total = (o.totalAmount || 0).toFixed(2);
+                    return [{ text: `${statusEmoji} #${o.id} - ${custName} ($${total})`, callback_data: `view_${o.id}` }];
+                })
+            };
+
+            await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                chat_id: chatId,
+                text: `📦 *Active Orders (${activeOrders.length} total):*\nSelect an order to view details:`,
+                parse_mode: 'Markdown',
+                reply_markup: inlineKeyboard
+            }, { timeout: 10000 });
+        } catch (err) {
+            console.error('Error fetching active orders for Telegram:', err.message);
+        }
+    } else if (text === '📜 View History' || text === '📜 History') {
+        try {
+            const allOrders = await dbClient.getOrders() || [];
+            const historyOrders = allOrders.filter(o => o.status === 'Delivered' || o.status === 'Cancelled').slice(0, 30);
+
+            if (historyOrders.length === 0) {
+                await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    chat_id: chatId,
+                    text: '📭 No completed or cancelled orders in history.',
+                    reply_markup: mainKeyboard
+                }, { timeout: 10000 });
+                return;
+            }
+
+            const inlineKeyboard = {
+                inline_keyboard: historyOrders.map(o => {
+                    const statusEmoji = o.status === 'Delivered' ? '🟢' : '🔴';
+                    const custName = o.customer?.name || 'Unknown';
+                    const total = (o.totalAmount || 0).toFixed(2);
+                    return [{ text: `${statusEmoji} #${o.id} - ${custName} ($${total})`, callback_data: `view_${o.id}` }];
+                })
+            };
+
+            await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                chat_id: chatId,
+                text: `📜 *History Orders (${historyOrders.length} shown):*\nClick any order to view details:`,
+                parse_mode: 'Markdown',
+                reply_markup: inlineKeyboard
+            }, { timeout: 10000 });
+        } catch (err) {
+            console.error('Error fetching history orders for Telegram:', err.message);
+        }
+    }
+}
+
 async function handleTelegramCallbackQuery(callbackQuery) {
     const callbackId = callbackQuery.id;
     const data = callbackQuery.data || '';
@@ -1387,6 +1477,8 @@ async function pollTelegramUpdates() {
                 tgPollOffset = update.update_id + 1;
                 if (update.callback_query) {
                     await handleTelegramCallbackQuery(update.callback_query);
+                } else if (update.message && update.message.text) {
+                    await handleTelegramMessage(update.message);
                 }
             }
         }
