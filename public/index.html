@@ -2481,6 +2481,13 @@
         }
 
         function openAuthModal(onSuccessCallback = null) {
+            const lang = localStorage.getItem('store_lang') || 'en';
+            if (currentUser) {
+                showToast(lang === 'ar' ? 'أنت مسجل الدخول بالفعل! (You are logged in)' : 'You are logged in!', false);
+                if (onSuccessCallback) onSuccessCallback(currentUser);
+                return;
+            }
+
             const signupForm = document.getElementById('auth-signup-form');
             const signinForm = document.getElementById('auth-signin-form');
             if (signupForm) signupForm.reset();
@@ -2628,18 +2635,28 @@
                 }
             }
 
-            let isNewUser = false;
-            if (!foundUser) {
-                isNewUser = true;
-                foundUser = {
-                    name: lang === 'ar' ? 'زبون جديد' : 'New Customer',
-                    phone: normalizedLoginPhone,
-                    address: '',
-                    email: '',
-                    createdAt: new Date().toISOString(),
-                    orders: []
-                };
+            if (foundUser && foundUser.phone) {
+                // Instantly log in existing user without delay
+                saveCustomerUser(foundUser);
+                closeAuthModal();
+                showToast(lang === 'ar' ? `تم تسجيل الدخول بنجاح! You are logged in` : `You are logged in!`, false);
+                if (typeof updateAuthUI === 'function') updateAuthUI();
+                if (window.onAuthSuccess) {
+                    window.onAuthSuccess(foundUser);
+                    window.onAuthSuccess = null;
+                }
+                return;
             }
+
+            let isNewUser = true;
+            foundUser = {
+                name: lang === 'ar' ? 'زبون جديد' : 'New Customer',
+                phone: normalizedLoginPhone,
+                address: '',
+                email: '',
+                createdAt: new Date().toISOString(),
+                orders: []
+            };
 
             // Generate OTP
             generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
