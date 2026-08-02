@@ -2527,31 +2527,52 @@
             const cleanPhoneInput = normalizedLoginPhone.replace(/[^0-9]/g, '');
             let foundUser = null;
 
+            // Check Local Customer Cache first for instant response
+            const localCache = JSON.parse(localStorage.getItem('customer_cache') || '{}');
+            if (localCache[cleanPhoneInput]) {
+                foundUser = localCache[cleanPhoneInput];
+            }
+
             if (isFirebaseActive) {
                 try {
-                    const doc = await db.collection('customers').doc(cleanPhoneInput).get();
-                    if (doc.exists) {
-                        foundUser = doc.data();
-                    } else {
-                        const snapshot = await db.collection('customers')
-                            .where('phone', '==', normalizedLoginPhone)
-                            .limit(1)
-                            .get();
-                        if (!snapshot.empty) {
-                            foundUser = snapshot.docs[0].data();
+                    // Quick async check in Firestore to get latest or fill cache if not found locally
+                    const fetchPromise = (async () => {
+                        let userDoc = null;
+                        const doc = await db.collection('customers').doc(cleanPhoneInput).get();
+                        if (doc.exists) {
+                            userDoc = doc.data();
+                        } else {
+                            const snapshot = await db.collection('customers')
+                                .where('phone', '==', normalizedLoginPhone)
+                                .limit(1)
+                                .get();
+                            if (!snapshot.empty) {
+                                userDoc = snapshot.docs[0].data();
+                            }
                         }
+                        if (userDoc) {
+                            localCache[cleanPhoneInput] = userDoc;
+                            localStorage.setItem('customer_cache', JSON.stringify(localCache));
+                        }
+                        return userDoc;
+                    })();
+
+                    if (!foundUser) {
+                        foundUser = await fetchPromise;
                     }
                 } catch (err) {
                     console.error("Firestore lookup error during sign in:", err);
                 }
             } else {
-                const mockCustomers = JSON.parse(localStorage.getItem('mock_customers')) || {};
-                if (mockCustomers[cleanPhoneInput]) {
-                    foundUser = mockCustomers[cleanPhoneInput];
-                } else {
-                    foundUser = Object.values(mockCustomers).find(c => 
-                        c.phone && c.phone.replace(/[^0-9]/g, '') === cleanPhoneInput
-                    );
+                if (!foundUser) {
+                    const mockCustomers = JSON.parse(localStorage.getItem('mock_customers')) || {};
+                    if (mockCustomers[cleanPhoneInput]) {
+                        foundUser = mockCustomers[cleanPhoneInput];
+                    } else {
+                        foundUser = Object.values(mockCustomers).find(c => 
+                            c.phone && c.phone.replace(/[^0-9]/g, '') === cleanPhoneInput
+                        );
+                    }
                 }
             }
 
