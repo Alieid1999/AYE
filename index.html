@@ -1147,108 +1147,83 @@
             .cart-item-title { font-size: 0.9rem; }
         }
         /* PWA Install Banner */
-        .pwa-install-banner {
+        /* Top Banner PWA Install (Matching exact design) */
+        .pwa-top-bar {
             position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%) translateY(150px);
-            width: 90%;
-            max-width: 450px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            padding: 16px 20px;
+            top: -100px;
+            left: 0;
+            right: 0;
+            width: 100%;
+            background: #2d3139;
+            color: #ffffff;
+            padding: 10px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 15px;
-            z-index: 99999;
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
-            opacity: 0;
-            pointer-events: none;
+            z-index: 999999;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: top 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            direction: ltr; /* Keeps icon left, text left, button right like system banner */
         }
-        .pwa-install-banner.active {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-            pointer-events: auto;
+        .pwa-top-bar.active {
+            top: 0;
         }
-        .pwa-brand {
+        .pwa-top-left {
             display: flex;
             align-items: center;
             gap: 12px;
-            text-align: start;
+            overflow: hidden;
         }
-        .pwa-logo {
-            width: 45px;
-            height: 45px;
+        .pwa-top-icon {
+            width: 42px;
+            height: 42px;
             border-radius: 10px;
-            background: var(--primary-color);
+            background: linear-gradient(135deg, #a855f7, #ec4899);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
             flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            overflow: hidden;
         }
-        .pwa-logo img {
+        .pwa-top-icon img {
             width: 100%;
             height: 100%;
-            border-radius: 10px;
             object-fit: cover;
         }
-        .pwa-text {
+        .pwa-top-info {
             display: flex;
             flex-direction: column;
-        }
-        .pwa-title {
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: var(--text-dark);
-            margin-bottom: 2px;
-        }
-        .pwa-desc {
-            font-size: 0.75rem;
-            color: var(--text-light);
-            line-height: 1.3;
-        }
-        .pwa-buttons {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-        .pwa-btn-install {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .pwa-btn-install:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-1px);
+        .pwa-top-title {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .pwa-btn-close {
+        .pwa-top-sub {
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+        .pwa-top-btn {
             background: none;
             border: none;
-            color: var(--text-light);
-            font-size: 1.1rem;
+            color: #3b82f6;
+            font-weight: 700;
+            font-size: 0.95rem;
             cursor: pointer;
-            padding: 4px 8px;
-            transition: color 0.2s;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: background 0.2s;
+            flex-shrink: 0;
         }
-        .pwa-btn-close:hover {
-            color: var(--text-dark);
+        .pwa-top-btn:hover {
+            background: rgba(59, 130, 246, 0.15);
         }
 
         /* iOS instruction modal styling */
@@ -5270,19 +5245,14 @@
             });
         }
 
-        // PWA Install Modal Elements
-        const pwaInstallModal = document.getElementById('pwa-install-modal');
-        const pwaModalBtnInstall = document.getElementById('pwa-modal-btn-install');
-        const pwaModalBtnClose = document.getElementById('pwa-modal-btn-close');
+        // Top PWA Banner Logic (Exact top bar style as in screenshot)
+        const pwaTopBar = document.getElementById('pwa-top-bar');
+        const pwaTopInstallBtn = document.getElementById('pwa-top-install-btn');
 
-        // Immediate install prompt logic on entry
-        function triggerImmediateInstallPrompt() {
+        function triggerTopPwaBar() {
             if (isStandalone()) return;
-            if (sessionStorage.getItem('pwa_modal_dismissed')) return;
-
-            const modal = document.getElementById('pwa-install-modal');
-            if (modal && !modal.classList.contains('active')) {
-                modal.classList.add('active');
+            if (pwaTopBar) {
+                pwaTopBar.classList.add('active');
             }
         }
 
@@ -5290,83 +5260,36 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            triggerImmediateInstallPrompt();
+            triggerTopPwaBar();
         });
 
         // Prompt user immediately when DOM is loaded or page loads
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', triggerImmediateInstallPrompt);
+            document.addEventListener('DOMContentLoaded', triggerTopPwaBar);
         } else {
-            triggerImmediateInstallPrompt();
+            triggerTopPwaBar();
         }
-        window.addEventListener('load', triggerImmediateInstallPrompt);
+        window.addEventListener('load', triggerTopPwaBar);
 
-        // Click event on custom install button inside modal
-        if (pwaModalBtnInstall) {
-            pwaModalBtnInstall.addEventListener('click', async () => {
-                const installModal = document.getElementById('pwa-install-modal');
+        // Click event on Install button inside top bar
+        if (pwaTopInstallBtn) {
+            pwaTopInstallBtn.addEventListener('click', async () => {
                 const iosModal = document.getElementById('pwa-ios-modal');
                 const winModal = document.getElementById('pwa-win-modal');
 
                 if (deferredPrompt) {
-                    if (installModal) installModal.classList.remove('active');
                     deferredPrompt.prompt();
                     const { outcome } = await deferredPrompt.userChoice;
-                    console.log(`User response to the install prompt: ${outcome}`);
+                    console.log(`User response to install prompt: ${outcome}`);
                     deferredPrompt = null;
+                    if (pwaTopBar) pwaTopBar.classList.remove('active');
                 } else if (isIos()) {
-                    if (installModal) installModal.classList.remove('active');
                     if (iosModal) iosModal.classList.add('active');
                 } else {
-                    if (installModal) installModal.classList.remove('active');
                     if (winModal) winModal.classList.add('active');
                 }
             });
         }
-
-        // Close/Dismiss modal for this session
-        if (pwaModalBtnClose) {
-            pwaModalBtnClose.addEventListener('click', () => {
-                const modal = document.getElementById('pwa-install-modal');
-                if (modal) modal.classList.remove('active');
-                sessionStorage.setItem('pwa_modal_dismissed', 'true');
-            });
-        }
-
-        // Close iOS modal
-        if (pwaIosCloseBtn) {
-            pwaIosCloseBtn.addEventListener('click', () => {
-                if (pwaIosModal) pwaIosModal.classList.remove('active');
-            });
-        }
-        if (pwaIosModal) {
-            pwaIosModal.addEventListener('click', (e) => {
-                if (e.target === pwaIosModal) pwaIosModal.classList.remove('active');
-            });
-        }
-
-        // Close Windows modal
-        const pwaWinModal = document.getElementById('pwa-win-modal');
-        const pwaWinCloseBtn = document.getElementById('pwa-win-close-btn');
-        if (pwaWinCloseBtn) {
-            pwaWinCloseBtn.addEventListener('click', () => {
-                if (pwaWinModal) pwaWinModal.classList.remove('active');
-            });
-        }
-        if (pwaWinModal) {
-            pwaWinModal.addEventListener('click', (e) => {
-                if (e.target === pwaWinModal) pwaWinModal.classList.remove('active');
-            });
-        }
-
-        // Special: If iOS Safari, and not installed, show custom iOS install prompt!
-        window.addEventListener('load', () => {
-            if (isIos() && !isStandalone() && !sessionStorage.getItem('pwa_modal_dismissed')) {
-                setTimeout(() => {
-                    if (pwaInstallModal) pwaInstallModal.classList.add('active');
-                }, 2000); // 2 seconds delay for iOS
-            }
-        });
 
         // Gmail/Google Sign-In Incentive Modal Logic
         window.closeGmailIncentiveModal = function() {
@@ -5449,21 +5372,18 @@
 
     </script>
 
-    <!-- PWA Center Install Modal -->
-    <div class="modal-overlay" id="pwa-install-modal" style="z-index: 100000;">
-        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 30px 24px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); background: var(--white);">
-            <div style="width: 70px; height: 70px; border-radius: 18px; background: var(--primary-color); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 10px 25px rgba(59, 130, 246, 0.45); overflow: hidden;">
-                <img id="pwa-modal-logo" src="icon.svg" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
+    <!-- PWA Top Install Bar (Matching screenshot style) -->
+    <div class="pwa-top-bar" id="pwa-top-bar">
+        <div class="pwa-top-left">
+            <div class="pwa-top-icon">
+                <img src="icon.svg" alt="App Icon">
             </div>
-            
-            <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 10px; color: var(--text-dark);" data-i18n="pwaModalTitle">تثبيت التطبيق على جهازك</h3>
-            <p style="font-size: 0.88rem; color: var(--text-light); line-height: 1.6; margin-bottom: 25px;" data-i18n="pwaModalDesc">ثبّت تطبيق متجر على شاشتك الرئيسية لتجربة تصفح أسرع، استهلاك أقل للبيانات، وتصفح أسهل!</p>
-            
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button type="button" id="pwa-modal-btn-install" class="btn-submit" style="margin: 0; width: 100%; padding: 12px; font-size: 0.95rem; border-radius: 14px; font-weight: bold; background: var(--primary-color); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.35);" data-i18n="pwaInstall">تثبيت الآن</button>
-                <button type="button" id="pwa-modal-btn-close" class="btn-secondary" style="margin: 0; width: 100%; padding: 12px; font-size: 0.95rem; border-radius: 14px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-dark);" data-i18n="btnContinueBrowser">المتابعة عبر المتصفح</button>
+            <div class="pwa-top-info">
+                <span class="pwa-top-title" id="pwa-top-title">Install Store App Online Free</span>
+                <span class="pwa-top-sub" id="pwa-top-domain">store.app</span>
             </div>
         </div>
+        <button type="button" class="pwa-top-btn" id="pwa-top-install-btn">Install</button>
     </div>
 
     <!-- PWA iOS Share Sheet Instruction Modal -->
