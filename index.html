@@ -1149,7 +1149,7 @@
         /* PWA Install Banner */
         /* Top Banner PWA Install (Matching exact design) */
         .pwa-top-bar {
-            display: none;
+            display: flex !important;
             position: relative;
             width: 100%;
             background: #2d3139;
@@ -1160,9 +1160,6 @@
             z-index: 999999;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             direction: ltr; /* Keeps icon left, text left, button right like system banner */
-        }
-        .pwa-top-bar.active {
-            display: flex !important;
         }
         .pwa-top-left {
             display: flex;
