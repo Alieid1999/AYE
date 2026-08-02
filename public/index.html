@@ -5219,19 +5219,22 @@
         // Click event on custom install button inside modal
         if (pwaModalBtnInstall) {
             pwaModalBtnInstall.addEventListener('click', async () => {
+                const installModal = document.getElementById('pwa-install-modal');
+                const iosModal = document.getElementById('pwa-ios-modal');
+                const winModal = document.getElementById('pwa-win-modal');
+
                 if (deferredPrompt) {
-                    if (pwaInstallModal) pwaInstallModal.classList.remove('active');
+                    if (installModal) installModal.classList.remove('active');
                     deferredPrompt.prompt();
                     const { outcome } = await deferredPrompt.userChoice;
                     console.log(`User response to the install prompt: ${outcome}`);
                     deferredPrompt = null;
                 } else if (isIos()) {
-                    if (pwaInstallModal) pwaInstallModal.classList.remove('active');
-                    if (pwaIosModal) pwaIosModal.classList.add('active');
+                    if (installModal) installModal.classList.remove('active');
+                    if (iosModal) iosModal.classList.add('active');
                 } else {
-                    const lang = localStorage.getItem('store_lang') || 'en';
-                    alert(lang === 'ar' ? 'التطبيق جاهز للتثبيت من خلال شريط العنوان بالمتصفح!' : 'The app can be installed from the browser address bar!');
-                    if (pwaInstallModal) pwaInstallModal.classList.remove('active');
+                    if (installModal) installModal.classList.remove('active');
+                    if (winModal) winModal.classList.add('active');
                 }
             });
         }
@@ -5253,6 +5256,20 @@
         if (pwaIosModal) {
             pwaIosModal.addEventListener('click', (e) => {
                 if (e.target === pwaIosModal) pwaIosModal.classList.remove('active');
+            });
+        }
+
+        // Close Windows modal
+        const pwaWinModal = document.getElementById('pwa-win-modal');
+        const pwaWinCloseBtn = document.getElementById('pwa-win-close-btn');
+        if (pwaWinCloseBtn) {
+            pwaWinCloseBtn.addEventListener('click', () => {
+                if (pwaWinModal) pwaWinModal.classList.remove('active');
+            });
+        }
+        if (pwaWinModal) {
+            pwaWinModal.addEventListener('click', (e) => {
+                if (e.target === pwaWinModal) pwaWinModal.classList.remove('active');
             });
         }
 
@@ -5366,21 +5383,42 @@
     <!-- PWA iOS Share Sheet Instruction Modal -->
     <div class="pwa-ios-modal" id="pwa-ios-modal">
         <div class="pwa-ios-content">
-            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; color: var(--text-dark);" data-i18n="iosInstallTitle">Install App</h3>
-            <p style="font-size: 0.85rem; color: var(--text-light); line-height: 1.5; margin-bottom: 20px;" data-i18n="iosInstallDesc">Install this web app on your iPhone to access it anytime!</p>
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; color: var(--text-dark);" data-i18n="iosInstallTitle">تثبيت التطبيق على iPhone</h3>
+            <p style="font-size: 0.85rem; color: var(--text-light); line-height: 1.5; margin-bottom: 20px;" data-i18n="iosInstallDesc">اتبع الخطوات البسيطة لتثبيت التطبيق على جهازك:</p>
             
             <div class="pwa-ios-steps">
                 <div class="pwa-ios-step">
                     <div class="pwa-ios-step-num">1</div>
-                    <span data-i18n="iosStep1">Tap Safari's share button <i class="fa-solid fa-share-from-square"></i> in navigation bar</span>
+                    <span data-i18n="iosStep1">اضغط على زر المشاركة <i class="fa-solid fa-share-from-square"></i> في أسفل Safari</span>
                 </div>
                 <div class="pwa-ios-step">
                     <div class="pwa-ios-step-num">2</div>
-                    <span data-i18n="iosStep2">Scroll down and select <b>Add to Home Screen</b> <i class="fa-solid fa-square-plus"></i></span>
+                    <span data-i18n="iosStep2">اختر <b>إضافة إلى الشاشة الرئيسية (Add to Home Screen)</b> <i class="fa-solid fa-square-plus"></i></span>
                 </div>
             </div>
             
-            <button type="button" class="btn-primary" id="pwa-ios-close-btn" style="width: 100%; justify-content: center; padding: 10px; margin-top: 10px; border-radius: 12px;" data-i18n="btnBack">Got it!</button>
+            <button type="button" class="btn-primary" id="pwa-ios-close-btn" style="width: 100%; justify-content: center; padding: 10px; margin-top: 10px; border-radius: 12px;" data-i18n="btnBack">فهمت ذلك!</button>
+        </div>
+    </div>
+
+    <!-- PWA Windows / Desktop Install Instruction Modal -->
+    <div class="pwa-ios-modal" id="pwa-win-modal">
+        <div class="pwa-ios-content">
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; color: var(--text-dark);">💻 تثبيت التطبيق على الكمبيوتر (Windows/Chrome)</h3>
+            <p style="font-size: 0.85rem; color: var(--text-light); line-height: 1.5; margin-bottom: 20px;">لتنزيل وتثبيت التطبيق كبرنامج مستقل على شاشة الكمبيوتر:</p>
+            
+            <div class="pwa-ios-steps">
+                <div class="pwa-ios-step">
+                    <div class="pwa-ios-step-num">1</div>
+                    <span>اضغط على أيقونة التثبيت <i class="fa-solid fa-download" style="color: var(--primary-color);"></i> الموجودة في شريط الرابط من الأعلى أعلى اليسار/اليمين للمتصفح.</span>
+                </div>
+                <div class="pwa-ios-step">
+                    <div class="pwa-ios-step-num">2</div>
+                    <span>أو اضغط على النقاط الثلاث <i class="fa-solid fa-ellipsis-vertical"></i> في المتصفح اختر <b>Save and Share (حفظ ومشاركة)</b> ثم <b>Install App (تثبيت التطبيق)</b>.</span>
+                </div>
+            </div>
+            
+            <button type="button" class="btn-primary" id="pwa-win-close-btn" style="width: 100%; justify-content: center; padding: 10px; margin-top: 10px; border-radius: 12px;">تم الفهم!</button>
         </div>
     </div>
 
