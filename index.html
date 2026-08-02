@@ -1149,24 +1149,20 @@
         /* PWA Install Banner */
         /* Top Banner PWA Install (Matching exact design) */
         .pwa-top-bar {
-            position: fixed;
-            top: -100px;
-            left: 0;
-            right: 0;
+            display: none;
+            position: relative;
             width: 100%;
             background: #2d3139;
             color: #ffffff;
             padding: 10px 16px;
-            display: flex;
             align-items: center;
             justify-content: space-between;
             z-index: 999999;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            transition: top 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             direction: ltr; /* Keeps icon left, text left, button right like system banner */
         }
         .pwa-top-bar.active {
-            top: 0;
+            display: flex !important;
         }
         .pwa-top-left {
             display: flex;
