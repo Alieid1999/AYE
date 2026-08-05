@@ -1,0 +1,37 @@
+services:
+  - type: cron
+    name: instagram-gateway
+    runtime: python
+    pythonVersion: 3.11
+    buildCommand: pip install -r requirements.txt
+    startCommand: python instagram_gateway.py
+    plan: free
+    envVars:
+      - key: INSTAGRAM_USERNAME
+        value: ayemarket2
+      - key: INSTAGRAM_PASSWORD
+        sync: false
+      - key: FIREBASE_CREDENTIALS_JSON
+        sync: false
+      - key: FIREBASE_STORAGE_BUCKET
+        value: aye-commercial-4b871.firebasestorage.app
+
+# التكوين الموسع - استخدم هذا إذا كنت تريد web service بدلاً من cron
+# يمكنك تبديل النوع إذا أردت
+# 
+# services:
+#   - type: web
+#     name: instagram-gateway
+#     runtime: python
+#     pythonVersion: 3.11
+#     buildCommand: pip install -r requirements.txt
+#     startCommand: python instagram_gateway.py
+#     plan: free
+#     healthCheckPath: /health
+#     envVars:
+#       - key: INSTAGRAM_USERNAME
+#         value: ayemarket2
+#       - key: INSTAGRAM_PASSWORD
+#         sync: false
+#       - key: FIREBASE_CREDENTIALS_JSON
+#         sync: false
