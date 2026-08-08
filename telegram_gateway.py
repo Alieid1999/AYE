@@ -418,55 +418,10 @@ def get_main_keyboard():
     return markup
 
 def notify_customer_whatsapp(phone: str, order_id: str, new_status: str, customer_name: str, lang: str = None):
-    """Send a WhatsApp status notification to the customer in a background thread without emojis or graphics, supporting Arabic and English."""
-    if not WHATSAPP_GATEWAY_URL:
-        print("[WA Notify] WHATSAPP_GATEWAY_URL not set — skipping customer notification.")
-        return
+    """WhatsApp notifications disabled."""
+    print("[WA Notify] WhatsApp notifications are disabled.")
+    return
 
-    # Detect Arabic if lang is 'ar' or customer_name contains Arabic characters
-    is_arabic = False
-    if lang:
-        is_arabic = str(lang).lower().startswith("ar")
-    elif customer_name:
-        is_arabic = any('\u0600' <= char <= '\u06FF' for char in customer_name)
-
-    arabic_statuses = {
-        "Shipped": "قيد الشحن",
-        "Delivered": "تم التسليم",
-        "Cancelled": "ملغى",
-        "Pending": "قيد الانتظار"
-    }
-
-    if is_arabic:
-        translated_status = arabic_statuses.get(new_status, new_status)
-        msg = (
-            f"AYE Store - تحديث الطلب\n\n"
-            f"مرحباً {customer_name}!\n"
-            f"تم تحديث حالة طلبك #{order_id} إلى:\n\n"
-            f"{translated_status}\n\n"
-            f"شكراً لتسوقك معنا."
-        )
-    else:
-        msg = (
-            f"AYE Store - Order Update\n\n"
-            f"Hello {customer_name}!\n"
-            f"Your order #{order_id} has been updated to:\n\n"
-            f"{new_status}\n\n"
-            f"Thank you for shopping with us."
-        )
-
-    def _send():
-        try:
-            resp = requests.post(
-                f"{WHATSAPP_GATEWAY_URL}/send-message",
-                json={"to": phone, "message": msg},
-                timeout=15
-            )
-            print(f"[WA Notify] Sent to {phone}: {resp.status_code} {resp.text[:100]}")
-        except Exception as e:
-            print(f"[WA Notify] Failed: {e}")
-
-    threading.Thread(target=_send, daemon=True).start()
 
 
 def setup_bot():
@@ -745,21 +700,9 @@ def verify_api_key(x_api_key: Optional[str]) -> None:
         raise HTTPException(status_code=401, detail="Invalid or missing API key")
 
 def keep_alive_ping_loop():
-    print("[Keep-Alive] Starting background keep-alive ping thread...")
-    while True:
-        try:
-            time.sleep(300)
-            settings = db_client.get_gateway_settings()
-            whatsapp_bot_url = settings.get("whatsapp_bot_url")
-            if whatsapp_bot_url:
-                target_url = whatsapp_bot_url.rstrip("/") + "/status"
-                print(f"[Keep-Alive] Pinging WhatsApp Bot: {target_url}")
-                resp = requests.get(target_url, timeout=10)
-                print(f"[Keep-Alive] WhatsApp Bot response: {resp.status_code}")
-            else:
-                print("[Keep-Alive] No whatsapp_bot_url configured in settings/gateways.")
-        except Exception as e:
-            print(f"[Keep-Alive] Error pinging WhatsApp Bot: {e}")
+    print("[Keep-Alive] Background WhatsApp keep-alive ping thread disabled.")
+    return
+
 
 def daily_backup_scheduler():
     print("[Backup Scheduler] Starting background backup check thread...")

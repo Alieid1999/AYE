@@ -295,51 +295,16 @@ class UnifiedGateway:
     # ========================================================================
     
     def post_to_whatsapp(self, product_id: str, product: Dict[str, Any]) -> bool:
-        """Post product to WhatsApp via Twilio."""
-        if not (TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN):
-            logger.warning("WhatsApp not configured")
-            return False
-        
-        try:
-            from twilio.rest import Client
-            
-            title = product.get('title', 'Product')
-            price = product.get('price', 'N/A')
-            currency = product.get('currency', 'USD')
-            description = product.get('description', '')
-            
-            message_text = f"""
-🛍️ *{title}*
-
-📝 {description[:100]}
-
-💰 *Price:* {price} {currency}
-
-🛒 Shop now on AYE Market!
-"""
-            
-            logger.info(f"📲 Posting to WhatsApp: {title}")
-            
-            client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-            message = client.messages.create(
-                body=message_text,
-                from_=WHATSAPP_FROM,
-                to=WHATSAPP_TO
-            )
-            
-            logger.info(f"✅ WhatsApp sent! Message ID: {message.sid}")
-            return True
-        
-        except Exception as e:
-            logger.error(f"❌ WhatsApp error: {e}")
-            return False
+        """WhatsApp posting disabled."""
+        logger.info("WhatsApp posting is disabled.")
+        return False
     
     # ========================================================================
     # MAIN POSTING LOGIC
     # ========================================================================
     
     def post_product_everywhere(self, product_id: str, product: Dict[str, Any]) -> int:
-        """Post product to all channels."""
+        """Post product to channels (Instagram & Telegram)."""
         success_count = 0
         
         logger.info(f"\n🚀 Posting product: {product.get('title')}")
@@ -354,10 +319,6 @@ class UnifiedGateway:
         if self.post_to_telegram(product_id, product):
             success_count += 1
             time.sleep(3)
-        
-        # WhatsApp
-        if self.post_to_whatsapp(product_id, product):
-            success_count += 1
         
         logger.info(f"✅ Posted to {success_count} channels")
         logger.info("=" * 60 + "\n")
