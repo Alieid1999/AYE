@@ -1,12 +1,11 @@
-# 🌐 Unified Gateway - Telegram + Instagram
+# 🌐 Unified Gateway - Instagram
 
-**ملف واحد ينشر على قنوات التواصل في نفس الوقت!**
+**ملف واحد ينشر على انستغرام!**
 
 ## ✨ المميزات
 
 ✅ **Instagram** - ينشر الصور والأوصاف  
-✅ **Telegram** - ينشر في القناة  
-✅ **موحد** - ملف Python واحد يجمع كل شي  
+✅ **موحد** - ملف Python واحد  
 ✅ **ذكي** - لا ينشر نفس المنتج مرتين  
 
 ---
@@ -43,9 +42,6 @@ https://dashboard.render.com
 FIREBASE_CREDENTIALS_JSON = [ملف JSON الكامل]
 FIREBASE_STORAGE_BUCKET = aye-commercial-4b871.firebasestorage.app
 
-TELEGRAM_BOT_TOKEN = [token من BotFather]
-TELEGRAM_CHANNEL_ID = [معرف القناة]
-
 INSTAGRAM_USERNAME = ayemarket2
 INSTAGRAM_PASSWORD = Qwertyuiop1@
 ```
@@ -59,9 +55,7 @@ INSTAGRAM_PASSWORD = Qwertyuiop1@
 ```
 1. كل 10 دقائق يفحص Firestore
 2. يبحث عن منتجات حيث posted = false
-3. ينشرها على:
-   ✅ Instagram (صورة + وصف)
-   ✅ Telegram (رسالة نصية + صورة)
+3. ينشرها على Instagram (صورة + وصف)
 4. يحدّث Firestore: posted = true
 ```
 
@@ -71,7 +65,7 @@ INSTAGRAM_PASSWORD = Qwertyuiop1@
 
 ```json
 {
-  "title": "MacBook Pro 14\"",
+  "title": "MacBook Pro 14"",
   "description": "Apple MacBook Pro with M3 chip...",
   "price": 1499.99,
   "currency": "USD",
@@ -86,22 +80,7 @@ INSTAGRAM_PASSWORD = Qwertyuiop1@
 
 ---
 
-## 📱 إعداد كل قناة
-
-### Telegram
-
-1. تكلم مع [@BotFather](https://t.me/botfather)
-2. اطلب: `/newbot`
-3. اختر اسم البوت (مثلاً `AYE_Market_Bot`)
-4. سيعطيك **token** (احفظه)
-5. إنشئ قناة خاصة (أو استخدم موجودة)
-6. أضف البوت للقناة كـ admin
-7. احصل على معرف القناة:
-   ```
-   https://t.me/c/123456789 → ID = -100123456789
-   ```
-
-### Instagram
+## 📱 إعداد Instagram
 
 1. استخدم حسابك `ayemarket2`
 2. تأكد من كلمة المرور صحيحة
@@ -125,7 +104,7 @@ python unified_gateway.py
 ============================================================
 🚀 UNIFIED GATEWAY STARTED
 ============================================================
-📱 Channels: Instagram + Telegram
+📱 Channels: Instagram
 ⏰ Checking every 10 minutes...
 ============================================================
 
@@ -134,8 +113,6 @@ python unified_gateway.py
 ============================================================
 📸 Posting to Instagram: MacBook Pro 14"
 ✅ Instagram posted! Media ID: 123456
-📱 Posting to Telegram: MacBook Pro 14"
-✅ Telegram posted!
 ✅ Posted to channels
 ============================================================
 ```
@@ -157,7 +134,6 @@ python unified_gateway.py
 
 | الخطأ | الحل |
 |------|------|
-| `Telegram token not set` | أضف TELEGRAM_BOT_TOKEN |
 | `Instagram: Invalid credentials` | تحقق من username و password |
 | `Firebase not initialized` | تحقق من FIREBASE_CREDENTIALS_JSON |
 

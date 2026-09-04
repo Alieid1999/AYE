@@ -1,7 +1,5 @@
 fastapi
 uvicorn
-pytelegrambotapi
-telethon
 requests
 instagrapi
 pillow

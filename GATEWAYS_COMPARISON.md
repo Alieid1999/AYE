@@ -19,7 +19,6 @@ python unified_gateway.py
 
 **المخرجات:**
 - ✅ Instagram
-- ✅ Telegram
 
 ---
 
@@ -39,29 +38,15 @@ python instagram_gateway.py
 
 ---
 
-### 📱 **Telegram Gateway** (منفصل)
-
-```
-telegram_gateway.py         ← للـ Telegram فقط
-DEPLOY_RENDER_TELEGRAM.md   ← توثيق
-```
-
-**الاستخدام:**
-```bash
-python telegram_gateway.py
-```
-
----
-
 ## 🎯 الخيارات
 
-### ✨ **الخيار 1: Unified (موصى به)**
+### ✨ **Unified (موصى به)**
 
 **الملف:** `unified_gateway.py`
 
 **المميزات:**
 - ✅ ملف Python واحد
-- ✅ يدعم قنوات التواصل (Instagram + Telegram)
+- ✅ يدعم النشر على Instagram
 - ✅ سهل للـ Deploy
 - ✅ تحديث موحد
 
@@ -70,39 +55,12 @@ python telegram_gateway.py
 Python 3.11+
 firebase-admin
 instagrapi
-pytelegrambotapi
 ```
 
 **Deploy:**
 ```
 Render Cron Job (Python)
 ```
-
----
-
-### 🔀 **الخيار 2: Separate Services**
-
-**الملفات:** 
-- `instagram_gateway.py`
-- `telegram_gateway.py`
-
-**المميزات:**
-- ✅ كل خدمة مستقلة
-- ✅ أسهل للـ debugging
-- ✅ تحكم أكثر
-
----
-
-## 📊 المقارنة
-
-| الميزة | Unified | Separate |
-|------|---------|----------|
-| ملف واحد | ✅ | ❌ |
-| سهل التحديث | ✅ | ❌ |
-| تحديث الـ code | سريع جداً | بطيء |
-| الـ Logs | موحدة | متفرقة |
-| المراقبة | سهلة | معقدة |
-| التكلفة | رخيص | أغلى (3 services) |
 
 ---
 
@@ -151,11 +109,6 @@ git push origin main
 - [ ] لديك Service Account JSON
 - [ ] لديك Firestore Database
 
-### Telegram:
-- [ ] أنشأت Bot مع @BotFather
-- [ ] احصلت على Token
-- [ ] لديك قناة وأضفت البوت
-
 ### Instagram:
 - [ ] لديك حساب `ayemarket2`
 - [ ] تعرف كلمة المرور
@@ -171,7 +124,3 @@ git push origin main
 4. **انتظر أول تشغيل (10 دقائق)**
 5. **تفقد الـ Logs**
 6. **كل شي جاهز!** ✨
-
----
-
-**اختر Unified Gateway = أسهل حل!** 🚀

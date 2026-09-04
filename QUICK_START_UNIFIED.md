@@ -4,16 +4,6 @@
 
 ### 1️⃣ تحضير البيانات
 
-**Telegram:**
-```
-1. اذهب إلى @BotFather
-2. اكتب: /newbot
-3. اختر اسم البوت
-4. احصل على TOKEN
-5. إنشئ قناة وأضف البوت
-6. احصل على ID (-100...)
-```
-
 **Firebase:**
 ```
 1. Firebase Console > Project Settings
@@ -55,8 +45,6 @@ Schedule: */10 * * * *
 ```
 ✅ FIREBASE_CREDENTIALS_JSON    (Sync: false)
 ✅ FIREBASE_STORAGE_BUCKET      (aye-commercial-4b871.firebasestorage.app)
-✅ TELEGRAM_BOT_TOKEN           (Sync: false)
-✅ TELEGRAM_CHANNEL_ID          (Sync: false)
 ✅ INSTAGRAM_USERNAME           (ayemarket2)
 ✅ INSTAGRAM_PASSWORD           (Sync: false)
 ```
@@ -78,7 +66,7 @@ Schedule: */10 * * * *
 ============================================================
 🚀 UNIFIED GATEWAY STARTED
 ============================================================
-📱 Channels: Instagram + Telegram
+📱 Channels: Instagram
 ⏰ Checking every 10 minutes...
 ============================================================
 
@@ -90,7 +78,6 @@ Schedule: */10 * * * *
 
 ## ✅ Checklist
 
-- [ ] أنشأت Telegram Bot
 - [ ] احصلت على Firebase Credentials
 - [ ] إضافة كل المتغيرات في Render
 - [ ] Push التغييرات للـ Git
@@ -119,14 +106,10 @@ Schedule: */10 * * * *
 
 ✅ كل منتج جديد ينشر تلقائياً على:
 - 📸 Instagram
-- 📱 Telegram
 
 ---
 
 ## 🆘 مشاكل شائعة
-
-**❌ "Telegram token not set"**
-→ أضف TELEGRAM_BOT_TOKEN في Environment
 
 **❌ "Instagram: Invalid credentials"**
 → تحقق من username و password صحيح

@@ -1,9 +1,8 @@
 services:
   - type: web
-    name: aye-market-bot
+    name: aye-market-gateway
     env: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn telegram_gateway:app --host 0.0.0.0 --port $PORT
-    healthCheckPath: /status
+    startCommand: python unified_gateway.py
     autoDeploy: true

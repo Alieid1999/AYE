@@ -1,6 +1,6 @@
 """
-Unified Gateway - Telegram + Instagram
-بوابة موحدة لنشر المنتجات على تيليجرام وانستغرام
+Unified Gateway - Instagram
+بوابة موحدة لنشر المنتجات على انستغرام
 """
 
 import os
@@ -21,8 +21,6 @@ from firebase_admin import credentials, firestore, storage
 
 from instagrapi import Client as InstaClient
 from instagrapi.exceptions import BadPassword, LoginRequired
-import telebot
-from telebot.async_telebot import AsyncTeleBot
 
 # ============================================================================
 # CONFIGURATION
@@ -31,10 +29,6 @@ from telebot.async_telebot import AsyncTeleBot
 # Firebase
 FIREBASE_CREDENTIALS = os.getenv("FIREBASE_CREDENTIALS_JSON")
 FIREBASE_STORAGE_BUCKET = os.getenv("FIREBASE_STORAGE_BUCKET", "aye-commercial-4b871.firebasestorage.app")
-
-# Telegram
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID", "-1001234567890")
 
 # Instagram
 INSTAGRAM_USERNAME = os.getenv("INSTAGRAM_USERNAME", "ayemarket2")
@@ -58,12 +52,10 @@ class UnifiedGateway:
     def __init__(self):
         self.db = None
         self.insta_client = None
-        self.telegram_bot = None
         self.posted_products = self._load_state()
         
         self._initialize_firebase()
         self._initialize_instagram()
-        self._initialize_telegram()
         
         logger.info("✅ Unified Gateway initialized!")
     
@@ -221,75 +213,11 @@ class UnifiedGateway:
             return False
     
     # ========================================================================
-    # TELEGRAM
-    # ========================================================================
-    
-    def _initialize_telegram(self):
-        """Initialize Telegram bot."""
-        try:
-            if not TELEGRAM_BOT_TOKEN:
-                logger.warning("⚠️ Telegram token not set")
-                return
-            
-            self.telegram_bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
-            logger.info("✅ Telegram bot initialized")
-        except Exception as e:
-            logger.error(f"❌ Telegram error: {e}")
-    
-    def post_to_telegram(self, product_id: str, product: Dict[str, Any]) -> bool:
-        """Post product to Telegram channel."""
-        if not self.telegram_bot:
-            logger.warning("Telegram not initialized")
-            return False
-        
-        try:
-            image_url = product.get('image') or product.get('images', [None])[0]
-            title = product.get('title', 'Product')
-            description = product.get('description', '')
-            price = product.get('price', 'N/A')
-            currency = product.get('currency', 'USD')
-            category = product.get('category', 'Tech')
-            
-            caption = f"""
-🛍️ *{title}*
-
-📝 {description[:200]}
-
-💰 *Price:* {price} {currency}
-🏷️ *Category:* {category}
-
-🛒 Shop now on AYE Market!
-"""
-            
-            logger.info(f"📱 Posting to Telegram: {title}")
-            
-            if image_url:
-                self.telegram_bot.send_photo(
-                    TELEGRAM_CHANNEL_ID,
-                    image_url,
-                    caption=caption,
-                    parse_mode='Markdown'
-                )
-            else:
-                self.telegram_bot.send_message(
-                    TELEGRAM_CHANNEL_ID,
-                    caption,
-                    parse_mode='Markdown'
-                )
-            
-            logger.info("✅ Telegram posted!")
-            return True
-        
-        except Exception as e:
-            logger.error(f"❌ Telegram error: {e}")
-            return False
-    
-    # ========================================================================
     # MAIN POSTING LOGIC
     # ========================================================================
     
     def post_product_everywhere(self, product_id: str, product: Dict[str, Any]) -> int:
-        """Post product to channels (Instagram & Telegram)."""
+        """Post product to Instagram."""
         success_count = 0
         
         logger.info(f"\n🚀 Posting product: {product.get('title')}")
@@ -300,12 +228,7 @@ class UnifiedGateway:
             success_count += 1
             time.sleep(3)
         
-        # Telegram
-        if self.post_to_telegram(product_id, product):
-            success_count += 1
-            time.sleep(3)
-        
-        logger.info(f"✅ Posted to {success_count} channels")
+        logger.info(f"✅ Posted to {success_count} channel(s)")
         logger.info("=" * 60 + "\n")
         
         return success_count
@@ -338,7 +261,7 @@ class UnifiedGateway:
                         self.db.collection('products').document(product_id).update({
                             'posted': True,
                             'postedTime': datetime.now().isoformat(),
-                            'postedChannels': ['instagram', 'telegram'][:success]
+                            'postedChannels': ['instagram'][:success]
                         })
                         
                         self.posted_products.add(product_id)
@@ -347,7 +270,7 @@ class UnifiedGateway:
             
             if posted_count > 0:
                 self._save_state()
-                logger.info(f"✅ Posted {posted_count} product(s) to all channels")
+                logger.info(f"✅ Posted {posted_count} product(s) to Instagram")
             else:
                 logger.info("ℹ️ No new products")
         
@@ -361,7 +284,7 @@ class UnifiedGateway:
         logger.info("\n" + "=" * 60)
         logger.info("🚀 UNIFIED GATEWAY STARTED")
         logger.info("=" * 60)
-        logger.info("📱 Channels: Instagram + Telegram")
+        logger.info("📱 Channels: Instagram")
         logger.info("⏰ Checking every 10 minutes...")
         logger.info("=" * 60 + "\n")
         

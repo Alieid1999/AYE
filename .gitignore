@@ -7,8 +7,6 @@ __pycache__/
 # Session files (contains active login credentials - DO NOT COMMIT!)
 *.session
 *.session-journal
-telegram_gateway_session.session*
-admin_chat_id.txt
 
 # Keep deployable static assets in public/ only (avoid root/public divergence)
 /index.html

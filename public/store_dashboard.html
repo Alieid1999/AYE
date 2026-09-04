@@ -1590,37 +1590,23 @@
 
 
 
-                <!-- Telegram & Store Gateways -->
+                <!-- Store & Currency Settings -->
                 <div class="dashboard-card">
-                    <h2 class="card-title"><i class="fa-solid fa-server"></i> <span data-i18n="gatewaysTitle">Telegram & Store Settings</span></h2>
+                    <h2 class="card-title"><i class="fa-solid fa-gear"></i> <span data-i18n="gatewaysTitle">Store & Currency Settings</span></h2>
                     <p style="margin-bottom: 20px; font-size: 0.9rem; color: var(--text-light);" data-i18n="gatewaysDesc">
-                        Configure Telegram API URL and Admin Chat ID / Phone. If left blank, the store will run in simulation mode.
+                        Configure store currency exchange rates, delivery fees, and automated backups.
                     </p>
                     <form id="gateway-settings-form">
-                        <!-- Telegram Gateway Section -->
                         <div class="form-grid" style="margin-bottom: 20px;">
-                            <div class="form-group" style="grid-column: span 2;">
-                                <label for="telegram-api-url">Telegram API URL</label>
-                                <input type="text" id="telegram-api-url" placeholder="e.g. https://aye-market-bot.onrender.com/send-telegram" autocomplete="off">
-                            </div>
-                            <div class="form-group" style="grid-column: span 2;">
-                                <label for="telegram-api-key">Telegram Gateway API Key (Optional)</label>
-                                <input type="password" id="telegram-api-key" placeholder="Optional API Key if configured on server" autocomplete="off">
-                            </div>
-                            <div class="form-group" style="grid-column: span 2;">
-                                <label for="telegram-admin-phone" data-i18n="telegramAdminPhoneLabel">Admin Telegram Chat ID / Phone</label>
-                                <input type="text" id="telegram-admin-phone" placeholder="e.g. +96170236854" autocomplete="off">
-                                <small style="color: var(--text-light); font-size: 0.8rem;" data-i18n="telegramAdminPhoneHelp">Your personal chat ID or phone number to receive automated order notifications.</small>
-                            </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="usd-exchange-rate">💵 USD Exchange Rate (سعر صرف الدولار بالنسبة لليرة)</label>
                                 <input type="number" id="usd-exchange-rate" placeholder="e.g. 89000" step="any" autocomplete="off">
-                                <small style="color: var(--text-light); font-size: 0.8rem;">Enter exchange rate for 1 USD in LBP (e.g. 89000). Used to calculate USD equivalent totals on Telegram order messages.</small>
+                                <small style="color: var(--text-light); font-size: 0.8rem;">Enter exchange rate for 1 USD in LBP (e.g. 89000).</small>
                             </div>
                             <div class="form-group" style="grid-column: span 2;">
                                 <label for="delivery-fee-usd">🚚 Delivery Fee USD (مبلغ تكلفة التوصيل بالدولار)</label>
                                 <input type="number" id="delivery-fee-usd" placeholder="e.g. 3.00" step="any" autocomplete="off">
-                                <small style="color: var(--text-light); font-size: 0.8rem;">Enter default delivery cost in USD (e.g. 3.00). This fee will be automatically added to Telegram order messages.</small>
+                                <small style="color: var(--text-light); font-size: 0.8rem;">Enter default delivery cost in USD (e.g. 3.00).</small>
                             </div>
                         </div>
 
@@ -1639,34 +1625,10 @@
                             <input type="text" id="gmail-script-url" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off">
                         </div>
 
-                        <div style="display: flex; gap: 10px; margin-bottom: 25px;">
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
                             <button type="submit" class="btn-submit" style="flex: 1; margin: 0;">
-                                <i class="fa-solid fa-floppy-disk"></i> <span data-i18n="btnSaveGateways">Save Gateway Settings</span>
+                                <i class="fa-solid fa-floppy-disk"></i> <span data-i18n="btnSaveGateways">Save Settings</span>
                             </button>
-                        </div>
-
-                        <div style="border-top: 1px dashed #e2e8f0; padding-top: 20px; margin-top: 20px;">
-                            <h3 style="font-size: 0.95rem; font-weight: bold; margin-bottom: 12px; color: var(--text-dark); display: flex; align-items: center; gap: 8px;">
-                                <i class="fa-solid fa-vial" style="color: #6366f1;"></i>
-                                <span data-i18n="testGatewaysTitle">Test Gateways Connection</span>
-                            </h3>
-                            <div class="form-grid" style="margin-bottom: 15px;">
-                                <div class="form-group">
-                                    <label for="test-phone" data-i18n="testPhoneLabel">Test Phone Number / Chat ID (Telegram)</label>
-                                    <input type="text" id="test-phone" placeholder="e.g. +96170123456" autocomplete="off">
-                                </div>
-                                <div class="form-group" style="display: none;">
-                                    <label for="test-email">Test Email Address</label>
-                                    <input type="text" id="test-email" placeholder="e.g. name@example.com" autocomplete="off">
-                                </div>
-                            </div>
-                            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;">
-                                <button type="button" id="btn-test-telegram" class="btn-secondary" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 0.85rem; padding: 8px 14px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                                    <i class="fa-brands fa-telegram"></i> <span data-i18n="btnTestTelegram">Send Test Telegram</span>
-                                </button>
-                                <button type="button" id="btn-test-email" style="display: none;"></button>
-                            </div>
-                            <div id="gateway-test-result" style="display: none; padding: 12px; border-radius: 8px; font-size: 0.88rem; line-height: 1.5; margin-top: 10px; word-break: break-all;"></div>
                         </div>
                     </form>
                 </div>
@@ -1968,31 +1930,7 @@
         </div>
     </div>
 
-    <!-- Send SMS Modal -->
-    <div class="modal-overlay" id="send-sms-modal">
-        <div class="modal-content" style="max-width: 400px; padding: 25px; border-radius: 12px; position: relative;">
-            <span class="close-modal" onclick="closeSendSMSModal()"><i class="fa-solid fa-xmark"></i></span>
-            <h2 class="card-title" style="border:none; padding-bottom:0; margin-bottom:20px; font-weight:700; display:flex; align-items:center; gap:8px;">
-                <i class="fa-brands fa-telegram" style="color:#0088cc;"></i>
-                <span data-i18n="sendSMSHeader">Send Custom Telegram Message</span>
-            </h2>
-            <div class="form-group" style="margin-bottom: 15px;">
-                <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:5px;">Recipient Name</label>
-                <input type="text" id="sms-recipient-name" readonly style="width:100%; padding:10px; border:1px solid var(--border-color); border-radius:6px; background:#f8fafc;">
-            </div>
-            <div class="form-group" style="margin-bottom: 15px;">
-                <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:5px;">Recipient Phone Number</label>
-                <input type="text" id="sms-recipient-phone" readonly style="width:100%; padding:10px; border:1px solid var(--border-color); border-radius:6px; background:#f8fafc;">
-            </div>
-            <div class="form-group" style="margin-bottom: 20px;">
-                <label for="sms-custom-message" style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:5px;">Message Content</label>
-                <textarea id="sms-custom-message" placeholder="Type your message here..." rows="4" style="width:100%; padding:10px; border:1px solid var(--border-color); border-radius:6px; resize:vertical; font-family:inherit;"></textarea>
-            </div>
-            <button type="button" onclick="executeSendSMS()" class="btn-submit" style="width:100%; justify-content:center; background:#0088cc; border:none; color:#fff; font-weight:bold; cursor:pointer;">
-                <i class="fa-brands fa-telegram"></i> <span data-i18n="btnSendSMS">Send Telegram</span>
-            </button>
-        </div>
-    </div>
+
 
     <!-- Firebase SDK Compat -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -2091,31 +2029,15 @@
                 thOrdersPlaced:     "Orders Placed",
                 thTotalSpending:    "Total Spending",
                 firebaseConnection: "Firebase Cloud Connection",
-                btnSaveConfig:      "Save Configurations",
-                gatewaysTitle:      "Telegram & Store Settings",
-                gatewaysDesc:       "Configure Telegram API URL and Admin Chat ID / Phone. If left blank, the store will run in simulation mode.",
-                btnSaveGateways:    "Save Gateway Settings",
-                testGatewaysTitle:  "Test Gateways Connection",
-                testPhoneLabel:     "Test Phone Number / Chat ID (for Telegram)",
-                testEmailLabel:     "Test Email Address (for Email)",
-                telegramAdminPhoneLabel: "Admin Telegram Chat ID / Phone",
-                telegramAdminPhoneHelp:  "Your personal chat ID or phone number to receive automated order notifications.",
- 
-                backupTitle:        "Database Backup & Restore",
-                backupDesc:         "Export your database to a JSON file or restore it. Set up automatic daily backups to your email and Google Drive.",
-                btnExportBackup:    "Export JSON Backup",
-                btnImportBackup:    "Restore from JSON File",
-
-                 btnTestTelegram:    "Send Test Telegram",
-                 btnTestEmail:       "Send Test Email",
-                 dangerZone:         "Danger Zone",
-                 btnReset:           "Reset Local Database",
-                 editProductTitle:   "Edit Product Details",
-                 btnSaveChanges:     "Save Changes",
-                 thActions:          "Actions",
-                 btnSendSMS:         "Send Telegram",
-                 sendSMSHeader:      "Send Custom Telegram Message",
-                 // Analytics & new features
+                  btnSaveConfig:      "حفظ الإعدادات",
+                  gatewaysTitle:      "إعدادات المتجر والعملة",
+                  gatewaysDesc:       "قم بضبط سعر صرف العملة وتكلفة التوصيل والنسخ الاحتياطي التلقائي.",
+                  btnSaveGateways:    "حفظ الإعدادات",
+                  dangerZone:         "منطقة الخطر",
+                  btnReset:           "إعادة ضبط قاعدة البيانات",
+                  editProductTitle:   "تعديل تفاصيل المنتج",
+                  btnSaveChanges:     "حفظ التغييرات",
+                  thActions:          "إجراءات",
                  navAnalytics:       "Analytics",
                  salesChartTitle:    "Sales Revenue Chart",
                  chartTypeLine:      "Line",
@@ -2228,25 +2150,15 @@
                  thOrdersPlaced:     "الطلبات المقدمة",
                  thTotalSpending:    "إجمالي الإنفاق",
                  firebaseConnection: "الاتصال بـ Firebase",
-                 btnSaveConfig:      "حفظ الإعدادات",
-                 gatewaysTitle:      "بوابات الـ Telegram والبريد الإلكتروني",
-                 gatewaysDesc:       "قم بإعداد بوابة تلغرام ورابط Gmail Apps Script لإرسال رسائل التفعيل الحقيقية ورموز الـ OTP. إذا تركت فارغة، سيعمل المتجر في وضع المحاكاة التلقائي.",
-                 btnSaveGateways:    "حفظ إعدادات البوابات",
-                 testGatewaysTitle:  "اختبار اتصال البوابات",
-                 testPhoneLabel:     "رقم هاتف التجربة (لـ Telegram)",
-                 testEmailLabel:     "البريد الإلكتروني للتجربة (لـ EmailJS)",
-                 telegramAdminPhoneLabel: "رقم هاتف مسؤول المتجر على Telegram",
-                 telegramAdminPhoneHelp:  "رقم هاتفك الشخصي لتلقي إشعارات الطلبات التلقائية.",
-
-                btnTestTelegram:    "إرسال تلغرام تجريبي",
-                btnTestEmail:       "إرسال إيميل تجريبي",
-                dangerZone:         "منطقة الخطر",
-                btnReset:           "إعادة ضبط قاعدة البيانات",
-                editProductTitle:   "تعديل تفاصيل المنتج",
-                btnSaveChanges:     "حفظ التغييرات",
-                thActions:          "إجراءات",
-                btnSendSMS:         "إرسال رسالة تليجرام",
-                sendSMSHeader:      "إرسال رسالة تليجرام مخصصة",
+                  btnSaveConfig:      "حفظ الإعدادات",
+                  gatewaysTitle:      "إعدادات المتجر والعملة",
+                  gatewaysDesc:       "قم بضبط سعر صرف العملة وتكلفة التوصيل والنسخ الاحتياطي التلقائي.",
+                  btnSaveGateways:    "حفظ الإعدادات",
+                  dangerZone:         "منطقة الخطر",
+                  btnReset:           "إعادة ضبط قاعدة البيانات",
+                  editProductTitle:   "تعديل تفاصيل المنتج",
+                  btnSaveChanges:     "حفظ التغييرات",
+                  thActions:          "إجراءات",
                  navAnalytics:       "التحليلات",
                  salesChartTitle:    "رسم بياني للإيرادات",
                  chartTypeLine:      "خطي",
@@ -2433,10 +2345,6 @@
                 };
 
                 let gatewayBase = 'http://localhost:8000';
-                const telegramApiUrl = localStorage.getItem('store_telegram_api_url');
-                if (telegramApiUrl && telegramApiUrl.includes('/send-telegram')) {
-                    gatewayBase = telegramApiUrl.split('/send-telegram')[0];
-                }
 
                 try {
                     const response = await fetch(`${gatewayBase}/post-social`, {
@@ -2529,16 +2437,12 @@
 
              _fallbackGatewaysSubscribe(callback) {
                  const getAndCallback = () => {
-                     const telegram_api_url  = localStorage.getItem('store_telegram_api_url') || '';
                      const gmail_script_url  = localStorage.getItem('store_gmail_script_url') || '';
-                     const telegram_api_key  = localStorage.getItem('store_telegram_api_key') || '';
-                     const telegram_admin_phone = localStorage.getItem('store_telegram_admin_phone') || '';
                      const usd_exchange_rate = localStorage.getItem('store_usd_exchange_rate') || '89000';
                      const delivery_fee_usd = localStorage.getItem('store_delivery_fee_usd') || '0';
                      const backup_email = localStorage.getItem('store_backup_email') || '';
                      const backup_drive_folder_id = localStorage.getItem('store_backup_drive_folder_id') || '';
-                     const callmebot_api_key = '';
-                     callback({ telegram_api_url, gmail_script_url, telegram_api_key, telegram_admin_phone, usd_exchange_rate, delivery_fee_usd, backup_email, backup_drive_folder_id, callmebot_api_key });
+                     callback({ gmail_script_url, usd_exchange_rate, delivery_fee_usd, backup_email, backup_drive_folder_id });
                  };
                  getAndCallback();
                  const listener = (e) => {
@@ -2553,10 +2457,7 @@
              },
  
              async saveGatewaySettings(settings) {
-                 localStorage.setItem('store_telegram_api_url', settings.telegram_api_url || '');
                  localStorage.setItem('store_gmail_script_url', settings.gmail_script_url || '');
-                 localStorage.setItem('store_telegram_api_key', settings.telegram_api_key || '');
-                 localStorage.setItem('store_telegram_admin_phone', settings.telegram_admin_phone || '');
                  localStorage.setItem('store_usd_exchange_rate', settings.usd_exchange_rate || '89000');
                  localStorage.setItem('store_delivery_fee_usd', settings.delivery_fee_usd || '0');
                  localStorage.setItem('store_backup_email', settings.backup_email || '');
@@ -4438,11 +4339,6 @@
                         <div style="font-weight:600;">${order.customer?.name || 'Guest'}</div>
                         <div style="font-size:0.85rem; color:var(--text-light); display:flex; align-items:center; gap:8px;">
                             <i class="fa-solid fa-phone"></i> ${order.customer?.phone || ''}
-                            ${order.customer?.phone ? `
-                            <button type="button" class="btn-primary" onclick="openSendSMSModal('${String(order.customer.phone).replace(/[^0-9]/g, '')}', '${String(order.customer?.name || 'Guest').replace(/'/g, "\\'")}')" style="padding: 2px 6px; font-size: 0.7rem; background: #0088cc; border:none; display:none !important; align-items:center; gap:3px; border-radius:4px; height:20px; color:#fff; cursor:pointer;" title="Send Telegram">
-                                <i class="fa-brands fa-telegram"></i> <span>Telegram</span>
-                            </button>
-                            ` : ''}
                         </div>
                         <div style="font-size:0.8rem; color:var(--text-light); max-width:200px; overflow:hidden; text-overflow:ellipsis;"><i class="fa-solid fa-location-dot"></i> ${order.customer?.address || ''}</div>
                     </td>
@@ -4477,9 +4373,6 @@
                         await DBService.updateOrderStatus(orderId, newStatus);
                         const lang = localStorage.getItem('store_lang') || 'en';
                         showToast(lang === 'ar' ? `تم تحديث حالة الطلب إلى ${newStatus}` : `Order status updated to ${newStatus}`);
-                        
-                        // ── NEW: Send Telegram push notification to customer ──
-                        sendOrderStatusTelegramNotification(order, newStatus, oldStatus);
                     } catch (err) {
                         showToast("Failed to update status", "error");
                     }
@@ -4509,97 +4402,7 @@
             }
         }
 
-        // ─────────────────────────────────────────────────────────────────────
-        // TELEGRAM PUSH NOTIFICATION ON ORDER STATUS CHANGE
-        // ─────────────────────────────────────────────────────────────────────
-        async function sendOrderStatusTelegramNotification(order, newStatus, oldStatus) {
-            // Only send for meaningful transitions
-            if (!order || !order.customer?.phone || newStatus === oldStatus) return;
-            const settings = activeGatewaySettings || {};
-            let telegramUrl = (settings.telegram_api_url || '').trim();
-            if (!telegramUrl) return; // Telegram not configured
 
-            if (!telegramUrl.endsWith('/send-telegram')) {
-                telegramUrl = telegramUrl.replace(/\/$/, '') + '/send-telegram';
-            }
-
-            const lang = localStorage.getItem('store_lang') || 'en';
-            const customerName = order.customer?.name || (lang === 'ar' ? 'عزيزي العميل' : 'Dear Customer');
-            const itemsList = (order.items || []).map(it => `• ${it.title} ×${it.quantity}`).join('\n');
-            const total = formatOrderTotal(order);
-
-            const statusEmoji = { Pending: '🟡', Shipped: '🔵', Delivered: '🟢', Cancelled: '🔴' };
-            const emoji = statusEmoji[newStatus] || '📦';
-
-            let message = '';
-            if (lang === 'ar') {
-                const statusAr = { Pending: 'معلق', Shipped: 'تم الشحن', Delivered: 'تم التوصيل', Cancelled: 'ملغى' };
-                message = `${emoji} *تحديث طلبك، ${customerName}!*\n\nحالة طلبك الآن: *${statusAr[newStatus] || newStatus}*\n\n📦 *المنتجات:*\n${itemsList}\n\n💰 *الإجمالي:* ${total}\n\nشكراً لتسوقك معنا! 🛍️`;
-            } else {
-                message = `${emoji} *Order Update, ${customerName}!*\n\nYour order status is now: *${newStatus}*\n\n📦 *Items:*\n${itemsList}\n\n💰 *Total:* ${total}\n\nThank you for shopping with us! 🛍️`;
-            }
-
-            try {
-                const headers = { 'Content-Type': 'application/json' };
-                if (settings.telegram_api_key) headers['X-API-Key'] = settings.telegram_api_key;
-
-                const resp = await fetch(telegramUrl, {
-                    method: 'POST',
-                    headers,
-                    body: JSON.stringify({ phone: order.customer.phone, message })
-                });
-                if (resp.ok) {
-                    const icon = lang === 'ar' ? '📲 تم إرسال إشعار تلغرام للزبون' : '📲 Telegram notification sent to customer';
-                    showToast(icon);
-                } else {
-                    console.warn('[Telegram Push] Response not OK:', resp.status);
-                }
-            } catch (err) {
-                console.warn('[Telegram Push] Failed to send notification:', err.message);
-            }
-        }
-
-        window.openSendSMSModal = function(phone, name) {
-            if (!phone || phone === 'N/A' || phone.trim() === '') {
-                const lang = localStorage.getItem('dashboard_lang') || 'en';
-                showToast(lang === 'ar' ? 'رقم الهاتف غير متاح لهذا الزبون!' : 'Phone number is not available for this customer!', 'warning');
-                return;
-            }
-            document.getElementById('sms-recipient-name').value = name;
-            document.getElementById('sms-recipient-phone').value = phone;
-            document.getElementById('sms-custom-message').value = '';
-            document.getElementById('send-sms-modal').classList.add('active');
-        };
-
-        window.closeSendSMSModal = function() {
-            document.getElementById('send-sms-modal').classList.remove('active');
-        };
-
-        window.executeSendSMS = async function() {
-            const phone = document.getElementById('sms-recipient-phone').value.trim();
-            const body = document.getElementById('sms-custom-message').value.trim();
-            const lang = localStorage.getItem('dashboard_lang') || 'en';
-
-            if (!body) {
-                showToast(lang === 'ar' ? 'يرجى كتابة نص الرسالة أولاً!' : 'Please enter message content first!', 'warning');
-                return;
-            }
-
-            if (!activeGatewaySettings || !activeGatewaySettings.telegram_api_url) {
-                showToast(lang === 'ar' ? 'يرجى تكوين رابط بوابة Telegram في الإعدادات أولاً!' : 'Please configure Telegram API URL in Settings first!', 'warning');
-                return;
-            }
-
-            showToast(lang === 'ar' ? 'جاري إرسال الرسالة...' : 'Sending message...');
-            const result = await sendCustomSMS(phone, body, activeGatewaySettings);
-
-            if (result.ok) {
-                showToast(lang === 'ar' ? 'تم إرسال الرسالة بنجاح!' : 'Message sent successfully!');
-                closeSendSMSModal();
-            } else {
-                showToast(lang === 'ar' ? `فشل الإرسال: ${result.error}` : `Failed to send: ${result.error}`, 'error');
-            }
-        };
 
         // 5. Customers Directory Tab
         function renderCustomersTable() {
@@ -4663,13 +4466,7 @@
                     </td>
                     <td style="font-weight:bold; text-align:center;">${ordersCount}</td>
                     <td style="font-weight:bold; color:var(--success-color); font-size:1rem;">$${totalSpent.toFixed(2)}</td>
-                    <td style="text-align:center;">
-                        ${c.phone ? `
-                        <button type="button" class="btn-primary" onclick="openSendSMSModal('${String(c.phone).replace(/[^0-9]/g, '')}', '${String(c.name || '').replace(/'/g, "\\'")}')" style="padding: 5px 10px; font-size: 0.8rem; display: none !important; align-items: center; gap: 4px; background: #0088cc; border:none; border-radius:6px; color:#fff; cursor:pointer;">
-                            <i class="fa-brands fa-telegram"></i> <span data-i18n="btnSendSMS">Telegram</span>
-                        </button>
-                        ` : 'N/A'}
-                    </td>
+                    <td style="text-align:center;">N/A</td>
                 `;
                 container.appendChild(tr);
             });
@@ -4867,9 +4664,6 @@
         if (gatewaySettingsForm) {
             DBService.subscribeToGatewaySettings((settings) => {
                 activeGatewaySettings = settings;
-                document.getElementById('telegram-api-url').value = settings.telegram_api_url || '';
-                document.getElementById('telegram-api-key').value = settings.telegram_api_key || '';
-                document.getElementById('telegram-admin-phone').value = settings.telegram_admin_phone || '';
                 if (document.getElementById('usd-exchange-rate')) {
                     document.getElementById('usd-exchange-rate').value = settings.usd_exchange_rate || '89000';
                 }
@@ -4882,23 +4676,22 @@
                 if (document.getElementById('backup-drive-folder-id')) {
                     document.getElementById('backup-drive-folder-id').value = settings.backup_drive_folder_id || '';
                 }
-                document.getElementById('gmail-script-url').value = settings.gmail_script_url || '';
+                if (document.getElementById('gmail-script-url')) {
+                    document.getElementById('gmail-script-url').value = settings.gmail_script_url || '';
+                }
             });
 
             gatewaySettingsForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const settings = {
-                    telegram_api_url: document.getElementById('telegram-api-url').value.trim(),
-                    telegram_api_key: document.getElementById('telegram-api-key').value.trim(),
-                    telegram_admin_phone: document.getElementById('telegram-admin-phone').value.trim(),
                     usd_exchange_rate: document.getElementById('usd-exchange-rate') ? document.getElementById('usd-exchange-rate').value.trim() : '89000',
                     delivery_fee_usd: document.getElementById('delivery-fee-usd') ? document.getElementById('delivery-fee-usd').value.trim() : '0',
                     backup_email: document.getElementById('backup-email') ? document.getElementById('backup-email').value.trim() : '',
                     backup_drive_folder_id: document.getElementById('backup-drive-folder-id') ? document.getElementById('backup-drive-folder-id').value.trim() : '',
-                    gmail_script_url: document.getElementById('gmail-script-url').value.trim()
+                    gmail_script_url: document.getElementById('gmail-script-url') ? document.getElementById('gmail-script-url').value.trim() : ''
                 };
                 await DBService.saveGatewaySettings(settings);
-                showToast('Gateway settings saved successfully!');
+                showToast('Settings saved successfully!');
             });
         }
 
@@ -5153,191 +4946,8 @@
              });
 
             // Test Gateways
-            const btnTestTelegram = document.getElementById('btn-test-telegram');
             const btnTestEmail = document.getElementById('btn-test-email');
             const testResultDiv = document.getElementById('gateway-test-result');
-
-            async function runTelegramSMSTest(to, settings) {
-                let telegramUrl = settings.telegram_api_url;
-                if (!telegramUrl) {
-                    return { ok: false, error: "Telegram API URL is not set" };
-                }
-                if (!telegramUrl.endsWith('/send-telegram')) {
-                    telegramUrl = telegramUrl.endsWith('/') ? telegramUrl + 'send-telegram' : telegramUrl + '/send-telegram';
-                }
-                try {
-                    const headers = {
-                        'Content-Type': 'application/json'
-                    };
-                    if (settings.telegram_api_key) {
-                        headers['X-API-Key'] = settings.telegram_api_key;
-                    }
-                    const response = await fetch(telegramUrl, {
-                        method: 'POST',
-                        headers: headers,
-                        body: JSON.stringify({
-                            to: normalizePhoneNumber(to),
-                            message: "Store: This is a test message to verify your Telegram SMS gateway configuration! 🚀",
-                            is_admin: normalizePhoneNumber(to) === normalizePhoneNumber(settings.telegram_admin_phone)
-                        })
-                    });
-                    const text = await response.text();
-                    let data = null;
-                    try { data = JSON.parse(text); } catch (e) { /* not JSON */ }
-                    return { ok: response.ok, status: response.status, statusText: response.statusText, bodyText: text, bodyJson: data };
-                } catch (e) {
-                    return { ok: false, error: e.message };
-                }
-            }
-
-
-            async function sendCustomSMS(to, body, settings) {
-                let telegramUrl = settings.telegram_api_url;
-                
-                if (telegramUrl) {
-                    if (!telegramUrl.endsWith('/send-telegram')) {
-                        telegramUrl = telegramUrl.endsWith('/') ? telegramUrl + 'send-telegram' : telegramUrl + '/send-telegram';
-                    }
-                    try {
-                        const headers = {
-                            'Content-Type': 'application/json'
-                        };
-                        if (settings.telegram_api_key) {
-                            headers['X-API-Key'] = settings.telegram_api_key;
-                        }
-                        const response = await fetch(telegramUrl, {
-                            method: 'POST',
-                            headers: headers,
-                            body: JSON.stringify({
-                                to: normalizePhoneNumber(to),
-                                message: body,
-                                is_admin: normalizePhoneNumber(to) === normalizePhoneNumber(settings.telegram_admin_phone)
-                            })
-                        });
-                        const data = await response.json();
-                        if (response.ok && (data.success || data.ok)) {
-                            return { ok: true };
-                        } else {
-                            return { ok: false, error: data.error || data.detail || "Failed to send via Telegram API" };
-                        }
-                    } catch (e) {
-                        return { ok: false, error: e.message };
-                    }
-                } else {
-                    return { ok: false, error: "Telegram gateway URL and API key must both be configured." };
-                }
-            }
-            window.sendCustomSMS = sendCustomSMS;
-
-            async function runGmailScriptTest(toEmail, scriptUrl) {
-                const payload = JSON.stringify({
-                    to: toEmail,
-                    subject: 'تفعيل البريد الإلكتروني - Store Test',
-                    body: "أهلاً بك، تم اختبار بوابتك الإلكترونية بنجاح! تطبيق Google Apps Script الخاص بك يعمل 100% مجاناً كبوابة إرسال إيميلات. 🚀"
-                });
-
-                // Try direct first with redirect: 'follow'
-                try {
-                    console.log("Attempting direct send to Google Script URL");
-                    const res = await fetch(scriptUrl, {
-                        method: 'POST',
-                        mode: 'cors',
-                        redirect: 'follow',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: payload
-                    });
-                    const text = await res.text();
-                    let data = {};
-                    try { data = JSON.parse(text); } catch(e) {}
-                    
-                    if (data.status === "success") {
-                        return { ok: true };
-                    } else {
-                        throw new Error(data.message || text || "Failed to send");
-                    }
-                } catch (e) {
-                    console.warn("Direct send failed, trying via CORS proxies:", e.message);
-                    
-                    // Fallback to CORS proxies (only using corsproxy.io as it supports POST)
-                    const proxies = [
-                        `https://corsproxy.io/?url=${encodeURIComponent(scriptUrl)}`,
-                        `https://corsproxy.io/?${encodeURIComponent(scriptUrl)}`
-                    ];
-                    
-                    let lastError = e.message;
-                    for (const proxyUrl of proxies) {
-                        try {
-                            console.log(`Attempting send via proxy: ${proxyUrl}`);
-                            const res = await fetch(proxyUrl, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                                body: payload
-                            });
-                            const text = await res.text();
-                            let data = {};
-                            try { data = JSON.parse(text); } catch(e) {}
-                            
-                            if (data.status === "success") {
-                                return { ok: true };
-                            } else {
-                                lastError = data.message || text || "Failed to send via proxy";
-                            }
-                        } catch (proxyErr) {
-                            lastError = proxyErr.message;
-                        }
-                    }
-                    if (lastError.includes("corsproxy.io") || lastError.includes("pricing") || lastError.includes("Free usage")) {
-                        lastError = "Google Apps Script returned an error. This usually means your script code has a syntax error (like '.setHeader' TypeError) or is not authorized. Please check your script code.";
-                    }
-                    // Add helpful authorization hint to error
-                    return { ok: false, error: `${lastError} (Please ensure you clicked 'Allow' during deployment authorization and set access to 'Anyone')` };
-                }
-            }
-
-
-
-
-
-            if (btnTestTelegram) {
-                btnTestTelegram.addEventListener('click', async () => {
-                    const testPhone = document.getElementById('test-phone').value.trim();
-                    if (!testPhone) {
-                        showToast('Please enter a test phone number first!', 'warning');
-                        return;
-                    }
-                    const settings = {
-                        telegram_api_url: document.getElementById('telegram-api-url').value.trim(),
-                        telegram_api_key: document.getElementById('telegram-api-key').value.trim()
-                    };
-
-                    if (!settings.telegram_api_url) {
-                        showToast('Please configure Telegram API URL first!', 'warning');
-                        return;
-                    }
-
-                    testResultDiv.style.display = 'block';
-                    testResultDiv.style.background = '#f3f4f6';
-                    testResultDiv.style.color = '#1f2937';
-                    testResultDiv.style.border = '1px solid #e5e7eb';
-
-                    testResultDiv.innerHTML = `⏳ Sending test Telegram message to <b>${testPhone}</b> via Telegram FastAPI Gateway...`;
-                    const result = await runTelegramSMSTest(testPhone, settings);
-                    if (result.ok) {
-                        testResultDiv.style.background = '#ecfdf5';
-                        testResultDiv.style.color = '#047857';
-                        testResultDiv.style.border = '1px solid #a7f3d0';
-                        testResultDiv.innerHTML = `✅ <b>Success!</b> HTTP ${result.status} ${result.statusText}<br><pre style="font-family:monospace; font-size:0.8rem; white-space:pre-wrap;">${escapeHtml(result.bodyText)}</pre>`;
-                        showToast('Test Telegram sent (see response)');
-                    } else {
-                        testResultDiv.style.background = '#fff1f2';
-                        testResultDiv.style.color = '#b91c1c';
-                        testResultDiv.style.border = '1px solid #fecdd3';
-                        const body = result.bodyText || result.error || JSON.stringify(result);
-                        testResultDiv.innerHTML = `❌ <b>Failed!</b> ${result.error ? 'Error: ' + result.error : 'HTTP ' + (result.status || '') + ' ' + (result.statusText || '')}<br><pre style="font-family:monospace; font-size:0.8rem; white-space:pre-wrap;">${escapeHtml(body)}</pre>`;
-                        showToast('Failed to send test Telegram', 'error');
-                    }
-                });
-            }
 
 
             if (btnTestEmail) {

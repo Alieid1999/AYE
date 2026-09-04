@@ -14,12 +14,6 @@ services:
       - key: FIREBASE_STORAGE_BUCKET
         value: aye-commercial-4b871.firebasestorage.app
 
-      # Telegram
-      - key: TELEGRAM_BOT_TOKEN
-        sync: false
-      - key: TELEGRAM_CHANNEL_ID
-        sync: false
-
       # Instagram
       - key: INSTAGRAM_USERNAME
         value: ayemarket2

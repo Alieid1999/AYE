@@ -2421,7 +2421,7 @@
 
         function gatewayReadyForOtp(otpMethod, settings) {
             if (otpMethod === 'email') return Boolean(settings?.gmail_script_url);
-            return Boolean(settings?.telegram_api_url);
+            return false;
         }
 
         function formatPrice(amount, currency) {
@@ -2663,46 +2663,7 @@
                 mockOtpIndicator.style.border = '1px solid #bae6fd';
                 showDevOtpNotification('sms', 'Store', generatedOTP, lang);
                 showToast(lang === 'ar' ? 'تم إرسال رمز التحقق (تطوير)!' : 'Verification code sent (dev)!');
-            };
-
-            let msgText = '';
-            if (lang === 'ar') {
-                msgText = `متجر Store [لا للرد/No-Reply]: رمز التحقق الخاص بك هو 🔑 ${generatedOTP}. صالح لمدة 5 دقائق.\n\n(هذه رسالة تلقائية، يرجى عدم الرد على هذه الرسالة.)`;
-            } else {
-                msgText = `Store [No-Reply]: Your verification code is 🔑 ${generatedOTP}. Valid for 5 minutes.\n\n(This is an automated message, please do not reply to this message.)`;
-            }
-
-            const telegram_api_url = gatewaySettings?.telegram_api_url;
-            if (telegram_api_url) {
-                mockOtpIndicator.innerHTML = lang === 'ar'
-                    ? `💬 جاري إرسال رمز التحقق...`
-                    : `💬 Sending verification code...`;
-                mockOtpIndicator.style.background = '#ecfdf5';
-                mockOtpIndicator.style.color = '#047857';
-                mockOtpIndicator.style.border = '1px solid #a7f3d0';
-
-                sendTelegramSMS(pendingAuthData.phone, msgText, gatewaySettings).then(result => {
-                    if (result.ok) {
-                        mockOtpIndicator.innerHTML = lang === 'ar'
-                            ? `<i class="fa-solid fa-circle-check" style="color:#10b981"></i> تم إرسال الرمز بنجاح إلى الرقم <b>${pendingAuthData.phone}</b>!`
-                            : `<i class="fa-solid fa-circle-check" style="color:#10b981"></i> Verification code sent successfully to <b>${pendingAuthData.phone}</b>!`;
-                        mockOtpIndicator.style.background = '#ecfdf5';
-                        mockOtpIndicator.style.color = '#047857';
-                        mockOtpIndicator.style.border = '1px solid #a7f3d0';
-                        showToast(lang === 'ar' ? 'تم إرسال رمز التحقق!' : 'Verification code sent!');
-                    } else {
-                        console.warn("SMS sending failed:", result.error);
-                        triggerSmsSimulator(`⚠️ API error: ${result.error}. Simulated delivery instead.`);
-                    }
-                }).catch(err => {
-                    console.error(err);
-                    triggerSmsSimulator(`⚠️ Connection error: ${err.message}. Simulated delivery instead.`);
-                });
-            } else {
-                triggerSmsSimulator(lang === 'ar'
-                    ? "⚠️ لم يتم تكوين إعدادات البوابة في لوحة الإدارة بعد. تم تفعيل المحاكاة تلقائياً."
-                    : "⚠️ Gateway settings are not configured in the Admin Dashboard yet. Simulation enabled.");
-            }
+            triggerSmsSimulator();
         }
 
         let activeSignupMode = 'phone';
@@ -2838,128 +2799,8 @@
         }
 
         // ----------------------------------------
-        // SMS AND EMAIL GATEWAYS DELIVERY
+        // EMAIL GATEWAY DELIVERY
         // ----------------------------------------
-
-        async function sendTelegramSMS(to, body, settings) {
-            let telegramUrl = settings.telegram_api_url;
-            if (!telegramUrl) {
-                return { ok: false, error: "Telegram API URL is not set" };
-            }
-            if (!telegramUrl.endsWith('/send-telegram')) {
-                telegramUrl = telegramUrl.endsWith('/') ? telegramUrl + 'send-telegram' : telegramUrl + '/send-telegram';
-            }
-            try {
-                const headers = {
-                    'Content-Type': 'application/json'
-                };
-                if (settings.telegram_api_key) {
-                    headers['X-API-Key'] = settings.telegram_api_key;
-                }
-                const response = await fetch(telegramUrl, {
-                    method: 'POST',
-                    headers: headers,
-                    body: JSON.stringify({
-                        to: to,
-                        message: body
-                    })
-                });
-                const data = await response.json();
-                if (response.ok && (data.success || data.ok)) {
-                    return { ok: true };
-                } else {
-                    return { ok: false, error: data.error || data.detail || "Failed to send via Telegram API" };
-                }
-            } catch (e) {
-                return { ok: false, error: e.message };
-            }
-        }
-
-        async function notifyAdminOfNewOrder(orderData) {
-            let telegramUrl = gatewaySettings?.telegram_api_url;
-            if (!telegramUrl) return;
-
-            if (!telegramUrl.endsWith('/send-telegram')) {
-                telegramUrl = telegramUrl.endsWith('/') ? telegramUrl + 'send-telegram' : telegramUrl + '/send-telegram';
-            }
-
-            const lang = localStorage.getItem('store_lang') || 'en';
-            const usdItems = orderData.items.filter(item => item.currency !== 'LBP');
-            const lbpItems = orderData.items.filter(item => item.currency === 'LBP');
-
-            let totalUSD = 0;
-            let totalLBP = 0;
-            usdItems.forEach(item => totalUSD += Number(item.price) * item.quantity);
-            lbpItems.forEach(item => totalLBP += Number(item.price) * item.quantity);
-
-            const exchangeRate = Number(gatewaySettings?.usd_exchange_rate) || 89000;
-            const deliveryFeeUSD = Number(gatewaySettings?.delivery_fee_usd) || 0;
-            let subtotalUSD = totalUSD + (totalLBP > 0 ? (totalLBP / exchangeRate) : 0);
-            let grandTotalUSD = subtotalUSD + deliveryFeeUSD;
-
-            let msg = '';
-            if (lang === 'ar') {
-                msg = `*🛒 طلب جديد في المتجر!*\n\n` +
-                      (orderData.id ? `*رقم الطلب:* \`${orderData.id}\`\n` : '') +
-                      `*اسم الزبون:* ${orderData.customer.name}\n` +
-                      (orderData.customer.phone ? `*رقم الهاتف:* ${orderData.customer.phone}\n` : '') +
-                      `*📍 عنوان الدليفري:* ${orderData.customer.address || 'غير محدد'}\n\n`;
-
-                if (orderData.items.length > 0) {
-                    msg += `*📦 المنتجات المطلوبة:*\n`;
-                    orderData.items.forEach(item => {
-                        const priceFormatted = formatPrice(item.price, item.currency);
-                        const subtotalFormatted = formatPrice(item.price * item.quantity, item.currency);
-                        msg += `• *${item.title}* (x${item.quantity}) - ${priceFormatted} (المجموع: ${subtotalFormatted})\n`;
-                    });
-                    msg += `\n`;
-                }
-
-                if (totalUSD > 0) msg += `*مجموع المنتجات بالدولار:* $${totalUSD.toFixed(2)}\n`;
-                if (totalLBP > 0) msg += `*مجموع المنتجات باللبناني:* ${formatPrice(totalLBP, 'LBP')}\n`;
-                if (deliveryFeeUSD > 0) msg += `*🚚 تكلفة الدليفري:* $${deliveryFeeUSD.toFixed(2)}\n`;
-                msg += `*💵 الإجمالي النهائي مع الدليفري:* $${grandTotalUSD.toFixed(2)} (سعر الصرف: 1$ = ${exchangeRate.toLocaleString()} LBP)\n`;
-            } else {
-                msg = `*🛒 New Order Received!*\n\n` +
-                      (orderData.id ? `*Order ID:* \`${orderData.id}\`\n` : '') +
-                      `*Customer Name:* ${orderData.customer.name}\n` +
-                      (orderData.customer.phone ? `*Phone:* ${orderData.customer.phone}\n` : '') +
-                      `*📍 Delivery Address:* ${orderData.customer.address || 'N/A'}\n\n`;
-
-                if (orderData.items.length > 0) {
-                    msg += `*📦 Items:*\n`;
-                    orderData.items.forEach(item => {
-                        const priceFormatted = formatPrice(item.price, item.currency);
-                        const subtotalFormatted = formatPrice(item.price * item.quantity, item.currency);
-                        msg += `• *${item.title}* (x${item.quantity}) - ${priceFormatted} (Subtotal: ${subtotalFormatted})\n`;
-                    });
-                    msg += `\n`;
-                }
-
-                if (totalUSD > 0) msg += `*Subtotal USD:* $${totalUSD.toFixed(2)}\n`;
-                if (totalLBP > 0) msg += `*Subtotal LBP:* ${formatPrice(totalLBP, 'LBP')}\n`;
-                if (deliveryFeeUSD > 0) msg += `*🚚 Delivery Fee:* $${deliveryFeeUSD.toFixed(2)}\n`;
-                msg += `*💵 Grand Total with Delivery:* $${grandTotalUSD.toFixed(2)} (Rate: 1$ = ${exchangeRate.toLocaleString()} LBP)\n`;
-            }
-
-            try {
-                const headers = { 'Content-Type': 'application/json' };
-                if (gatewaySettings.telegram_api_key) {
-                    headers['X-API-Key'] = gatewaySettings.telegram_api_key;
-                }
-                await fetch(telegramUrl, {
-                    method: 'POST',
-                    headers: headers,
-                    body: JSON.stringify({
-                        message: msg,
-                        is_admin: true,
-                        order_id: orderData.id
-                    })
-                });
-            } catch (e) {
-                console.error("Failed to notify admin of new order via Telegram:", e);
-            }
-        }
 
         async function sendGmailScriptEmail(toEmail, toName, otpCode, settings) {
             const subject = '[No-Reply] رمز التحقق لطلبيتك - Track Order';
@@ -3630,16 +3471,10 @@
 
              _fallbackGatewaysSubscribe(callback) {
                  const getAndCallback = () => {
-                     const telegram_api_url  = localStorage.getItem('store_telegram_api_url') || '';
                      const gmail_script_url  = localStorage.getItem('store_gmail_script_url') || '';
-                     const telegram_api_key  = localStorage.getItem('store_telegram_api_key') || '';
-                     const telegram_admin_phone = localStorage.getItem('store_telegram_admin_phone') || '';
                      const usd_exchange_rate = localStorage.getItem('store_usd_exchange_rate') || '89000';
                      callback({
-                          telegram_api_url,
                           gmail_script_url,
-                          telegram_api_key,
-                          telegram_admin_phone,
                           usd_exchange_rate
                       });
                  };
@@ -3891,7 +3726,7 @@
 
 
 
-        let gatewaySettings = { telegram_api_url: '', gmail_script_url: '', telegram_admin_phone: '', callmebot_api_key: '' };
+        let gatewaySettings = { gmail_script_url: '', usd_exchange_rate: '89000' };
 
         DBService.subscribeToGatewaySettings((settings) => {
             gatewaySettings = settings;
@@ -4523,7 +4358,6 @@
                     }
                 }
 
-                notifyAdminOfNewOrder(orderData); // Send order details directly to Telegram
                 cart = [];
                 saveCart();
                 checkoutForm.reset();

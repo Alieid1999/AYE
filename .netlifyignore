@@ -1,4 +1,3 @@
-telegram_gateway.py
 requirements.txt
 render.yaml
 firestore.rules
