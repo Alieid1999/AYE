@@ -49,13 +49,6 @@ if sys.platform.startswith('win'):
         sys.stderr.reconfigure(encoding='utf-8')
     except AttributeError:
         pass
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
 
 # ==========================================
 # ⚙️ TELEGRAM CREDENTIALS
@@ -64,7 +57,6 @@ API_ID_ENV = os.environ.get('TELEGRAM_API_ID')
 API_HASH_ENV = os.environ.get('TELEGRAM_API_HASH')
 SESSION_STRING = os.environ.get('TELEGRAM_SESSION')
 GATEWAY_API_KEY = os.environ.get('TELEGRAM_GATEWAY_API_KEY', '')
-WHATSAPP_GATEWAY_URL = os.environ.get('WHATSAPP_GATEWAY_URL', '')  # e.g. https://your-whatsapp-bot.onrender.com
 
 API_ID = int(API_ID_ENV) if API_ID_ENV else 32658899          # <-- Replace with your api_id (Integer)
 API_HASH = API_HASH_ENV if API_HASH_ENV else '2ed2353e5f72146c5e053cd4730e442b' # <-- Replace with your api_hash (String)
@@ -393,7 +385,7 @@ def check_for_new_orders():
                     if o.get("status") == "Pending":
                         cust = o.get("customer", {})
                         total = o.get("totalAmount", 0)
-                        cust_phone = cust.get('phone') or 'Auto-linking via WhatsApp...'
+                        cust_phone = cust.get('phone') or 'N/A'
                         
                         notify_msg = (
                             f"🔔 *New Order Received! (# {order_id})*\n"
@@ -416,11 +408,6 @@ def get_main_keyboard():
     btn_history = types.KeyboardButton("📜 View History")
     markup.add(btn_active, btn_history)
     return markup
-
-def notify_customer_whatsapp(phone: str, order_id: str, new_status: str, customer_name: str, lang: str = None):
-    """WhatsApp notifications disabled."""
-    print("[WA Notify] WhatsApp notifications are disabled.")
-    return
 
 
 
@@ -541,7 +528,7 @@ def setup_bot():
             price = item.get("price", 0)
             items_text += f" - {title} x{qty} (${price:.2f})\n"
 
-        cust_phone = cust.get('phone') or 'Auto-linking via WhatsApp...'
+        cust_phone = cust.get('phone') or 'N/A'
         details_msg = (
             f"📦 *Order Details #{order['id']}*\n"
             f"━━━━━━━━━━━━━━━━━━━\n"
@@ -584,26 +571,6 @@ def setup_bot():
         
         if success:
             bot.answer_callback_query(call.id, f"✅ Order status updated to {new_status}!", show_alert=True)
-
-            # Notify the customer via WhatsApp
-            print(f"[WA Notify] Status updated to {new_status} for order {order_id} — fetching order...")
-            try:
-                order = db_client.get_order_by_id(order_id)
-                if order:
-                    customer_obj = order.get("customer", {})
-                    customer_phone = customer_obj.get("phone", "")
-                    customer_name = customer_obj.get("name", "")
-                    customer_lang = customer_obj.get("lang") or customer_obj.get("language") or order.get("lang") or order.get("language")
-                    print(f"[WA Notify] Customer: {customer_name}, Phone: '{customer_phone}', WA_URL: '{WHATSAPP_GATEWAY_URL}'")
-                    if customer_phone:
-                        notify_customer_whatsapp(customer_phone, order_id, new_status, customer_name, lang=customer_lang)
-                    else:
-                        print("[WA Notify] No phone number found on order — skipping.")
-                else:
-                    print(f"[WA Notify] Order {order_id} not found in DB.")
-            except Exception as notify_err:
-                print(f"[WA Notify] Error fetching order for notification: {notify_err}")
-
             call.data = f"view_{order_id}"
             view_order_details(call)
         else:
@@ -698,11 +665,6 @@ def verify_api_key(x_api_key: Optional[str]) -> None:
         return
     if not x_api_key or x_api_key != GATEWAY_API_KEY:
         raise HTTPException(status_code=401, detail="Invalid or missing API key")
-
-def keep_alive_ping_loop():
-    print("[Keep-Alive] Background WhatsApp keep-alive ping thread disabled.")
-    return
-
 
 def daily_backup_scheduler():
     print("[Backup Scheduler] Starting background backup check thread...")
@@ -822,11 +784,6 @@ async def startup_event():
         backup_thread = threading.Thread(target=daily_backup_scheduler, daemon=True)
         backup_thread.start()
         print("💾 Automatic daily backup scheduler thread started.")
-        
-        # Start keep-alive ping thread
-        keep_alive_thread = threading.Thread(target=keep_alive_ping_loop, daemon=True)
-        keep_alive_thread.start()
-        print("⚡ Keep-alive mutual ping scheduler thread started.")
         
         # Start background order checking thread (disabled to rely entirely on direct storefront API notifications)
         # notifier_thread = threading.Thread(target=check_for_new_orders, daemon=True)
@@ -997,8 +954,6 @@ class SocialPostRequest(BaseModel):
     tiktok_enabled: bool
     tiktok_access_token: Optional[str] = None
     webhook_url: Optional[str] = None
-    whatsapp_enabled: bool
-    whatsapp_channel_name: Optional[str] = None
 
 def make_multipart_request(url, fields, files):
     boundary = b'----WebKitFormBoundary7MA4YWxkTrZu0gW'
@@ -1034,93 +989,6 @@ def make_json_request(url, payload):
     req.add_header('Content-Type', 'application/json')
     with urllib.request.urlopen(req) as response:
         return json.loads(response.read().decode('utf-8'))
-
-
-
-# Selenium Profile Directory in the project folder
-PROFILE_DIR = os.path.join(os.getcwd(), "whatsapp_selenium_profile")
-
-def get_whatsapp_driver():
-    options = webdriver.ChromeOptions()
-    options.add_argument(f"user-data-dir={PROFILE_DIR}")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-gpu")
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=options)
-    return driver
-
-def run_whatsapp_post_bg(channel_name: str, text: str, image_str: str):
-    driver = None
-    temp_image_path = None
-    try:
-        print(f"[WhatsApp Automation] Initializing browser for channel: {channel_name}")
-        driver = get_whatsapp_driver()
-        driver.get("https://web.whatsapp.com")
-        
-        wait = WebDriverWait(driver, 60)
-        
-        search_box = wait.until(EC.presence_of_element_located((
-            By.XPATH, '//div[@contenteditable="true"][@data-tab="3"]'
-        )))
-        
-        search_box.clear()
-        search_box.send_keys(channel_name)
-        time.sleep(3)
-        search_box.send_keys(Keys.ENTER)
-        time.sleep(3)
-        
-        if image_str and image_str.startswith("data:image"):
-            header, encoded = image_str.split(",", 1)
-            mime_type = header.split(";")[0].split(":")[1]
-            ext = mime_type.split("/")[1]
-            image_bytes = base64.b64decode(encoded)
-            
-            with tempfile.NamedTemporaryFile(delete=False, suffix=f".{ext}") as temp_file:
-                temp_file.write(image_bytes)
-                temp_image_path = temp_file.name
-            
-            attach_btn = wait.until(EC.element_to_be_clickable((
-                By.XPATH, '//div[@title="Attach"] | //span[@data-icon="plus"]'
-            )))
-            attach_btn.click()
-            time.sleep(1.5)
-            
-            file_input = driver.find_element(By.XPATH, '//input[@type="file"]')
-            file_input.send_keys(temp_image_path)
-            time.sleep(3)
-            
-            caption_box = wait.until(EC.presence_of_element_located((
-                By.XPATH, '//div[@contenteditable="true"][@data-tab="10"] | //div[@contenteditable="true"][@aria-placeholder="Add a caption"]'
-            )))
-            caption_box.send_keys(text)
-            time.sleep(1.5)
-            
-            send_media_btn = wait.until(EC.element_to_be_clickable((
-                By.XPATH, '//span[@data-icon="send"] | //div[@aria-label="Send"]'
-            )))
-            send_media_btn.click()
-            time.sleep(4)
-            print("[WhatsApp Automation] Successfully posted to WhatsApp Channel with image!")
-        else:
-            message_box = wait.until(EC.presence_of_element_located((
-                By.XPATH, '//div[@contenteditable="true"][@data-tab="10"] | //div[@aria-placeholder="Type a message"]'
-            )))
-            message_box.send_keys(text)
-            time.sleep(1.5)
-            message_box.send_keys(Keys.ENTER)
-            time.sleep(3)
-            print("[WhatsApp Automation] Successfully posted text to WhatsApp Channel!")
-    except Exception as e:
-        print(f"[WhatsApp Automation] Failed to post message: {e}")
-    finally:
-        if driver:
-            driver.quit()
-        if temp_image_path and os.path.exists(temp_image_path):
-            try:
-                os.remove(temp_image_path)
-            except Exception:
-                pass
 
 @app.post("/post-social")
 async def post_to_social_media(request: SocialPostRequest, background_tasks: BackgroundTasks):
@@ -1220,16 +1088,6 @@ async def post_to_social_media(request: SocialPostRequest, background_tasks: Bac
                 results["instagram"] = {"success": False, "error": "Instagram API does not support local base64 images directly. Please use automation webhook for full support."}
         except Exception as e:
             results["instagram"] = {"success": False, "error": str(e)}
-
-    # 4. WhatsApp Channel automation (via Selenium in background)
-    if request.whatsapp_enabled and request.whatsapp_channel_name:
-        background_tasks.add_task(
-            run_whatsapp_post_bg, 
-            request.whatsapp_channel_name, 
-            caption, 
-            request.image
-        )
-        results["whatsapp"] = {"success": True, "status": "queued_in_background"}
 
     return {"status": "completed", "results": results}
 

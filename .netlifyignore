@@ -1,5 +1,3 @@
-whatsapp_bot/
-whatsapp_gateway/
 telegram_gateway.py
 requirements.txt
 render.yaml

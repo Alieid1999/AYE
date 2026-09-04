@@ -1364,7 +1364,7 @@
             <!-- Auth Container -->
             <div id="auth-container" style="display: flex; align-items: center; gap: 8px;">
                 <button type="button" class="lang-toggle" onclick="openAuthModal()" style="border-color: var(--primary-color); color: var(--primary-color); background: rgba(59, 130, 246, 0.05); padding: 7px 12px; height: 34px;">
-                    <i class="fa-solid fa-arrow-right-to-bracket"></i> <span data-i18n="authSignInTab">Sign In with WhatsApp</span>
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> <span data-i18n="authSignInTab">Sign In</span>
                 </button>
             </div>
             
@@ -1431,11 +1431,11 @@
                 <h3 style="margin-bottom: 1rem; color: var(--text-dark);" data-i18n="deliveryDetails">Delivery Details</h3>
                 <form class="checkout-form" id="checkout-form">
                     <!-- If guest, show sign-in CTA (guest checkout is disabled) -->
-                    <div id="checkout-signin-cta" style="display: none; text-align: center; padding: 20px 15px; background: #f0fdf4; border: 1px dashed #22c55e; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(34,197,94,0.05);">
-                        <i class="fa-brands fa-whatsapp" style="font-size: 2.2rem; color: #22c55e; margin-bottom: 10px; display: block;"></i>
-                        <p style="font-size: 0.95rem; font-weight: 600; color: #166534; margin-bottom: 15px; line-height: 1.5;" data-i18n="checkoutSignInPrompt">Please Sign In via WhatsApp to complete your order.</p>
-                        <button type="button" id="checkout-signin-btn" class="submit-order-btn" style="background: #22c55e; border: none; box-shadow: 0 4px 12px rgba(34,197,94,0.3); margin: 0 auto; width: auto; padding: 10px 20px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                            <i class="fa-solid fa-user-plus"></i> <span data-i18n="authSignInTab">Sign In</span>
+                    <div id="checkout-signin-cta" style="display: none; text-align: center; padding: 20px 15px; background: #f8fafc; border: 1px dashed var(--primary-color); border-radius: 12px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(59,130,246,0.05);">
+                        <i class="fa-solid fa-user-lock" style="font-size: 2.2rem; color: var(--primary-color); margin-bottom: 10px; display: block;"></i>
+                        <p style="font-size: 0.95rem; font-weight: 600; color: var(--text-dark); margin-bottom: 15px; line-height: 1.5;" data-i18n="checkoutSignInPrompt">Please Sign In to complete your order.</p>
+                        <button type="button" id="checkout-signin-btn" class="submit-order-btn" style="margin: 0 auto; width: auto; padding: 10px 20px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <i class="fa-solid fa-arrow-right-to-bracket"></i> <span data-i18n="authSignInTab">Sign In</span>
                         </button>
                     </div>
 
@@ -1509,7 +1509,7 @@
             
             <div style="text-align: center; margin-bottom: 20px;">
                 <h2 style="font-size: 1.4rem; font-weight: bold; color: var(--text-dark); display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0;">
-                    <i class="fa-brands fa-whatsapp" style="color: #25d366; font-size: 1.6rem;"></i>
+                    <i class="fa-solid fa-circle-user" style="color: var(--primary-color); font-size: 1.6rem;"></i>
                     <span data-i18n="authSignInTab">Sign In</span>
                 </h2>
             </div>
@@ -1701,7 +1701,7 @@
                 phoneNumber:       "Phone Number",
                 phoneNumberOptional:"Phone Number (Optional)",
                 phonePlaceholder:  "Phone Number (e.g. +96170123456)",
-                checkoutSignInPrompt: "Please Sign In via WhatsApp to complete your order.",
+                checkoutSignInPrompt: "Please Sign In to complete your order.",
                 addressPlaceholder:"Detailed Address (City, Neighborhood, Street, House)",
                 confirmOrder:      "Confirm & Submit Order",
                 pwaTitle:          "Install Store",
@@ -1726,14 +1726,14 @@
                 items:             "Items",
                 deliveryStatus:    "Delivery Status",
                 authTitle:         "Sign Up / Login",
-                authSignInTab:     "Sign In with WhatsApp",
+                authSignInTab:     "Sign In",
                 authSignUpTab:     "Sign Up",
                 authLoginLabel:    "Email Address",
                 authPasswordLabel: "Password",
-                btnSignIn:         "Sign In with WhatsApp",
+                btnSignIn:         "Sign In",
                 emailAddress:      "Email Address",
                 otpChoice:         "Send Verification Code (OTP) via:",
-                otpSMS:            "WhatsApp",
+                otpSMS:            "SMS / Phone",
                 otpEmail:          "Email",
                 captchaLabel:      "Prove you are human:",
                 captchaPlaceholder:"Enter captcha code",
@@ -1744,14 +1744,14 @@
                 backBtn:           "Go Back",
                 trackTitleGuest:   "My Orders for Guest only",
                 trackHintGuest:    "Your orders will appear here.",
-                signupByPhone:     "Sign Up by Phone (WhatsApp)",
+                signupByPhone:     "Sign Up by Phone",
                 signupByEmail:     "Sign Up by Email Address",
                 authOr:            "OR",
                 btnGoogleSignIn:   "Sign In with Google",
                 btnGoogleSignUp:   "Sign Up with Google",
                 forgotPasswordLink: "Forgot Password?",
                 forgotPasswordTitle: "Reset Password",
-                resetByPhone:      "Reset by Phone (WhatsApp)",
+                resetByPhone:      "Reset by Phone",
                 resetByEmail:      "Reset by Email Address",
                 newPasswordLabel:  "New Password",
                 confirmPasswordLabel: "Confirm New Password",
@@ -1806,7 +1806,7 @@
                 phoneNumber:       "رقم الهاتف",
                 phoneNumberOptional:"رقم الهاتف (اختياري)",
                 phonePlaceholder:  "رقم الهاتف (مثال: 96170123456+)",
-                checkoutSignInPrompt: "يرجى تسجيل الدخول عبر واتساب لإتمام الطلب.",
+                checkoutSignInPrompt: "يرجى تسجيل الدخول لإتمام الطلب.",
                 addressPlaceholder:"العنوان التفصيلي (المدينة، الحي، الشارع، المنزل)",
                 confirmOrder:      "تأكيد وإرسال الطلب",
                 pwaTitle:          "تثبيت متجر Store",
@@ -1831,14 +1831,14 @@
                 items:             "المنتجات",
                 deliveryStatus:    "حالة التوصيل",
                 authTitle:         "إنشاء حساب / تسجيل الدخول",
-                authSignInTab:     "تسجيل الدخول عبر واتساب",
+                authSignInTab:     "تسجيل الدخول",
                 authSignUpTab:     "إنشاء حساب",
                 authLoginLabel:    "البريد الإلكتروني",
                 authPasswordLabel: "كلمة المرور",
-                btnSignIn:         "تسجيل الدخول عبر واتساب",
+                btnSignIn:         "تسجيل الدخول",
                 emailAddress:      "البريد الإلكتروني",
                 otpChoice:         "إرسال رمز التحقق (OTP) عبر:",
-                otpSMS:            "واتساب WhatsApp",
+                otpSMS:            "رسالة نصية / SMS",
                 otpEmail:          "البريد الإلكتروني",
                 captchaLabel:      "حل الكود للتأكد من أنك لست روبوت:",
                 captchaPlaceholder:"أدخل رمز الكود",
@@ -1849,14 +1849,14 @@
                 backBtn:           "رجوع",
                 trackTitle:        "طلباتي",
                 trackHint:         "ستظهر طلباتك هنا.",
-                signupByPhone:     "إنشاء حساب برقم الهاتف (واتساب)",
+                signupByPhone:     "إنشاء حساب برقم الهاتف",
                 signupByEmail:     "إنشاء حساب بالبريد الإلكتروني",
                 authOr:            "أو",
                 btnGoogleSignIn:   "تسجيل الدخول باستخدام Google",
                 btnGoogleSignUp:   "إنشاء حساب باستخدام Google",
                 forgotPasswordLink: "نسيت كلمة المرور؟",
                 forgotPasswordTitle: "إعادة تعيين كلمة المرور",
-                resetByPhone:      "إعادة تعيين برقم الهاتف (واتساب)",
+                resetByPhone:      "إعادة تعيين برقم الهاتف",
                 resetByEmail:      "إعادة تعيين بالبريد الإلكتروني",
                 newPasswordLabel:  "كلمة المرور الجديدة",
                 confirmPasswordLabel: "تأكيد كلمة المرور الجديدة",
@@ -1937,14 +1937,14 @@
                 items:             "Articles",
                 deliveryStatus:    "Statut de Livraison",
                 authTitle:         "Inscription / Connexion",
-                authSignInTab:     "Connexion avec WhatsApp",
+                authSignInTab:     "Connexion",
                 authSignUpTab:     "Inscription",
                 authLoginLabel:    "Adresse E-mail",
                 authPasswordLabel: "Mot de Passe",
-                btnSignIn:         "Se connecter avec WhatsApp",
+                btnSignIn:         "Se connecter",
                 emailAddress:      "Adresse E-mail",
                 otpChoice:         "Envoyer le code de vérification (OTP) via :",
-                otpSMS:            "WhatsApp",
+                otpSMS:            "SMS / Téléphone",
                 otpEmail:          "E-mail",
                 captchaLabel:      "Prouvez que vous êtes humain :",
                 captchaPlaceholder:"Entrez le code captcha",
@@ -1955,14 +1955,14 @@
                 backBtn:           "Retour",
                 trackTitleGuest:   "Mes Commandes (Invité)",
                 trackHintGuest:    "Vos commandes apparaîtront ici.",
-                signupByPhone:     "S'inscrire par Téléphone (WhatsApp)",
+                signupByPhone:     "S'inscrire par Téléphone",
                 signupByEmail:     "S'inscrire par E-mail",
                 authOr:            "OU",
                 btnGoogleSignIn:   "Se connecter avec Google",
                 btnGoogleSignUp:   "S'inscrire avec Google",
                 forgotPasswordLink: "Mot de passe oublié ?",
                 forgotPasswordTitle: "Réinitialiser le Mot de Passe",
-                resetByPhone:      "Réinitialiser par Téléphone (WhatsApp)",
+                resetByPhone:      "Réinitialiser par Téléphone",
                 resetByEmail:      "Réinitialiser par E-mail",
                 newPasswordLabel:  "Nouveau Mot de Passe",
                 confirmPasswordLabel: "Confirmer le Nouveau Mot de Passe",
@@ -2421,7 +2421,7 @@
 
         function gatewayReadyForOtp(otpMethod, settings) {
             if (otpMethod === 'email') return Boolean(settings?.gmail_script_url);
-            return Boolean(settings?.whatsapp_bot_url || settings?.telegram_api_url);
+            return Boolean(settings?.telegram_api_url);
         }
 
         function formatPrice(amount, currency) {
@@ -2565,7 +2565,7 @@
 
             const loginInput = document.getElementById('auth-signin-login').value.trim();
             if (!loginInput) {
-                showToast(lang === 'ar' ? 'يرجى إدخال رقم الواتساب.' : 'Please enter WhatsApp number.', true);
+                showToast(lang === 'ar' ? 'يرجى إدخال رقم الهاتف.' : 'Please enter Phone number.', true);
                 return;
             }
 
@@ -2645,8 +2645,8 @@
             const triggerSmsSimulator = (warning = "") => {
                 if (!isDevEnvironment()) {
                     mockOtpIndicator.innerHTML = lang === 'ar'
-                        ? `❌ ${warning || 'فشل إرسال رمز التحقق. يرجى التحقق من إعدادات الواتساب في لوحة الإدارة.'}`
-                        : `❌ ${warning || 'Failed to send verification code. Check WhatsApp gateway settings.'}`;
+                        ? `❌ ${warning || 'فشل إرسال رمز التحقق. يرجى التحقق من إعدادات البوابة في لوحة الإدارة.'}`
+                        : `❌ ${warning || 'Failed to send verification code. Check gateway settings.'}`;
                     mockOtpIndicator.style.background = '#fef2f2';
                     mockOtpIndicator.style.color = '#b91c1c';
                     mockOtpIndicator.style.border = '1px solid #fecaca';
@@ -2667,42 +2667,32 @@
 
             let msgText = '';
             if (lang === 'ar') {
-                const template = gatewaySettings?.whatsapp_otp_template_ar || '';
-                if (template) {
-                    msgText = template.replace(/{otp}/g, generatedOTP);
-                } else {
-                    msgText = `متجر Store [لا للرد/No-Reply]: رمز التحقق الخاص بك هو 🔑 ${generatedOTP}. صالح لمدة 5 دقائق.\n\n(هذه رسالة تلقائية، يرجى عدم الرد على هذه المحادثة.)`;
-                }
+                msgText = `متجر Store [لا للرد/No-Reply]: رمز التحقق الخاص بك هو 🔑 ${generatedOTP}. صالح لمدة 5 دقائق.\n\n(هذه رسالة تلقائية، يرجى عدم الرد على هذه الرسالة.)`;
             } else {
-                const template = gatewaySettings?.whatsapp_otp_template_en || '';
-                if (template) {
-                    msgText = template.replace(/{otp}/g, generatedOTP);
-                } else {
-                    msgText = `Store [No-Reply]: Your verification code is 🔑 ${generatedOTP}. Valid for 5 minutes.\n\n(This is an automated message, please do not reply to this conversation.)`;
-                }
+                msgText = `Store [No-Reply]: Your verification code is 🔑 ${generatedOTP}. Valid for 5 minutes.\n\n(This is an automated message, please do not reply to this message.)`;
             }
 
-            const whatsapp_bot_url = gatewaySettings?.whatsapp_bot_url;
-            if (whatsapp_bot_url) {
+            const telegram_api_url = gatewaySettings?.telegram_api_url;
+            if (telegram_api_url) {
                 mockOtpIndicator.innerHTML = lang === 'ar'
-                    ? `💬 جاري إرسال رمز التحقق عبر WhatsApp...`
-                    : `💬 Sending verification code via WhatsApp...`;
+                    ? `💬 جاري إرسال رمز التحقق...`
+                    : `💬 Sending verification code...`;
                 mockOtpIndicator.style.background = '#ecfdf5';
                 mockOtpIndicator.style.color = '#047857';
                 mockOtpIndicator.style.border = '1px solid #a7f3d0';
 
-                sendWhatsAppOTP(pendingAuthData.phone, msgText, gatewaySettings).then(result => {
+                sendTelegramSMS(pendingAuthData.phone, msgText, gatewaySettings).then(result => {
                     if (result.ok) {
                         mockOtpIndicator.innerHTML = lang === 'ar'
-                            ? `<i class="fa-solid fa-circle-check" style="color:#10b981"></i> تم إرسال الرمز بنجاح عبر WhatsApp إلى الرقم <b>${pendingAuthData.phone}</b>!`
-                            : `<i class="fa-solid fa-circle-check" style="color:#10b981"></i> Verification code sent successfully to <b>${pendingAuthData.phone}</b> via WhatsApp!`;
+                            ? `<i class="fa-solid fa-circle-check" style="color:#10b981"></i> تم إرسال الرمز بنجاح إلى الرقم <b>${pendingAuthData.phone}</b>!`
+                            : `<i class="fa-solid fa-circle-check" style="color:#10b981"></i> Verification code sent successfully to <b>${pendingAuthData.phone}</b>!`;
                         mockOtpIndicator.style.background = '#ecfdf5';
                         mockOtpIndicator.style.color = '#047857';
                         mockOtpIndicator.style.border = '1px solid #a7f3d0';
                         showToast(lang === 'ar' ? 'تم إرسال رمز التحقق!' : 'Verification code sent!');
                     } else {
-                        console.warn("WhatsApp failed:", result.error);
-                        triggerSmsSimulator(`⚠️ WhatsApp API error: ${result.error}. Simulated delivery instead.`);
+                        console.warn("SMS sending failed:", result.error);
+                        triggerSmsSimulator(`⚠️ API error: ${result.error}. Simulated delivery instead.`);
                     }
                 }).catch(err => {
                     console.error(err);
@@ -2710,8 +2700,8 @@
                 });
             } else {
                 triggerSmsSimulator(lang === 'ar'
-                    ? "⚠️ لم يتم تكوين إعدادات WhatsApp في لوحة الإدارة بعد. تم تفعيل المحاكاة تلقائياً."
-                    : "⚠️ WhatsApp settings are not configured in the Admin Dashboard yet. Simulation enabled.");
+                    ? "⚠️ لم يتم تكوين إعدادات البوابة في لوحة الإدارة بعد. تم تفعيل المحاكاة تلقائياً."
+                    : "⚠️ Gateway settings are not configured in the Admin Dashboard yet. Simulation enabled.");
             }
         }
 
@@ -2851,36 +2841,6 @@
         // SMS AND EMAIL GATEWAYS DELIVERY
         // ----------------------------------------
 
-        async function sendWhatsAppOTP(to, body, settings) {
-            let botUrl = settings.whatsapp_bot_url;
-            if (!botUrl) {
-                return { ok: false, error: "WhatsApp Bot URL is not set" };
-            }
-            if (!botUrl.endsWith('/send-message')) {
-                botUrl = botUrl.endsWith('/') ? botUrl + 'send-message' : botUrl + '/send-message';
-            }
-            try {
-                const response = await fetch(botUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        to: to,
-                        message: body
-                    })
-                });
-                const data = await response.json();
-                if (response.ok && data.success) {
-                    return { ok: true };
-                } else {
-                    return { ok: false, error: data.error || "Failed to send via WhatsApp Bot" };
-                }
-            } catch (e) {
-                return { ok: false, error: e.message };
-            }
-        }
-
         async function sendTelegramSMS(to, body, settings) {
             let telegramUrl = settings.telegram_api_url;
             if (!telegramUrl) {
@@ -2998,154 +2958,6 @@
                 });
             } catch (e) {
                 console.error("Failed to notify admin of new order via Telegram:", e);
-            }
-        }
-
-        function notifyAdminViaWhatsApp(orderData, newTab) {
-            const whatsappPhone = gatewaySettings?.whatsapp_admin_phone;
-            if (!whatsappPhone) {
-                if (newTab) newTab.close();
-                return;
-            }
-
-            const lang = localStorage.getItem('store_lang') || 'en';
-            
-            // Separate items by currency
-            const usdItems = orderData.items.filter(item => item.currency !== 'LBP');
-            const lbpItems = orderData.items.filter(item => item.currency === 'LBP');
-
-            let totalUSD = 0;
-            let totalLBP = 0;
-            
-            usdItems.forEach(item => {
-                totalUSD += Number(item.price) * item.quantity;
-            });
-            lbpItems.forEach(item => {
-                totalLBP += Number(item.price) * item.quantity;
-            });
-
-            const exchangeRate = Number(gatewaySettings?.usd_exchange_rate) || 89000;
-            const deliveryFeeUSD = Number(gatewaySettings?.delivery_fee_usd) || 0;
-            let subtotalUSD = totalUSD + (totalLBP > 0 ? (totalLBP / exchangeRate) : 0);
-            let grandTotalUSD = subtotalUSD + deliveryFeeUSD;
-
-            let msg = '';
-            const isGuest = !currentUser;
-
-            if (lang === 'ar') {
-                msg = `*🛒 طلب جديد في المتجر!*\n\n` +
-                      (orderData.id ? `*رقم الطلب:* \`${orderData.id}\`\n` : '') +
-                      `*اسم الزبون:* ${orderData.customer.name}\n` +
-                      (orderData.customer.phone ? `*رقم الهاتف:* ${orderData.customer.phone}\n` : '') +
-                      `*📍 عنوان الدليفري:* ${orderData.customer.address || 'غير محدد'}\n\n`;
-
-                if (orderData.items.length > 0) {
-                    msg += `*📦 المنتجات المطلوبة:*\n`;
-                    orderData.items.forEach(item => {
-                        const priceFormatted = formatPrice(item.price, item.currency);
-                        const subtotalFormatted = formatPrice(item.price * item.quantity, item.currency);
-                        msg += `• *${item.title}* (x${item.quantity}) - ${priceFormatted} (المجموع: ${subtotalFormatted})\n`;
-                    });
-                    msg += `\n`;
-                }
-
-                if (totalUSD > 0) {
-                    msg += `*مجموع المنتجات بالدولار:* $${totalUSD.toFixed(2)}\n`;
-                }
-                if (totalLBP > 0) {
-                    msg += `*مجموع المنتجات باللبناني:* ${formatPrice(totalLBP, 'LBP')}\n`;
-                }
-                if (deliveryFeeUSD > 0) {
-                    msg += `*🚚 تكلفة الدليفري:* $${deliveryFeeUSD.toFixed(2)}\n`;
-                }
-                msg += `*💵 الإجمالي النهائي مع الدليفري:* $${grandTotalUSD.toFixed(2)} (سعر الصرف: 1$ = ${exchangeRate.toLocaleString()} LBP)\n`;
-            } else {
-                msg = `*🛒 New Order Received!*\n\n` +
-                      (orderData.id ? `*Order ID:* \`${orderData.id}\`\n` : '') +
-                      `*Customer Name:* ${orderData.customer.name}\n` +
-                      (orderData.customer.phone ? `*Phone:* ${orderData.customer.phone}\n` : '') +
-                      `*📍 Delivery Address:* ${orderData.customer.address || 'N/A'}\n\n`;
-
-                if (orderData.items.length > 0) {
-                    msg += `*📦 Items:*\n`;
-                    orderData.items.forEach(item => {
-                        const priceFormatted = formatPrice(item.price, item.currency);
-                        const subtotalFormatted = formatPrice(item.price * item.quantity, item.currency);
-                        msg += `• *${item.title}* (x${item.quantity}) - ${priceFormatted} (Subtotal: ${subtotalFormatted})\n`;
-                    });
-                    msg += `\n`;
-                }
-
-                if (totalUSD > 0) {
-                    msg += `*Subtotal USD:* $${totalUSD.toFixed(2)}\n`;
-                }
-                if (totalLBP > 0) {
-                    msg += `*Subtotal LBP:* ${formatPrice(totalLBP, 'LBP')}\n`;
-                }
-                if (deliveryFeeUSD > 0) {
-                    msg += `*🚚 Delivery Fee:* $${deliveryFeeUSD.toFixed(2)}\n`;
-                }
-                msg += `*💵 Grand Total with Delivery:* $${grandTotalUSD.toFixed(2)} (Rate: 1$ = ${exchangeRate.toLocaleString()} LBP)\n`;
-            }
-
-            const cleanedPhone = whatsappPhone.replace(/\D/g, '');
-            if (cleanedPhone) {
-                const encodedMsg = encodeURIComponent(msg);
-                
-                // Redirection helper
-                function launchWhatsApp(appType, phone, encodedMsg, tabRef) {
-                    let url = '';
-                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-                    
-                    if (appType === 'business') {
-                        url = `whatsapp-business://send?phone=${phone}&text=${encodedMsg}`;
-                    } else {
-                        // On iOS, use whatsapp-consumer:// to bypass WhatsApp Business hijacking
-                        if (isIOS) {
-                            url = `whatsapp-consumer://send?phone=${phone}&text=${encodedMsg}`;
-                        } else {
-                            url = `whatsapp://send?phone=${phone}&text=${encodedMsg}`;
-                        }
-                    }
-                    
-                    if (tabRef) {
-                        // Navigate the pre-allocated trusted tab to the custom scheme
-                        tabRef.location.href = url;
-                        
-                        // Fallback: if the scheme doesn't respond (e.g. app not installed), redirect to web link
-                        setTimeout(() => {
-                            try {
-                                if (tabRef.location.href === 'about:blank' || tabRef.location.href.startsWith('whatsapp')) {
-                                    tabRef.location.href = `https://wa.me/${phone}?text=${encodedMsg}`;
-                                }
-                            } catch (e) {
-                                // If it successfully navigated, cross-origin restrictions might throw an error, which is fine
-                            }
-                        }, 1500);
-                    } else {
-                        window.location.href = url;
-                        setTimeout(() => {
-                            window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
-                        }, 1500);
-                    }
-                }
-
-                // Check device type and saved preferences
-                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 0 && window.innerWidth <= 1024);
-                const preferredApp = 'messenger';
-
-                if (isMobile) {
-                    launchWhatsApp(preferredApp, cleanedPhone, encodedMsg, newTab);
-                } else {
-                    // On desktop, use standard universal link
-                    const whatsappUrl = `https://wa.me/${cleanedPhone}?text=${encodedMsg}`;
-                    if (newTab) {
-                        newTab.location.href = whatsappUrl;
-                    } else {
-                        window.open(whatsappUrl, '_blank');
-                    }
-                }
-
             }
         }
 
@@ -3339,29 +3151,6 @@
                 closeAuthModal();
                 updateAuthUI();
                 fillCheckoutDetails();
-
-                // Send a second WhatsApp message reminding them to update name/address if empty/default
-                const lowerName = currentUser.name ? currentUser.name.toLowerCase().trim() : '';
-                const nameEmptyOrNew = !lowerName || 
-                                       lowerName === 'new customer' || 
-                                       lowerName === 'newcustomer' || 
-                                       lowerName === 'customer' || 
-                                       lowerName.includes('زبون') || 
-                                       lowerName.includes('جديد') || 
-                                       lowerName.includes('new');
-                const addressEmpty = !currentUser.address || currentUser.address.trim() === '';
-                if (nameEmptyOrNew || addressEmpty) {
-                    const noticeText = lang === 'ar'
-                        ? (gatewaySettings?.whatsapp_update_info_template_ar || `عزيزنا الزبون، يرجى ملء اسمك الكامل وعنوان التوصيل لتتمكن من إتمام طلبيتك الأولى بنجاح.`)
-                        : (gatewaySettings?.whatsapp_update_info_template_en || `Dear customer, please fill in your full name and delivery address to complete your first order successfully.`);
-                    
-                    const whatsapp_bot_url = gatewaySettings?.whatsapp_bot_url;
-                    if (whatsapp_bot_url) {
-                        sendWhatsAppOTP(currentUser.phone, noticeText, gatewaySettings).catch(err => console.error("Error sending profile completion reminder WhatsApp:", err));
-                    } else if (isDevEnvironment()) {
-                        showDevOtpNotification('sms', 'Store Reminder', noticeText, lang);
-                    }
-                }
 
                 if (window.onAuthSuccess) {
                     window.onAuthSuccess();
@@ -3616,7 +3405,7 @@
                     </button>
                 `;
             } else {
-                const loginText = lang === 'ar' ? 'تسجيل الدخول عبر واتساب' : 'Sign In with WhatsApp';
+                const loginText = lang === 'ar' ? 'تسجيل الدخول' : (lang === 'fr' ? 'Connexion' : 'Sign In');
                 authContainer.innerHTML = `
                     <button type="button" class="lang-toggle" onclick="openAuthModal()" style="border-color: var(--primary-color); color: var(--primary-color); background: rgba(59, 130, 246, 0.05); padding: 7px 12px; height: 34px;">
                         <i class="fa-solid fa-arrow-right-to-bracket"></i> <span>${loginText}</span>
@@ -3845,21 +3634,13 @@
                      const gmail_script_url  = localStorage.getItem('store_gmail_script_url') || '';
                      const telegram_api_key  = localStorage.getItem('store_telegram_api_key') || '';
                      const telegram_admin_phone = localStorage.getItem('store_telegram_admin_phone') || '';
-                     const whatsapp_admin_phone = localStorage.getItem('store_whatsapp_admin_phone') || '';
-                     const whatsapp_bot_url = localStorage.getItem('store_whatsapp_bot_url') || '';
                      const usd_exchange_rate = localStorage.getItem('store_usd_exchange_rate') || '89000';
                      callback({
                           telegram_api_url,
                           gmail_script_url,
                           telegram_api_key,
                           telegram_admin_phone,
-                          whatsapp_admin_phone,
-                          whatsapp_bot_url,
-                          usd_exchange_rate,
-                          whatsapp_otp_template_ar: localStorage.getItem('store_whatsapp_otp_template_ar') || '',
-                          whatsapp_update_info_template_ar: localStorage.getItem('store_whatsapp_update_info_template_ar') || '',
-                          whatsapp_otp_template_en: localStorage.getItem('store_whatsapp_otp_template_en') || '',
-                          whatsapp_update_info_template_en: localStorage.getItem('store_whatsapp_update_info_template_en') || ''
+                          usd_exchange_rate
                       });
                  };
                  getAndCallback();
@@ -4110,7 +3891,7 @@
 
 
 
-        let gatewaySettings = { telegram_api_url: '', gmail_script_url: '', telegram_admin_phone: '', whatsapp_admin_phone: '', whatsapp_bot_url: '', callmebot_api_key: '' };
+        let gatewaySettings = { telegram_api_url: '', gmail_script_url: '', telegram_admin_phone: '', callmebot_api_key: '' };
 
         DBService.subscribeToGatewaySettings((settings) => {
             gatewaySettings = settings;
@@ -4695,13 +4476,6 @@
             submitOrderBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting order...';
             submitOrderBtn.disabled = true;
 
-            // Pre-allocate a blank tab synchronously to prevent browser popup blockers from blocking WhatsApp
-            let newTab = null;
-            const whatsappPhone = gatewaySettings?.whatsapp_admin_phone;
-            if (whatsappPhone) {
-                newTab = window.open('', '_blank');
-            }
-
             try {
                 const orderId = await DBService.addOrder(orderData);
                 orderData.id = orderId;
@@ -4750,7 +4524,6 @@
                 }
 
                 notifyAdminOfNewOrder(orderData); // Send order details directly to Telegram
-                notifyAdminViaWhatsApp(orderData, newTab); // Open WhatsApp app for customer to send order
                 cart = [];
                 saveCart();
                 checkoutForm.reset();

@@ -8,8 +8,6 @@
   # No build command needed - static files only
   command = "echo 'Deploying static files from public directory'"
   
-  # Ignore these directories during build
-  ignore = "git diff --quiet HEAD^ HEAD -- whatsapp_gateway whatsapp_bot"
 
 # Redirect rules
 [[redirects]]

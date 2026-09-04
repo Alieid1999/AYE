@@ -3,10 +3,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Backend Node.js services - ignore runtime files and cache
-whatsapp_bot/node_modules/
-whatsapp_bot/auth_info_baileys/
-whatsapp_gateway/
 
 # Session files (contains active login credentials - DO NOT COMMIT!)
 *.session

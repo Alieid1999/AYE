@@ -2,7 +2,7 @@
 
 ## ⚡ البدء السريع (5 دقائق)
 
-### 1️⃣ تحضير البيانات (10 دقائق)
+### 1️⃣ تحضير البيانات
 
 **Telegram:**
 ```
@@ -12,15 +12,6 @@
 4. احصل على TOKEN
 5. إنشئ قناة وأضف البوت
 6. احصل على ID (-100...)
-```
-
-**WhatsApp (Twilio):**
-```
-1. اذهب إلى twilio.com
-2. إنشئ حساب
-3. اختر Messaging → Whatsapp
-4. احصل على Account SID و Auth Token
-5. أضف رقمك في Sandbox
 ```
 
 **Firebase:**
@@ -66,10 +57,6 @@ Schedule: */10 * * * *
 ✅ FIREBASE_STORAGE_BUCKET      (aye-commercial-4b871.firebasestorage.app)
 ✅ TELEGRAM_BOT_TOKEN           (Sync: false)
 ✅ TELEGRAM_CHANNEL_ID          (Sync: false)
-✅ TWILIO_ACCOUNT_SID           (Sync: false)
-✅ TWILIO_AUTH_TOKEN            (Sync: false)
-✅ WHATSAPP_FROM                (whatsapp:+14155238886)
-✅ WHATSAPP_TO                  (whatsapp:+966...)
 ✅ INSTAGRAM_USERNAME           (ayemarket2)
 ✅ INSTAGRAM_PASSWORD           (Sync: false)
 ```
@@ -91,12 +78,12 @@ Schedule: */10 * * * *
 ============================================================
 🚀 UNIFIED GATEWAY STARTED
 ============================================================
-📱 Channels: Instagram + Telegram + WhatsApp
+📱 Channels: Instagram + Telegram
 ⏰ Checking every 10 minutes...
 ============================================================
 
 🔍 Checking for new products...
-✅ Posted to 3 channels
+✅ Posted to channels
 ```
 
 ---
@@ -104,7 +91,6 @@ Schedule: */10 * * * *
 ## ✅ Checklist
 
 - [ ] أنشأت Telegram Bot
-- [ ] أنشأت Twilio Account
 - [ ] احصلت على Firebase Credentials
 - [ ] إضافة كل المتغيرات في Render
 - [ ] Push التغييرات للـ Git
@@ -134,7 +120,6 @@ Schedule: */10 * * * *
 ✅ كل منتج جديد ينشر تلقائياً على:
 - 📸 Instagram
 - 📱 Telegram
-- 💬 WhatsApp
 
 ---
 
@@ -149,11 +134,6 @@ Schedule: */10 * * * *
 **❌ "Firebase not initialized"**
 → تحقق من FIREBASE_CREDENTIALS_JSON كاملة
 
-**❌ "Twilio error"**
-→ تحقق من Account SID و Auth Token
-
 ---
 
 **🎉 خلاص! كل شي جاهز!**
-
-كل منتج جديد سينشر تلقائياً على الثلاث قنوات في نفس الوقت!

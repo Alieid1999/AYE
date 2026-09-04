@@ -24,7 +24,6 @@ Open service -> **Environment** and set:
 - `TELEGRAM_SESSION`
 - `TELEGRAM_GATEWAY_API_KEY`
 - `TELEGRAM_ADMIN_CHAT_ID` (optional but recommended)
-- `WHATSAPP_GATEWAY_URL` (optional)
 
 Note:
 - Do not leave `TELEGRAM_SESSION` empty on Render.

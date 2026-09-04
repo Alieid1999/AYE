@@ -1,12 +1,11 @@
-# 🌐 Unified Gateway - Telegram + WhatsApp + Instagram
+# 🌐 Unified Gateway - Telegram + Instagram
 
-**ملف واحد ينشر على ثلاث قنوات في نفس الوقت!**
+**ملف واحد ينشر على قنوات التواصل في نفس الوقت!**
 
 ## ✨ المميزات
 
 ✅ **Instagram** - ينشر الصور والأوصاف  
 ✅ **Telegram** - ينشر في القناة  
-✅ **WhatsApp** - ينشر رسائل (عبر Twilio)  
 ✅ **موحد** - ملف Python واحد يجمع كل شي  
 ✅ **ذكي** - لا ينشر نفس المنتج مرتين  
 
@@ -47,10 +46,6 @@ FIREBASE_STORAGE_BUCKET = aye-commercial-4b871.firebasestorage.app
 TELEGRAM_BOT_TOKEN = [token من BotFather]
 TELEGRAM_CHANNEL_ID = [معرف القناة]
 
-TWILIO_ACCOUNT_SID = [من Twilio]
-TWILIO_AUTH_TOKEN = [من Twilio]
-WHATSAPP_TO = whatsapp:+966501234567
-
 INSTAGRAM_USERNAME = ayemarket2
 INSTAGRAM_PASSWORD = Qwertyuiop1@
 ```
@@ -67,7 +62,6 @@ INSTAGRAM_PASSWORD = Qwertyuiop1@
 3. ينشرها على:
    ✅ Instagram (صورة + وصف)
    ✅ Telegram (رسالة نصية + صورة)
-   ✅ WhatsApp (رسالة نصية)
 4. يحدّث Firestore: posted = true
 ```
 
@@ -107,17 +101,6 @@ INSTAGRAM_PASSWORD = Qwertyuiop1@
    https://t.me/c/123456789 → ID = -100123456789
    ```
 
-### WhatsApp (Twilio)
-
-1. اذهب إلى [Twilio Console](https://www.twilio.com/console)
-2. اضغط **Messaging** → **Programmable Messaging**
-3. إنشئ WhatsApp Sandbox
-4. احصل على:
-   - **Account SID**
-   - **Auth Token**
-   - **Whatsapp FROM** (رقم Twilio)
-5. أضف رقمك كـ **TO**
-
 ### Instagram
 
 1. استخدم حسابك `ayemarket2`
@@ -142,7 +125,7 @@ python unified_gateway.py
 ============================================================
 🚀 UNIFIED GATEWAY STARTED
 ============================================================
-📱 Channels: Instagram + Telegram + WhatsApp
+📱 Channels: Instagram + Telegram
 ⏰ Checking every 10 minutes...
 ============================================================
 
@@ -153,9 +136,7 @@ python unified_gateway.py
 ✅ Instagram posted! Media ID: 123456
 📱 Posting to Telegram: MacBook Pro 14"
 ✅ Telegram posted!
-📲 Posting to WhatsApp: MacBook Pro 14"
-✅ WhatsApp sent! Message ID: SM123456
-✅ Posted to 3 channels
+✅ Posted to channels
 ============================================================
 ```
 
@@ -179,7 +160,6 @@ python unified_gateway.py
 | `Telegram token not set` | أضف TELEGRAM_BOT_TOKEN |
 | `Instagram: Invalid credentials` | تحقق من username و password |
 | `Firebase not initialized` | تحقق من FIREBASE_CREDENTIALS_JSON |
-| `Twilio error` | تأكد من TWILIO_ACCOUNT_SID و AUTH_TOKEN |
 
 ---
 
@@ -198,14 +178,9 @@ python unified_gateway.py
 ```bash
 # 1. Push التغييرات
 git add unified_gateway.py render_unified.yaml requirements.txt
-git commit -m "Add unified gateway for all channels"
+git commit -m "Add unified gateway for channels"
 git push origin main
 
 # 2. Deploy على Render (من Dashboard)
 # 3. ابدأ النشر الأوتوماتيكي! 🎉
 ```
-
----
-
-**آخر تحديث:** 2026-01-15  
-**الإصدار:** 1.0.0

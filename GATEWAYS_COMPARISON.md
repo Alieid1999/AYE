@@ -20,7 +20,6 @@ python unified_gateway.py
 **المخرجات:**
 - ✅ Instagram
 - ✅ Telegram
-- ✅ WhatsApp
 
 ---
 
@@ -54,22 +53,6 @@ python telegram_gateway.py
 
 ---
 
-### 💬 **WhatsApp Gateway** (Node.js)
-
-```
-whatsapp_gateway/
-  ├── server.js            ← للـ WhatsApp (Twilio)
-  ├── package.json
-  └── render.yaml
-```
-
-**الاستخدام:**
-```bash
-npm install && npm start
-```
-
----
-
 ## 🎯 الخيارات
 
 ### ✨ **الخيار 1: Unified (موصى به)**
@@ -78,10 +61,9 @@ npm install && npm start
 
 **المميزات:**
 - ✅ ملف Python واحد
-- ✅ يدعم الثلاث قنوات
+- ✅ يدعم قنوات التواصل (Instagram + Telegram)
 - ✅ سهل للـ Deploy
 - ✅ تحديث موحد
-- ✅ لا يحتاج Node.js
 
 **المتطلبات:**
 ```
@@ -89,7 +71,6 @@ Python 3.11+
 firebase-admin
 instagrapi
 pytelegrambotapi
-twilio
 ```
 
 **Deploy:**
@@ -104,25 +85,11 @@ Render Cron Job (Python)
 **الملفات:** 
 - `instagram_gateway.py`
 - `telegram_gateway.py`
-- `whatsapp_gateway/server.js`
 
 **المميزات:**
 - ✅ كل خدمة مستقلة
 - ✅ أسهل للـ debugging
 - ✅ تحكم أكثر
-
-**المشاكل:**
-- ❌ أكثر تعقيداً
-- ❌ ثلاث services منفصلة
-- ❌ يحتاج Node.js + Python
-
-**Deploy:**
-```
-Render: 3 services منفصلة
-- Cron Job (Instagram)
-- Cron Job (Telegram)
-- Web Service (WhatsApp)
-```
 
 ---
 
@@ -188,11 +155,6 @@ git push origin main
 - [ ] أنشأت Bot مع @BotFather
 - [ ] احصلت على Token
 - [ ] لديك قناة وأضفت البوت
-
-### WhatsApp:
-- [ ] لديك Twilio Account
-- [ ] لديك WhatsApp Sandbox مفعل
-- [ ] أضفت رقمك في Sandbox
 
 ### Instagram:
 - [ ] لديك حساب `ayemarket2`

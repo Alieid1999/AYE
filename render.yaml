@@ -3,8 +3,7 @@ services:
     name: aye-market-bot
     env: python
     plan: free
-    rootDir: .
-    buildCommand: pip install -r requirements.txt && npm install
+    buildCommand: pip install -r requirements.txt
     startCommand: uvicorn telegram_gateway:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /status
     autoDeploy: true

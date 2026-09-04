@@ -31,8 +31,4 @@ Go to your Render Dashboard -> Service (`market-anxk`) -> **Environment** and ad
   - `View Order Details 👁️`
 - **Instant Status Sync**: Tapping any button in Telegram updates Firestore and refreshes the Telegram alert message.
 
----
-
-> [!NOTE]
-> WhatsApp integrations and automatic messaging to customers have been disabled.
 

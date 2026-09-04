@@ -1,6 +1,6 @@
 """
-Unified Gateway - Telegram + WhatsApp + Instagram
-واحد ملف يجمع كل القنوات
+Unified Gateway - Telegram + Instagram
+بوابة موحدة لنشر المنتجات على تيليجرام وانستغرام
 """
 
 import os
@@ -35,12 +35,6 @@ FIREBASE_STORAGE_BUCKET = os.getenv("FIREBASE_STORAGE_BUCKET", "aye-commercial-4
 # Telegram
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID", "-1001234567890")
-
-# WhatsApp (Twilio)
-TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
-TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
-WHATSAPP_FROM = os.getenv("WHATSAPP_FROM", "whatsapp:+14155238886")  # Twilio sandbox
-WHATSAPP_TO = os.getenv("WHATSAPP_TO", "whatsapp:+966")  # Your number
 
 # Instagram
 INSTAGRAM_USERNAME = os.getenv("INSTAGRAM_USERNAME", "ayemarket2")
@@ -291,15 +285,6 @@ class UnifiedGateway:
             return False
     
     # ========================================================================
-    # WHATSAPP (via Twilio)
-    # ========================================================================
-    
-    def post_to_whatsapp(self, product_id: str, product: Dict[str, Any]) -> bool:
-        """WhatsApp posting disabled."""
-        logger.info("WhatsApp posting is disabled.")
-        return False
-    
-    # ========================================================================
     # MAIN POSTING LOGIC
     # ========================================================================
     
@@ -353,7 +338,7 @@ class UnifiedGateway:
                         self.db.collection('products').document(product_id).update({
                             'posted': True,
                             'postedTime': datetime.now().isoformat(),
-                            'postedChannels': ['instagram', 'telegram', 'whatsapp'][:success]
+                            'postedChannels': ['instagram', 'telegram'][:success]
                         })
                         
                         self.posted_products.add(product_id)
@@ -376,7 +361,7 @@ class UnifiedGateway:
         logger.info("\n" + "=" * 60)
         logger.info("🚀 UNIFIED GATEWAY STARTED")
         logger.info("=" * 60)
-        logger.info("📱 Channels: Instagram + Telegram + WhatsApp")
+        logger.info("📱 Channels: Instagram + Telegram")
         logger.info("⏰ Checking every 10 minutes...")
         logger.info("=" * 60 + "\n")
         
