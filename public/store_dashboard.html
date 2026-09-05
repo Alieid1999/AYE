@@ -1599,11 +1599,16 @@
                     <form id="gateway-settings-form">
                         <div class="form-grid" style="margin-bottom: 20px;">
                             <div class="form-group" style="grid-column: span 2;">
+                                <label for="whatsapp-phone">📱 WhatsApp Number for Orders (رقم الواتساب لاستلام الطلبات)</label>
+                                <input type="text" id="whatsapp-phone" placeholder="e.g. +96170123456" autocomplete="off">
+                                <small style="color: var(--text-light); font-size: 0.8rem;">Enter the WhatsApp phone number to receive orders via WhatsApp.</small>
+                            </div>
+                            <div class="form-group" style="grid-column: span 1;">
                                 <label for="usd-exchange-rate">💵 USD Exchange Rate (سعر صرف الدولار بالنسبة لليرة)</label>
                                 <input type="number" id="usd-exchange-rate" placeholder="e.g. 89000" step="any" autocomplete="off">
                                 <small style="color: var(--text-light); font-size: 0.8rem;">Enter exchange rate for 1 USD in LBP (e.g. 89000).</small>
                             </div>
-                            <div class="form-group" style="grid-column: span 2;">
+                            <div class="form-group" style="grid-column: span 1;">
                                 <label for="delivery-fee-usd">🚚 Delivery Fee USD (مبلغ تكلفة التوصيل بالدولار)</label>
                                 <input type="number" id="delivery-fee-usd" placeholder="e.g. 3.00" step="any" autocomplete="off">
                                 <small style="color: var(--text-light); font-size: 0.8rem;">Enter default delivery cost in USD (e.g. 3.00).</small>
@@ -2437,12 +2442,13 @@
 
              _fallbackGatewaysSubscribe(callback) {
                  const getAndCallback = () => {
+                     const whatsapp_phone   = localStorage.getItem('store_whatsapp_phone') || '';
                      const gmail_script_url  = localStorage.getItem('store_gmail_script_url') || '';
                      const usd_exchange_rate = localStorage.getItem('store_usd_exchange_rate') || '89000';
                      const delivery_fee_usd = localStorage.getItem('store_delivery_fee_usd') || '0';
                      const backup_email = localStorage.getItem('store_backup_email') || '';
                      const backup_drive_folder_id = localStorage.getItem('store_backup_drive_folder_id') || '';
-                     callback({ gmail_script_url, usd_exchange_rate, delivery_fee_usd, backup_email, backup_drive_folder_id });
+                     callback({ whatsapp_phone, gmail_script_url, usd_exchange_rate, delivery_fee_usd, backup_email, backup_drive_folder_id });
                  };
                  getAndCallback();
                  const listener = (e) => {
@@ -2457,6 +2463,7 @@
              },
  
              async saveGatewaySettings(settings) {
+                 localStorage.setItem('store_whatsapp_phone', settings.whatsapp_phone || '');
                  localStorage.setItem('store_gmail_script_url', settings.gmail_script_url || '');
                  localStorage.setItem('store_usd_exchange_rate', settings.usd_exchange_rate || '89000');
                  localStorage.setItem('store_delivery_fee_usd', settings.delivery_fee_usd || '0');
@@ -2465,7 +2472,7 @@
                  
                  window.dispatchEvent(new Event('local_gateways_changed'));
                  if (isFirebaseActive) {
-                     await db.collection('settings').doc('gateways').set(settings);
+                     await db.collection('settings').doc('gateways').set(settings, { merge: true });
                  }
              },
 
@@ -4664,6 +4671,9 @@
         if (gatewaySettingsForm) {
             DBService.subscribeToGatewaySettings((settings) => {
                 activeGatewaySettings = settings;
+                if (document.getElementById('whatsapp-phone')) {
+                    document.getElementById('whatsapp-phone').value = settings.whatsapp_phone || '';
+                }
                 if (document.getElementById('usd-exchange-rate')) {
                     document.getElementById('usd-exchange-rate').value = settings.usd_exchange_rate || '89000';
                 }
@@ -4684,6 +4694,7 @@
             gatewaySettingsForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const settings = {
+                    whatsapp_phone: document.getElementById('whatsapp-phone') ? document.getElementById('whatsapp-phone').value.trim() : '',
                     usd_exchange_rate: document.getElementById('usd-exchange-rate') ? document.getElementById('usd-exchange-rate').value.trim() : '89000',
                     delivery_fee_usd: document.getElementById('delivery-fee-usd') ? document.getElementById('delivery-fee-usd').value.trim() : '0',
                     backup_email: document.getElementById('backup-email') ? document.getElementById('backup-email').value.trim() : '',

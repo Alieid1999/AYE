@@ -1357,18 +1357,13 @@
                     </button>
                 </div>
             </div>
-            <button id="open-track-btn" style="background: none; border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; display: none; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-dark); transition: all 0.3s;">
+            <button id="open-track-btn" style="background: none; border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-dark); transition: all 0.3s;">
                 <i class="fa-solid fa-truck-fast"></i> <span data-i18n="trackOrder">Track My Orders</span>
             </button>
             
-            <!-- Auth Container -->
-            <div id="auth-container" style="display: flex; align-items: center; gap: 8px;">
-                <button type="button" class="lang-toggle" onclick="openAuthModal()" style="border-color: var(--primary-color); color: var(--primary-color); background: rgba(59, 130, 246, 0.05); padding: 7px 12px; height: 34px;">
-                    <i class="fa-solid fa-arrow-right-to-bracket"></i> <span data-i18n="authSignInTab">Sign In</span>
-                </button>
-            </div>
+            <div id="auth-container" style="display: none;"></div>
             
-            <div class="cart" id="open-cart-btn" title="View Cart" style="display: none;">
+            <div class="cart" id="open-cart-btn" title="View Cart" style="display: flex;">
                 <i class="fa-solid fa-cart-shopping"></i>
                 <span class="cart-badge" id="cart-badge">0</span>
             </div>
@@ -1430,37 +1425,19 @@
 
                 <h3 style="margin-bottom: 1rem; color: var(--text-dark);" data-i18n="deliveryDetails">Delivery Details</h3>
                 <form class="checkout-form" id="checkout-form">
-                    <!-- If guest, show sign-in CTA (guest checkout is disabled) -->
-                    <div id="checkout-signin-cta" style="display: none; text-align: center; padding: 20px 15px; background: #f8fafc; border: 1px dashed var(--primary-color); border-radius: 12px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(59,130,246,0.05);">
-                        <i class="fa-solid fa-user-lock" style="font-size: 2.2rem; color: var(--primary-color); margin-bottom: 10px; display: block;"></i>
-                        <p style="font-size: 0.95rem; font-weight: 600; color: var(--text-dark); margin-bottom: 15px; line-height: 1.5;" data-i18n="checkoutSignInPrompt">Please Sign In to complete your order.</p>
-                        <button type="button" id="checkout-signin-btn" class="submit-order-btn" style="margin: 0 auto; width: auto; padding: 10px 20px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                            <i class="fa-solid fa-arrow-right-to-bracket"></i> <span data-i18n="authSignInTab">Sign In</span>
-                        </button>
-                    </div>
-
-                    <!-- Hidden guest inputs container (disabled guest checkout) -->
-                    <div id="checkout-inputs-container" style="display: none;">
+                    <!-- Direct checkout inputs -->
+                    <div id="checkout-inputs-container">
                         <div class="form-group" style="margin-bottom: 10px;">
-                            <input type="text" id="cust-name" data-i18n-placeholder="fullName" placeholder="Full Name">
+                            <input type="text" id="cust-name" required data-i18n-placeholder="fullName" placeholder="Full Name">
                         </div>
 
                         <div class="form-group" style="margin-bottom: 10px;">
-                            <textarea id="cust-address" rows="3" data-i18n-placeholder="addressPlaceholder" placeholder="Detailed Address (City, Neighborhood, Street, House)"></textarea>
+                            <input type="tel" id="cust-phone" required data-i18n-placeholder="phonePlaceholder" placeholder="Phone Number (e.g. +96170123456)">
                         </div>
-                    </div>
-                    
-                    <!-- If logged in, show summary -->
-                    <div id="checkout-summary-container" style="display: none; background: #f8fafc; border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; margin-bottom: 10px;">
-                        <p style="font-size: 0.95rem; color: var(--text-dark); margin-bottom: 5px;">
-                            <i class="fa-solid fa-user" style="color: var(--primary-color); width: 20px;"></i> <span id="summary-name" style="font-weight: bold;"></span>
-                        </p>
-                        <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 5px; display: none;" id="summary-phone-paragraph">
-                            <i class="fa-solid fa-phone" style="color: var(--primary-color); width: 20px;"></i> <span id="summary-phone"></span>
-                        </p>
-                        <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 0;">
-                            <i class="fa-solid fa-location-dot" style="color: var(--primary-color); width: 20px;"></i> <span id="summary-address"></span>
-                        </p>
+
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <textarea id="cust-address" rows="3" required data-i18n-placeholder="addressPlaceholder" placeholder="Detailed Address (City, Neighborhood, Street, House)"></textarea>
+                        </div>
                     </div>
                     
                     <button type="submit" class="submit-order-btn" id="submit-order-btn">
@@ -1608,22 +1585,29 @@
         </div>
     </div>
 
-    <!-- Guest Order Success / Tracking ID Modal -->
+    <!-- Guest Order Success / Tracking ID & WhatsApp Modal -->
     <div class="modal-overlay" id="guest-tracking-modal">
-        <div class="modal-content" style="max-width: 450px; text-align: center; padding: 30px; border-radius: 16px;">
+        <div class="modal-content" style="max-width: 460px; text-align: center; padding: 25px 20px; border-radius: 16px;">
             <button class="close-modal" id="close-guest-tracking-modal-btn"><i class="fa-solid fa-xmark"></i></button>
-            <div style="font-size: 3.5rem; color: var(--success-color); margin-bottom: 20px;">
+            <div style="font-size: 3.2rem; color: var(--success-color); margin-bottom: 12px;">
                 <i class="fa-solid fa-circle-check"></i>
             </div>
-            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; color: var(--text-dark);" id="guest-tracking-title" data-i18n="orderSuccessTitle">Order Placed Successfully!</h3>
-            <p style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.6;" id="guest-tracking-desc" data-i18n="orderSuccessDesc">Thank you for your order. Since you are shopping as a guest, please use the tracking number below to check the status of your order.</p>
+            <h3 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 10px; color: var(--text-dark);" id="guest-tracking-title" data-i18n="orderSuccessTitle">Order Placed Successfully!</h3>
+            <p style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 18px; line-height: 1.5;" id="guest-tracking-desc" data-i18n="orderSuccessDesc">Thank you for your order! Your order has been placed successfully.</p>
             
-            <div style="background-color: var(--bg-light); border: 2px dashed var(--primary-color); padding: 15px; border-radius: 10px; margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;" onclick="copyGuestTrackingCode()" title="Click to copy">
-                <span id="guest-tracking-code" style="font-family: monospace; font-size: 1.3rem; font-weight: bold; color: var(--primary-color); letter-spacing: 1px;"></span>
+            <div style="background-color: var(--bg-light); border: 2px dashed var(--primary-color); padding: 12px 15px; border-radius: 10px; margin-bottom: 18px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;" onclick="copyGuestTrackingCode()" title="Click to copy">
+                <span style="font-size: 0.9rem; color: var(--text-light);" data-i18n="orderIdLabel">Order ID:</span>
+                <span id="guest-tracking-code" style="font-family: monospace; font-size: 1.25rem; font-weight: bold; color: var(--primary-color); letter-spacing: 1px;"></span>
                 <i class="fa-regular fa-copy" style="color: var(--primary-color); font-size: 1.1rem;"></i>
             </div>
+
+            <!-- WhatsApp Action Button -->
+            <a id="guest-tracking-whatsapp-btn" href="#" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 13px 20px; border-radius: 10px; background-color: #25D366; color: #ffffff; font-weight: 700; font-size: 1.05rem; text-decoration: none; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); transition: all 0.2s;">
+                <i class="fa-brands fa-whatsapp" style="font-size: 1.5rem;"></i>
+                <span id="whatsapp-btn-text">إرسال الطلب عبر واتساب</span>
+            </a>
             
-            <button type="button" class="btn-primary" id="guest-tracking-ok-btn" style="width: 100%; justify-content: center; padding: 12px; border-radius: 8px; font-weight: bold;">
+            <button type="button" class="btn-primary" id="guest-tracking-ok-btn" style="width: 100%; justify-content: center; padding: 11px; border-radius: 8px; font-weight: 600; background: transparent; border: 1px solid var(--border-color); color: var(--text-dark);">
                 OK
             </button>
         </div>
@@ -3198,61 +3182,22 @@
             const trackingTitleEl = document.querySelector('[data-i18n="trackTitle"]');
             if (trackingTitleEl) {
                 trackingTitleEl.textContent = lang === 'ar' ? 'طلباتي' : 'My Orders';
-            }
-
             const trackBtn = document.getElementById('open-track-btn');
             if (trackBtn) {
-                if (currentUser) {
-                    trackBtn.style.display = 'flex';
-                } else {
-                    trackBtn.style.display = 'none';
-                }
+                trackBtn.style.display = 'flex';
             }
             const cartBtn = document.getElementById('open-cart-btn');
             if (cartBtn) {
-                if (currentUser) {
-                    cartBtn.style.display = 'flex';
-                } else {
-                    cartBtn.style.display = 'none';
-                }
+                cartBtn.style.display = 'flex';
             }
 
             const cartTabs = document.querySelector('.cart-tabs');
             if (cartTabs) {
-                if (currentUser) {
-                    cartTabs.style.display = 'flex';
-                } else {
-                    cartTabs.style.display = 'none';
-                    if (typeof switchCartTab === 'function') {
-                        switchCartTab('active');
-                    }
-                }
+                cartTabs.style.display = 'flex';
             }
 
-            if (!authContainer) {
-                releaseAuthUILock();
-                return;
-            }
-            if (currentUser) {
-                const welcomeMsg = lang === 'ar' ? `مرحباً، ${currentUser.name}` : `Hello, ${currentUser.name}`;
-                const logoutTitle = lang === 'ar' ? 'خروج' : 'Sign Out';
-                const profileLinkText = lang === 'ar' ? 'تعديل الحساب' : 'Edit Profile';
-                authContainer.innerHTML = `
-                    <div style="display:flex; flex-direction:column; align-items:flex-end; margin-inline-end: 8px;">
-                        <span style="font-weight: bold; font-size: 0.9rem; color: var(--text-dark); max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${welcomeMsg}</span>
-                        <a href="javascript:void(0)" onclick="openEditProfileModal()" style="font-size:0.75rem; color:var(--primary-color); text-decoration:none; font-weight:600; margin-top:-2px;">${profileLinkText}</a>
-                    </div>
-                    <button type="button" class="lang-toggle" onclick="handleSignOut()" title="${logoutTitle}" style="border-color: #fca5a5; color: #ef4444; background: #fee2e2; padding: 7px 12px; height: 34px;">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                    </button>
-                `;
-            } else {
-                const loginText = lang === 'ar' ? 'تسجيل الدخول' : (lang === 'fr' ? 'Connexion' : 'Sign In');
-                authContainer.innerHTML = `
-                    <button type="button" class="lang-toggle" onclick="openAuthModal()" style="border-color: var(--primary-color); color: var(--primary-color); background: rgba(59, 130, 246, 0.05); padding: 7px 12px; height: 34px;">
-                        <i class="fa-solid fa-arrow-right-to-bracket"></i> <span>${loginText}</span>
-                    </button>
-                `;
+            if (authContainer) {
+                authContainer.style.display = 'none';
             }
 
             // Immediately trigger re-rendering of category pills and products to update saved hearts
@@ -3264,52 +3209,29 @@
         function fillCheckoutDetails() {
             const inputsContainer = document.getElementById('checkout-inputs-container');
             const summaryContainer = document.getElementById('checkout-summary-container');
-            const summaryPhoneParagraph = document.getElementById('summary-phone-paragraph');
             const signinCta = document.getElementById('checkout-signin-cta');
             const submitBtn = document.getElementById('submit-order-btn');
             
-            if (currentUser) {
-                const userPhone = currentUser.phone || '';
-                
-                document.getElementById('cust-name').value = currentUser.name || '';
-                document.getElementById('cust-address').value = currentUser.address || '';
-                
-                document.getElementById('summary-name').textContent = currentUser.name || '';
-                document.getElementById('summary-phone').textContent = userPhone;
-                document.getElementById('summary-address').textContent = currentUser.address || '';
-                
-                const hasValidDetails = currentUser.name && currentUser.name !== 'New Customer' && currentUser.name !== 'زبون جديد' && currentUser.address && currentUser.address.trim() !== '';
+            if (signinCta) signinCta.style.display = 'none';
+            if (summaryContainer) summaryContainer.style.display = 'none';
+            if (inputsContainer) inputsContainer.style.display = 'block';
+            if (submitBtn) submitBtn.style.display = 'flex';
 
-                if (signinCta) signinCta.style.display = 'none';
-                if (submitBtn) submitBtn.style.display = 'block';
+            const savedName = localStorage.getItem('saved_customer_name') || (currentUser ? currentUser.name : '') || '';
+            const savedPhone = localStorage.getItem('saved_customer_phone') || (currentUser ? currentUser.phone : '') || '';
+            const savedAddress = localStorage.getItem('saved_customer_address') || (currentUser ? currentUser.address : '') || '';
 
-                if (hasValidDetails) {
-                    if (inputsContainer) inputsContainer.style.display = 'none';
-                    if (summaryContainer) summaryContainer.style.display = 'block';
-                    if (summaryPhoneParagraph) summaryPhoneParagraph.style.display = 'block';
-                    document.getElementById('cust-name').removeAttribute('required');
-                    document.getElementById('cust-address').removeAttribute('required');
-                } else {
-                    if (inputsContainer) inputsContainer.style.display = 'block';
-                    if (summaryContainer) summaryContainer.style.display = 'none';
-                    if (summaryPhoneParagraph) summaryPhoneParagraph.style.display = 'none';
-                    document.getElementById('cust-name').setAttribute('required', 'required');
-                    document.getElementById('cust-address').setAttribute('required', 'required');
-                }
-            } else {
-                document.getElementById('cust-name').value = '';
-                document.getElementById('cust-address').value = '';
-                
-                document.getElementById('cust-name').removeAttribute('required');
-                document.getElementById('cust-address').removeAttribute('required');
-                
-                if (inputsContainer) inputsContainer.style.display = 'none';
-                if (summaryContainer) summaryContainer.style.display = 'none';
-                if (summaryPhoneParagraph) summaryPhoneParagraph.style.display = 'none';
-                if (signinCta) signinCta.style.display = 'block';
-                if (submitBtn) submitBtn.style.display = 'none';
-            }
+            const nameInput = document.getElementById('cust-name');
+            const phoneInput = document.getElementById('cust-phone');
+            const addressInput = document.getElementById('cust-address');
 
+            if (nameInput && !nameInput.value) nameInput.value = savedName;
+            if (phoneInput && !phoneInput.value) phoneInput.value = savedPhone;
+            if (addressInput && !addressInput.value) addressInput.value = savedAddress;
+
+            if (nameInput) nameInput.setAttribute('required', 'required');
+            if (phoneInput) phoneInput.setAttribute('required', 'required');
+            if (addressInput) addressInput.setAttribute('required', 'required');
         }
 
         // ----------------------------------------
@@ -3472,9 +3394,11 @@
 
              _fallbackGatewaysSubscribe(callback) {
                  const getAndCallback = () => {
+                     const whatsapp_phone   = localStorage.getItem('store_whatsapp_phone') || '';
                      const gmail_script_url  = localStorage.getItem('store_gmail_script_url') || '';
                      const usd_exchange_rate = localStorage.getItem('store_usd_exchange_rate') || '89000';
                      callback({
+                          whatsapp_phone,
                           gmail_script_url,
                           usd_exchange_rate
                       });
@@ -3727,7 +3651,7 @@
 
 
 
-        let gatewaySettings = { gmail_script_url: '', usd_exchange_rate: '89000' };
+        let gatewaySettings = { whatsapp_phone: '', gmail_script_url: '', usd_exchange_rate: '89000' };
 
         DBService.subscribeToGatewaySettings((settings) => {
             gatewaySettings = settings;
@@ -4238,72 +4162,46 @@
             cart.forEach(item => {
                 let priceUSD = item.price;
                 if (item.currency === 'LBP') {
-                    priceUSD = item.price / 89000;
+priceUSD = item.price / 89000;
                 }
                 totalAmountUSD += priceUSD * item.quantity;
             });
 
-            const enteredName = document.getElementById('cust-name').value.trim() || (currentUser ? currentUser.name : '');
-            const enteredPhone = currentUser ? (currentUser.phone || '') : '';
-            const enteredAddress = document.getElementById('cust-address').value.trim() || (currentUser ? currentUser.address : '');
+            const nameInput = document.getElementById('cust-name');
+            const phoneInput = document.getElementById('cust-phone');
+            const addressInput = document.getElementById('cust-address');
+
+            const enteredName = nameInput ? nameInput.value.trim() : '';
+            const enteredPhone = phoneInput ? phoneInput.value.trim() : '';
+            const enteredAddress = addressInput ? addressInput.value.trim() : '';
 
             const lang = localStorage.getItem('store_lang') || 'en';
-            const lowerName = enteredName.toLowerCase();
-            if (!enteredName || lowerName === 'new customer' || lowerName === 'newcustomer' || lowerName === 'زبون جديد') {
-                showToast(lang === 'ar' ? 'يرجى إدخال اسمك الكامل الحقيقي (وليس الاسم الافتراضي).' : 'Please enter your real full name.', true);
+            if (!enteredName) {
+                showToast(lang === 'ar' ? 'يرجى إدخال الاسم الكامل.' : 'Please enter your full name.', true);
                 return;
             }
 
-            if (!enteredAddress || enteredAddress.trim() === '') {
+            if (!enteredPhone) {
+                showToast(lang === 'ar' ? 'يرجى إدخال رقم الهاتف.' : 'Please enter your phone number.', true);
+                return;
+            }
+
+            if (!enteredAddress) {
                 showToast(lang === 'ar' ? 'يرجى إدخال عنوان التوصيل التفصيلي.' : 'Please enter your detailed address.', true);
                 return;
             }
 
-            if (currentUser) {
-                let profileChanged = false;
-                if (enteredName && enteredName !== currentUser.name) {
-                    currentUser.name = enteredName;
-                    profileChanged = true;
-                }
-                if (enteredAddress && enteredAddress !== currentUser.address) {
-                    currentUser.address = enteredAddress;
-                    profileChanged = true;
-                }
-                
-                if (profileChanged) {
-                    saveCustomerUser(currentUser);
-                    updateAuthUI();
-                    
-                    const cleanPhone = currentUser.phone ? currentUser.phone.replace(/[^0-9]/g, '') : '';
-                    const docId = cleanPhone || (currentUser.email ? currentUser.email.toLowerCase().trim() : '');
-                    
-                    if (docId) {
-                        if (isFirebaseActive) {
-                            db.collection('customers').doc(docId).update({
-                                phone: currentUser.phone,
-                                name: currentUser.name,
-                                address: currentUser.address
-                            }).catch(err => console.error("Error updating customer details on checkout:", err));
-                        } else {
-                            const mockCustomers = JSON.parse(localStorage.getItem('mock_customers')) || {};
-                            if (mockCustomers[docId]) {
-                                mockCustomers[docId].phone = currentUser.phone;
-                                mockCustomers[docId].name = currentUser.name;
-                                mockCustomers[docId].address = currentUser.address;
-                                localStorage.setItem('mock_customers', JSON.stringify(mockCustomers));
-                                window.dispatchEvent(new Event('local_customers_changed'));
-                            }
-                        }
-                    }
-                }
-            }
+            // Save customer details locally for future checkouts
+            localStorage.setItem('saved_customer_name', enteredName);
+            localStorage.setItem('saved_customer_phone', enteredPhone);
+            localStorage.setItem('saved_customer_address', enteredAddress);
 
             const orderData = {
                 customer: {
                     name: enteredName,
                     phone: enteredPhone,
                     address: enteredAddress,
-                    email: currentUser ? (currentUser.email || '') : ''
+                    email: ''
                 },
                 items: cart,
                 totalAmount: totalAmountUSD
@@ -4317,7 +4215,7 @@
                 orderData.id = orderId;
                 
                 try {
-                    const cleanPhone = currentUser?.phone ? currentUser.phone.replace(/[^0-9]/g, '') : '';
+                    const cleanPhone = enteredPhone.replace(/[^0-9]/g, '');
                     if (cleanPhone) {
                         let storedIds = JSON.parse(localStorage.getItem(`store_orders_history_${cleanPhone}`)) || [];
                         if (!storedIds.includes(orderId)) {
@@ -4325,38 +4223,13 @@
                             localStorage.setItem(`store_orders_history_${cleanPhone}`, JSON.stringify(storedIds));
                         }
                     }
+                    let allLocalIds = JSON.parse(localStorage.getItem('store_orders_history_all')) || [];
+                    if (!allLocalIds.includes(orderId)) {
+                        allLocalIds.push(orderId);
+                        localStorage.setItem('store_orders_history_all', JSON.stringify(allLocalIds));
+                    }
                 } catch (historyErr) {
                     console.error("Failed to save order to local history:", historyErr);
-                }
-
-                // Save order ID to user profile in database
-                if (currentUser) {
-                    const cleanPhone = currentUser.phone ? currentUser.phone.replace(/[^0-9]/g, '') : '';
-                    const docId = cleanPhone || (currentUser.email ? currentUser.email.toLowerCase().trim() : '');
-                    if (docId) {
-                        try {
-                            if (isFirebaseActive) {
-                                await db.collection('customers').doc(docId).update({
-                                    orders: firebase.firestore.FieldValue.arrayUnion(orderId)
-                                });
-                                console.log("Added order to user document in Firestore");
-                            } else {
-                                const mockCustomers = JSON.parse(localStorage.getItem('mock_customers')) || {};
-                                if (mockCustomers[docId]) {
-                                    if (!mockCustomers[docId].orders) {
-                                        mockCustomers[docId].orders = [];
-                                    }
-                                    if (!mockCustomers[docId].orders.includes(orderId)) {
-                                        mockCustomers[docId].orders.push(orderId);
-                                    }
-                                    localStorage.setItem('mock_customers', JSON.stringify(mockCustomers));
-                                    window.dispatchEvent(new Event('local_customers_changed'));
-                                }
-                            }
-                        } catch (profileUpdateErr) {
-                            console.error("Failed to append order to customer document:", profileUpdateErr);
-                        }
-                    }
                 }
 
                 cart = [];
@@ -4365,15 +4238,9 @@
                 fillCheckoutDetails();
                 cartModal.classList.remove('active');
                 
-                const lang = localStorage.getItem('store_lang') || 'en';
-                if (!currentUser) {
-                    showTrackingNumberModal(orderId);
-                } else {
-                    showToast(lang === 'ar' ? "تم استلام الطلب بنجاح! سنتواصل معك قريباً." : "Order received successfully! We will contact you soon.");
-                }
+                showTrackingNumberModal(orderId, orderData);
             } catch (err) {
                 console.error(err);
-                if (newTab) newTab.close(); // Close the pre-allocated blank tab if the order submission failed
                 showToast("Failed to submit order. Please try again.", true);
             } finally {
                 submitOrderBtn.innerHTML = originalBtnText;
@@ -4391,31 +4258,22 @@
             const lang = localStorage.getItem('store_lang') || 'en';
             
             trackingResultsContainer.innerHTML = '';
-            if (trackInput) trackInput.value = '';
+            const savedPhone = localStorage.getItem('saved_customer_phone') || '';
+            if (trackInput) trackInput.value = savedPhone;
             
             trackingModal.classList.add('active');
             
-            if (!currentUser) {
-                if (searchContainer) searchContainer.style.display = 'none';
-                if (hint) {
-                    hint.style.display = 'block';
-                    hint.innerHTML = `
-                        <div style="text-align: center; padding: 10px;">
-                            <i class="fa-solid fa-circle-exclamation" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 10px; display: block;"></i>
-                            <p style="font-size: 0.95rem; font-weight: 600; color: var(--text-dark); margin-bottom: 15px; line-height: 1.5;">
-                                ${lang === 'ar' ? 'يرجى تسجيل الدخول لمتابعة وتتبع طلباتك.' : 'Please sign in to track your orders.'}
-                            </p>
-                            <button type="button" onclick="document.getElementById('tracking-modal').classList.remove('active'); openAuthModal();" class="submit-order-btn" style="background: var(--primary-color); border: none; margin: 0 auto; width: auto; padding: 10px 20px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                                <i class="fa-solid fa-user-plus"></i> <span>${lang === 'ar' ? 'تسجيل الدخول' : 'Sign In'}</span>
-                            </button>
-                        </div>
-                    `;
-                }
-            } else {
-                if (searchContainer) searchContainer.style.display = 'none';
-                if (hint) hint.style.display = 'none';
-                if (trackingLoading) trackingLoading.style.display = 'block';
-                searchMyOrders(currentUser.phone);
+            if (searchContainer) searchContainer.style.display = 'flex';
+            if (hint) {
+                hint.style.display = 'block';
+                hint.innerHTML = `
+                    <i class="fa-solid fa-circle-info" style="font-size: 1.8rem; color: var(--primary-color); margin-bottom: 8px; display: block;"></i>
+                    <span>${lang === 'ar' ? 'أدخل رقم هاتفك أو رقم التتبع لمتابعة حالة طلباتك.' : 'Enter your phone number or tracking number to see order progress.'}</span>
+                `;
+            }
+
+            if (savedPhone) {
+                searchGuestOrder(savedPhone);
             }
         });
 
@@ -4433,7 +4291,7 @@
             // Calculate display total in mixed currencies
             let totalUSD = 0;
             let totalLBP = 0;
-            order.items.forEach(item => {
+            (order.items || []).forEach(item => {
                 const price = Number(item.price) || 0;
                 const qty = Number(item.quantity) || 1;
                 if (item.currency === 'LBP') {
@@ -4452,7 +4310,7 @@
                 displayTotal = `$${totalUSD.toFixed(2)}`;
             }
 
-            const itemsList = order.items.map(item => `${item.title} (x${item.quantity})`).join(', ');
+            const itemsList = (order.items || []).map(item => `${item.title} (x${item.quantity})`).join(', ');
             
             const resultDiv = document.createElement('div');
             resultDiv.className = 'tracking-result-item';
@@ -4467,116 +4325,152 @@
                 <hr style="border:none; border-top:1px solid var(--border-color); margin-bottom:8px;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="font-size:0.85rem; color:var(--text-light);">${localStorage.getItem('store_lang') === 'ar' ? 'حالة التوصيل:' : 'Delivery Status:'}</span>
-                    <span class="tracking-status ${order.status.toLowerCase()}">
-                        <i class="fa-solid ${getStatusIcon(order.status)}"></i> ${order.status}
+                    <span class="tracking-status ${(order.status || 'Pending').toLowerCase()}">
+                        <i class="fa-solid ${getStatusIcon(order.status)}"></i> ${order.status || 'Pending'}
                     </span>
                 </div>
             `;
             trackingResultsContainer.appendChild(resultDiv);
         }
 
-        async function searchMyOrders(phone) {
-            if (trackingLoading) trackingLoading.style.display = 'block';
-            trackingResultsContainer.innerHTML = '';
-            const lang = localStorage.getItem('store_lang') || 'en';
-
-            let orderIds = [];
-
-            try {
-                // 1. Try to get order IDs from the Firestore customer document (works across devices)
-                if (isFirebaseActive && currentUser) {
-                    const cleanPhone = currentUser.phone ? currentUser.phone.replace(/[^0-9]/g, '') : '';
-                    const docId = cleanPhone || (currentUser.email ? currentUser.email.toLowerCase().trim() : '');
-                    if (docId) {
-                        try {
-                            const customerDoc = await db.collection('customers').doc(docId).get();
-                            if (customerDoc.exists && customerDoc.data().orders) {
-                                orderIds = customerDoc.data().orders;
-                            }
-                        } catch (fsErr) {
-                            console.warn('Could not fetch orders from Firestore customer doc:', fsErr);
-                        }
-                    }
-                }
-
-                // 2. Fallback: merge with any IDs from localStorage (catches old orders placed before Firestore linking)
-                const cleanPhone = currentUser?.phone ? currentUser.phone.replace(/[^0-9]/g, '') : '';
-                const localIds = cleanPhone ? (JSON.parse(localStorage.getItem(`store_orders_history_${cleanPhone}`)) || []) : [];
-                const merged = [...new Set([...orderIds, ...localIds])];
-                orderIds = merged;
-
-                const historyOrders = await DBService.getOrdersByIds(orderIds);
-                historyOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-                if (trackingLoading) trackingLoading.style.display = 'none';
-
-                if (historyOrders.length === 0) {
-                    trackingResultsContainer.innerHTML = `<p style="text-align:center; color:var(--text-light); padding:20px;"><i class="fa-solid fa-box-open" style="font-size:2rem; margin-bottom:8px; display:block;"></i>${lang === 'ar' ? 'لا توجد طلبات مرتبطة بحسابك بعد.' : 'No orders placed yet on your account.'}</p>`;
-                    return;
-                }
-
-                historyOrders.forEach(order => {
-                    renderOrderInTracking(order);
-                });
-            } catch (err) {
-                console.error("Error searching user orders:", err);
-                if (trackingLoading) trackingLoading.style.display = 'none';
-                trackingResultsContainer.innerHTML = `<p style="text-align:center; color:red; padding:20px;">${lang === 'ar' ? 'حدث خطأ أثناء البحث.' : 'Error searching for orders.'}</p>`;
-            }
-        }
-
-        async function searchGuestOrder(orderId) {
+        async function searchGuestOrder(query) {
             trackingResultsContainer.innerHTML = '';
             const hint = document.getElementById('tracking-hint');
             if (hint) hint.style.display = 'none';
             
-            const searchId = orderId ? orderId.trim() : '';
+            const searchVal = query ? String(query).trim() : '';
             const lang = localStorage.getItem('store_lang') || 'en';
-            if (!searchId) {
-                trackingResultsContainer.innerHTML = `<p style="text-align:center; color:var(--text-light); padding:20px;">${lang === 'ar' ? 'يرجى إدخال رقم التتبع.' : 'Please enter a tracking number.'}</p>`;
+            if (!searchVal) {
+                trackingResultsContainer.innerHTML = `<p style="text-align:center; color:var(--text-light); padding:20px;">${lang === 'ar' ? 'يرجى إدخال رقم الهاتف أو رقم التتبع.' : 'Please enter a phone number or tracking number.'}</p>`;
                 return;
             }
 
             if (trackingLoading) trackingLoading.style.display = 'block';
             
             try {
-                const order = await DBService.getOrder(searchId);
-                
-                if (trackingLoading) trackingLoading.style.display = 'none';
-
-                if (!order) {
-                    trackingResultsContainer.innerHTML = `<p style="text-align:center; color:var(--text-light); padding:20px;"><i class="fa-solid fa-circle-question" style="font-size:2rem; margin-bottom:8px; display:block; color:#ef4444;"></i>${lang === 'ar' ? 'لم يتم العثور على طلب بهذا الرقم.' : 'No order found with this tracking number.'}</p>`;
+                // 1. First try direct order ID match
+                const directOrder = await DBService.getOrder(searchVal);
+                if (directOrder) {
+                    if (trackingLoading) trackingLoading.style.display = 'none';
+                    renderOrderInTracking(directOrder);
                     return;
                 }
 
-                renderOrderInTracking(order);
-            } catch (err) {
-                console.error("Error searching guest order:", err);
+                // 2. Search by phone number across local storage or DB
+                const cleanPhone = searchVal.replace(/[^0-9]/g, '');
+                let foundOrders = [];
+
+                if (cleanPhone) {
+                    const localIds = JSON.parse(localStorage.getItem(`store_orders_history_${cleanPhone}`)) || [];
+                    const allLocalIds = JSON.parse(localStorage.getItem('store_orders_history_all')) || [];
+                    const mergedIds = [...new Set([...localIds, ...allLocalIds])];
+                    if (mergedIds.length > 0) {
+                        const fetchedOrders = await DBService.getOrdersByIds(mergedIds);
+                        foundOrders = fetchedOrders.filter(o => {
+                            const ordPhone = o.customer?.phone ? String(o.customer.phone).replace(/[^0-9]/g, '') : '';
+                            return !ordPhone || ordPhone === cleanPhone || ordPhone.endsWith(cleanPhone) || cleanPhone.endsWith(ordPhone);
+                        });
+                    }
+                }
+
                 if (trackingLoading) trackingLoading.style.display = 'none';
-                trackingResultsContainer.innerHTML = `<p style="text-align:center; color:red; padding:20px;">${lang === 'ar' ? 'حدث خطأ أثناء البحث.' : 'Error searching for order.'}</p>`;
+
+                if (foundOrders.length > 0) {
+                    foundOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    foundOrders.forEach(order => renderOrderInTracking(order));
+                } else {
+                    trackingResultsContainer.innerHTML = `<p style="text-align:center; color:var(--text-light); padding:20px;"><i class="fa-solid fa-circle-question" style="font-size:2rem; margin-bottom:8px; display:block; color:#ef4444;"></i>${lang === 'ar' ? 'لم يتم العثور على طلب بهذا الرقم.' : 'No orders found matching this number.'}</p>`;
+                }
+            } catch (err) {
+                console.error("Error searching orders:", err);
+                if (trackingLoading) trackingLoading.style.display = 'none';
+                trackingResultsContainer.innerHTML = `<p style="text-align:center; color:red; padding:20px;">${lang === 'ar' ? 'حدث خطأ أثناء البحث.' : 'Error searching for orders.'}</p>`;
             }
         }
 
-        function showTrackingNumberModal(orderId) {
+        function showTrackingNumberModal(orderId, orderData) {
             const modal = document.getElementById('guest-tracking-modal');
             const titleEl = document.getElementById('guest-tracking-title');
             const descEl = document.getElementById('guest-tracking-desc');
             const codeEl = document.getElementById('guest-tracking-code');
             const okBtn = document.getElementById('guest-tracking-ok-btn');
+            const whatsappBtn = document.getElementById('guest-tracking-whatsapp-btn');
+            const whatsappTextEl = document.getElementById('whatsapp-btn-text');
             
             const lang = localStorage.getItem('store_lang') || 'en';
             
             if (lang === 'ar') {
                 titleEl.textContent = 'تم تقديم الطلب بنجاح!';
-                descEl.textContent = 'شكراً لك على طلبك. بما أنك تتسوق كزائر، يرجى استخدام رقم التتبع أدناه لمتابعة حالة طلبك.';
-                okBtn.textContent = 'موافق';
+                descEl.textContent = 'شكراً لك على طلبك! تم تسجيل طلبك بنجاح. يمكنك إرسال وتأكيد الطلب مباشرة عبر الواتساب.';
+                okBtn.textContent = 'إغلاق';
+                if (whatsappTextEl) whatsappTextEl.textContent = 'إرسال الطلب عبر واتساب';
+            } else if (lang === 'fr') {
+                titleEl.textContent = 'Commande passée avec succès!';
+                descEl.textContent = 'Merci pour votre commande! Vous pouvez envoyer et confirmer votre commande directement sur WhatsApp.';
+                okBtn.textContent = 'Fermer';
+                if (whatsappTextEl) whatsappTextEl.textContent = 'Envoyer la commande via WhatsApp';
             } else {
                 titleEl.textContent = 'Order Placed Successfully!';
-                descEl.textContent = 'Thank you for your order. Since you are shopping as a guest, please use the tracking number below to check the status of your order.';
-                okBtn.textContent = 'OK';
+                descEl.textContent = 'Thank you for your order! You can send and confirm your order directly on WhatsApp.';
+                okBtn.textContent = 'Close';
+                if (whatsappTextEl) whatsappTextEl.textContent = 'Send Order via WhatsApp';
             }
             
             codeEl.textContent = orderId;
+
+            // WhatsApp link logic based on admin phone in settings
+            if (whatsappBtn) {
+                const adminPhone = (gatewaySettings && gatewaySettings.whatsapp_phone) ? String(gatewaySettings.whatsapp_phone).trim() : (localStorage.getItem('store_whatsapp_phone') || '');
+                const cleanAdminPhone = adminPhone.replace(/[^0-9]/g, '');
+
+                let waMessage = '';
+                if (lang === 'ar') {
+                    waMessage += `*طلب جديد من المتجر* 🛍️\n`;
+                    waMessage += `*رقم الطلب:* #${orderId}\n`;
+                    if (orderData && orderData.customer) {
+                        waMessage += `*الاسم:* ${orderData.customer.name || ''}\n`;
+                        waMessage += `*الهاتف:* ${orderData.customer.phone || ''}\n`;
+                        waMessage += `*العنوان:* ${orderData.customer.address || ''}\n`;
+                    }
+                    if (orderData && orderData.items && orderData.items.length > 0) {
+                        waMessage += `\n*المنتجات المطلوبة:*\n`;
+                        orderData.items.forEach(item => {
+                            const unitPrice = item.currency === 'LBP' ? `${(item.price || 0).toLocaleString()} LBP` : `$${(item.price || 0).toFixed(2)}`;
+                            waMessage += `▫️ ${item.quantity}x ${item.title} (${unitPrice})\n`;
+                        });
+                    }
+                    if (orderData && orderData.totalAmount !== undefined) {
+                        waMessage += `\n*المجموع الإجمالي:* $${Number(orderData.totalAmount).toFixed(2)}\n`;
+                    }
+                } else {
+                    waMessage += `*New Store Order* 🛍️\n`;
+                    waMessage += `*Order ID:* #${orderId}\n`;
+                    if (orderData && orderData.customer) {
+                        waMessage += `*Name:* ${orderData.customer.name || ''}\n`;
+                        waMessage += `*Phone:* ${orderData.customer.phone || ''}\n`;
+                        waMessage += `*Address:* ${orderData.customer.address || ''}\n`;
+                    }
+                    if (orderData && orderData.items && orderData.items.length > 0) {
+                        waMessage += `\n*Ordered Items:*\n`;
+                        orderData.items.forEach(item => {
+                            const unitPrice = item.currency === 'LBP' ? `${(item.price || 0).toLocaleString()} LBP` : `$${(item.price || 0).toFixed(2)}`;
+                            waMessage += `▫️ ${item.quantity}x ${item.title} (${unitPrice})\n`;
+                        });
+                    }
+                    if (orderData && orderData.totalAmount !== undefined) {
+                        waMessage += `\n*Total Amount:* $${Number(orderData.totalAmount).toFixed(2)}\n`;
+                    }
+                }
+
+                const encodedMsg = encodeURIComponent(waMessage);
+                if (cleanAdminPhone) {
+                    whatsappBtn.href = `https://wa.me/${cleanAdminPhone}?text=${encodedMsg}`;
+                } else {
+                    whatsappBtn.href = `https://api.whatsapp.com/send?text=${encodedMsg}`;
+                }
+                whatsappBtn.style.display = 'flex';
+            }
+            
             modal.classList.add('active');
             
             const closeBtn = document.getElementById('close-guest-tracking-modal-btn');

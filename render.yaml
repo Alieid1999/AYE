@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: aye-market-gateway
-    env: python
-    plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: python unified_gateway.py
-    autoDeploy: true

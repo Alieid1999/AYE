@@ -1,9 +1,0 @@
-fastapi
-uvicorn
-requests
-instagrapi
-pillow
-python-multipart
-firebase-admin
-schedule
-aiohttp
