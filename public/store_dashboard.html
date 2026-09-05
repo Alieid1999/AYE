@@ -1688,44 +1688,6 @@
                     </form>
                 </div>
 
-                <!-- Firebase -->
-                <div class="dashboard-card">
-                    <h2 class="card-title" data-i18n="firebaseConnection">Firebase Cloud Connection</h2>
-                    <!-- Firebase Setup Instructions Guide -->
-                    
-                    <form id="firebase-settings-form">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="fb-apiKey">API Key (apiKey)</label>
-                                <input type="text" id="fb-apiKey" placeholder="e.g. AIzaSyA1...">
-                            </div>
-                            <div class="form-group">
-                                <label for="fb-projectId">Project ID (projectId)</label>
-                                <input type="text" id="fb-projectId" placeholder="e.g. my-store-1234">
-                            </div>
-                            <div class="form-group">
-                                <label for="fb-authDomain">Auth Domain (authDomain)</label>
-                                <input type="text" id="fb-authDomain" placeholder="e.g. my-store-1234.firebaseapp.com">
-                            </div>
-                            <div class="form-group">
-                                <label for="fb-storageBucket">Storage Bucket (storageBucket)</label>
-                                <input type="text" id="fb-storageBucket" placeholder="e.g. my-store-1234.appspot.com">
-                            </div>
-                            <div class="form-group">
-                                <label for="fb-messagingSenderId">Messaging Sender ID (messagingSenderId)</label>
-                                <input type="text" id="fb-messagingSenderId" placeholder="e.g. 9876543210">
-                            </div>
-                            <div class="form-group">
-                                <label for="fb-appId">App ID (appId)</label>
-                                <input type="text" id="fb-appId" placeholder="e.g. 1:9876543210:web:abc123xyz">
-                            </div>
-                        </div>
-                        <button type="submit" class="btn-submit">
-                            <i class="fa-solid fa-floppy-disk"></i> <span data-i18n="btnSaveConfig">Save Configurations</span>
-                        </button>
-                    </form>
-                </div>
-
 
 
                 <!-- Database Backup & Restore -->
@@ -2263,7 +2225,7 @@
         // ----------------------------------------
         const DEFAULT_CATEGORIES = ['Laptops', 'Headphones', 'Phones', 'Smartwatches', 'Accessories', 'Other'];
 
-        let firebaseConfig = {
+        const firebaseConfig = {
             apiKey: "AIzaSyDSIsmOtYSuQe7Y8XsUwfstc8UNQw2ykkM",
             authDomain: "aye-commercial-4b871.firebaseapp.com",
             databaseURL: "https://aye-commercial-4b871-default-rtdb.firebaseio.com",
@@ -2273,23 +2235,6 @@
             appId: "1:592903119970:web:d9cd37ff264fdf02a59d3b",
             measurementId: "G-SF7B7MV8MF"
         };
-
-        // Load config from LocalStorage if present
-        const savedConfig = localStorage.getItem('store_firebase_config');
-        if (savedConfig) {
-            try {
-                firebaseConfig = JSON.parse(savedConfig);
-                // Fill settings form values
-                document.getElementById('fb-apiKey').value = firebaseConfig.apiKey || '';
-                document.getElementById('fb-projectId').value = firebaseConfig.projectId || '';
-                document.getElementById('fb-authDomain').value = firebaseConfig.authDomain || '';
-                document.getElementById('fb-storageBucket').value = firebaseConfig.storageBucket || '';
-                document.getElementById('fb-messagingSenderId').value = firebaseConfig.messagingSenderId || '';
-                document.getElementById('fb-appId').value = firebaseConfig.appId || '';
-            } catch (e) {
-                console.error("Error parsing saved Firebase config", e);
-            }
-        }
 
         let isFirebaseActive = false;
         let db;
@@ -4642,28 +4587,7 @@
         }
 
         // 5. Settings Tab Forms
-        const fbSettingsForm = document.getElementById('firebase-settings-form');
         const resetDbBtn = document.getElementById('btn-reset-db');
-
-        fbSettingsForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const config = {
-                apiKey: document.getElementById('fb-apiKey').value.trim(),
-                projectId: document.getElementById('fb-projectId').value.trim(),
-                authDomain: document.getElementById('fb-authDomain').value.trim(),
-                storageBucket: document.getElementById('fb-storageBucket').value.trim(),
-                messagingSenderId: document.getElementById('fb-messagingSenderId').value.trim(),
-                appId: document.getElementById('fb-appId').value.trim()
-            };
-
-            // Save to localStorage
-            localStorage.setItem('store_firebase_config', JSON.stringify(config));
-            showToast("Firebase configurations saved! Reloading...");
-            
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-        });
 
 
 

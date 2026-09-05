@@ -3223,7 +3223,7 @@
         
 
 
-        let firebaseConfig = {
+        const firebaseConfig = {
             apiKey: "AIzaSyDSIsmOtYSuQe7Y8XsUwfstc8UNQw2ykkM",
             authDomain: "aye-commercial-4b871.firebaseapp.com",
             databaseURL: "https://aye-commercial-4b871-default-rtdb.firebaseio.com",
@@ -3233,16 +3233,6 @@
             appId: "1:592903119970:web:d9cd37ff264fdf02a59d3b",
             measurementId: "G-SF7B7MV8MF"
         };
-
-        // Load config from LocalStorage if dashboard configured it
-        const savedConfig = localStorage.getItem('store_firebase_config');
-        if (savedConfig) {
-            try {
-                firebaseConfig = JSON.parse(savedConfig);
-            } catch (e) {
-                console.error("Error parsing saved Firebase config", e);
-            }
-        }
 
         let isFirebaseActive = false;
         let db;
@@ -3361,7 +3351,14 @@
                 if (isFirebaseActive) {
                     return db.collection('settings').doc('gateways').onSnapshot(doc => {
                         if (doc.exists) {
-                            callback(doc.data());
+                            const data = doc.data() || {};
+                            if (data.whatsapp_phone) {
+                                localStorage.setItem('store_whatsapp_phone', data.whatsapp_phone);
+                            }
+                            if (data.usd_exchange_rate) {
+                                localStorage.setItem('store_usd_exchange_rate', data.usd_exchange_rate);
+                            }
+                            callback(data);
                         } else {
                             this._fallbackGatewaysSubscribe(callback);
                         }
@@ -4171,11 +4168,12 @@ priceUSD = item.price / 89000;
             // Save customer details locally for future checkouts
             localStorage.setItem('saved_customer_name', enteredName);
             localStorage.setItem('saved_customer_address', enteredAddress);
+            if (enteredPhone) localStorage.setItem('saved_customer_phone', enteredPhone);
 
             const orderData = {
                 customer: {
                     name: enteredName,
-                    phone: '',
+                    phone: enteredPhone || localStorage.getItem('saved_customer_phone') || '',
                     address: enteredAddress,
                     email: ''
                 },
@@ -4356,6 +4354,21 @@ priceUSD = item.price / 89000;
             }
         }
 
+        function formatWhatsAppNumber(phone) {
+            if (!phone) return '';
+            let clean = String(phone).replace(/[^0-9]/g, '');
+            if (clean.startsWith('00')) {
+                clean = clean.slice(2);
+            }
+            // Lebanon local phone formats: 03xxxxxx, 70xxxxxx, 71xxxxxx, 76xxxxxx, 78xxxxxx, 79xxxxxx, 81xxxxxx, 01xxxxxx, 04xxxxxx, etc.
+            if (clean.startsWith('0') && clean.length === 8) {
+                clean = '961' + clean.slice(1);
+            } else if ((clean.length === 7 || clean.length === 8) && !clean.startsWith('961')) {
+                clean = '961' + clean;
+            }
+            return clean;
+        }
+
         function showTrackingNumberModal(orderId, orderData) {
             const modal = document.getElementById('guest-tracking-modal');
             const titleEl = document.getElementById('guest-tracking-title');
@@ -4387,9 +4400,10 @@ priceUSD = item.price / 89000;
             codeEl.textContent = orderId;
 
             // WhatsApp link logic based on admin phone in settings
+            let waUrl = '';
             if (whatsappBtn) {
                 const adminPhone = (gatewaySettings && gatewaySettings.whatsapp_phone) ? String(gatewaySettings.whatsapp_phone).trim() : (localStorage.getItem('store_whatsapp_phone') || '');
-                const cleanAdminPhone = adminPhone.replace(/[^0-9]/g, '');
+                const cleanAdminPhone = formatWhatsAppNumber(adminPhone);
 
                 let waMessage = '';
                 if (lang === 'ar') {
@@ -4397,6 +4411,7 @@ priceUSD = item.price / 89000;
                     waMessage += `*رقم الطلب:* #${orderId}\n`;
                     if (orderData && orderData.customer) {
                         waMessage += `*الاسم:* ${orderData.customer.name || ''}\n`;
+                        if (orderData.customer.phone) waMessage += `*الهاتف:* ${orderData.customer.phone}\n`;
                         waMessage += `*العنوان:* ${orderData.customer.address || ''}\n`;
                     }
                     if (orderData && orderData.items && orderData.items.length > 0) {
@@ -4414,6 +4429,7 @@ priceUSD = item.price / 89000;
                     waMessage += `*Order ID:* #${orderId}\n`;
                     if (orderData && orderData.customer) {
                         waMessage += `*Name:* ${orderData.customer.name || ''}\n`;
+                        if (orderData.customer.phone) waMessage += `*Phone:* ${orderData.customer.phone}\n`;
                         waMessage += `*Address:* ${orderData.customer.address || ''}\n`;
                     }
                     if (orderData && orderData.items && orderData.items.length > 0) {
@@ -4430,14 +4446,24 @@ priceUSD = item.price / 89000;
 
                 const encodedMsg = encodeURIComponent(waMessage);
                 if (cleanAdminPhone) {
-                    whatsappBtn.href = `https://wa.me/${cleanAdminPhone}?text=${encodedMsg}`;
+                    waUrl = `https://wa.me/${cleanAdminPhone}?text=${encodedMsg}`;
                 } else {
-                    whatsappBtn.href = `https://api.whatsapp.com/send?text=${encodedMsg}`;
+                    waUrl = `https://api.whatsapp.com/send?text=${encodedMsg}`;
                 }
+                whatsappBtn.href = waUrl;
                 whatsappBtn.style.display = 'flex';
             }
             
             modal.classList.add('active');
+
+            // Attempt automatic redirection to WhatsApp while modal is active
+            if (waUrl) {
+                try {
+                    window.open(waUrl, '_blank');
+                } catch (e) {
+                    console.warn("Direct WhatsApp redirect popup blocked:", e);
+                }
+            }
             
             const closeBtn = document.getElementById('close-guest-tracking-modal-btn');
             const closeModal = () => modal.classList.remove('active');
