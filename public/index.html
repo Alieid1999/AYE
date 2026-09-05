@@ -3358,6 +3358,9 @@
                             if (data.usd_exchange_rate) {
                                 localStorage.setItem('store_usd_exchange_rate', data.usd_exchange_rate);
                             }
+                            if (data.delivery_fee_usd !== undefined) {
+                                localStorage.setItem('store_delivery_fee_usd', data.delivery_fee_usd);
+                            }
                             callback(data);
                         } else {
                             this._fallbackGatewaysSubscribe(callback);
@@ -3376,10 +3379,12 @@
                      const whatsapp_phone   = localStorage.getItem('store_whatsapp_phone') || '';
                      const gmail_script_url  = localStorage.getItem('store_gmail_script_url') || '';
                      const usd_exchange_rate = localStorage.getItem('store_usd_exchange_rate') || '89000';
+                     const delivery_fee_usd  = localStorage.getItem('store_delivery_fee_usd') || '0';
                      callback({
                           whatsapp_phone,
                           gmail_script_url,
-                          usd_exchange_rate
+                          usd_exchange_rate,
+                          delivery_fee_usd
                       });
                  };
                  getAndCallback();
@@ -3498,6 +3503,8 @@
                     id: orderId,
                     customer: orderData.customer,
                     items: orderData.items,
+                    subtotalUSD: orderData.subtotalUSD !== undefined ? Number(orderData.subtotalUSD) : Number(orderData.totalAmount),
+                    deliveryFeeUSD: orderData.deliveryFeeUSD !== undefined ? Number(orderData.deliveryFeeUSD) : 0,
                     totalAmount: Number(orderData.totalAmount),
                     status: 'Pending',
                     createdAt: new Date().toISOString()
@@ -3630,7 +3637,12 @@
 
 
 
-        let gatewaySettings = { whatsapp_phone: '', gmail_script_url: '', usd_exchange_rate: '89000' };
+        let gatewaySettings = { 
+            whatsapp_phone: localStorage.getItem('store_whatsapp_phone') || '', 
+            gmail_script_url: localStorage.getItem('store_gmail_script_url') || '', 
+            usd_exchange_rate: localStorage.getItem('store_usd_exchange_rate') || '89000',
+            delivery_fee_usd: localStorage.getItem('store_delivery_fee_usd') || '0'
+        };
 
         DBService.subscribeToGatewaySettings((settings) => {
             gatewaySettings = settings;
@@ -4136,15 +4148,20 @@
 
             const originalBtnText = submitOrderBtn.innerHTML;
 
-            // Sum total converting LBP to USD for totalAmount
-            let totalAmountUSD = 0;
+            const exchangeRate = Number(gatewaySettings?.usd_exchange_rate || localStorage.getItem('store_usd_exchange_rate') || 89000);
+            const deliveryFeeUSD = Number(gatewaySettings?.delivery_fee_usd !== undefined ? gatewaySettings.delivery_fee_usd : (localStorage.getItem('store_delivery_fee_usd') || 0));
+
+            // Sum items subtotal converting LBP to USD
+            let subtotalUSD = 0;
             cart.forEach(item => {
-                let priceUSD = item.price;
+                let priceUSD = Number(item.price) || 0;
                 if (item.currency === 'LBP') {
-priceUSD = item.price / 89000;
+                    priceUSD = priceUSD / exchangeRate;
                 }
-                totalAmountUSD += priceUSD * item.quantity;
+                subtotalUSD += priceUSD * (Number(item.quantity) || 1);
             });
+
+            const totalAmountUSD = subtotalUSD + deliveryFeeUSD;
 
             const nameInput = document.getElementById('cust-name');
             const phoneInput = document.getElementById('cust-phone');
@@ -4178,6 +4195,8 @@ priceUSD = item.price / 89000;
                     email: ''
                 },
                 items: cart,
+                subtotalUSD: subtotalUSD,
+                deliveryFeeUSD: deliveryFeeUSD,
                 totalAmount: totalAmountUSD
             };
 
@@ -4405,43 +4424,86 @@ priceUSD = item.price / 89000;
                 const adminPhone = (gatewaySettings && gatewaySettings.whatsapp_phone) ? String(gatewaySettings.whatsapp_phone).trim() : (localStorage.getItem('store_whatsapp_phone') || '');
                 const cleanAdminPhone = formatWhatsAppNumber(adminPhone);
 
+                const rate = Number(gatewaySettings?.usd_exchange_rate || localStorage.getItem('store_usd_exchange_rate') || 89000);
+                const deliveryFee = Number((orderData && orderData.deliveryFeeUSD !== undefined) ? orderData.deliveryFeeUSD : (gatewaySettings?.delivery_fee_usd !== undefined ? gatewaySettings.delivery_fee_usd : (localStorage.getItem('store_delivery_fee_usd') || 0)));
+
+                let itemsTotalUSD = 0;
+                const hasItems = orderData && orderData.items && orderData.items.length > 0;
+                if (hasItems) {
+                    orderData.items.forEach(item => {
+                        const price = Number(item.price) || 0;
+                        const qty = Number(item.quantity) || 1;
+                        if (item.currency === 'LBP') {
+                            itemsTotalUSD += (price / rate) * qty;
+                        } else {
+                            itemsTotalUSD += price * qty;
+                        }
+                    });
+                }
+                if (orderData && orderData.subtotalUSD !== undefined) {
+                    itemsTotalUSD = Number(orderData.subtotalUSD);
+                }
+
+                const finalTotalUSD = (orderData && orderData.totalAmount !== undefined) ? Number(orderData.totalAmount) : (itemsTotalUSD + deliveryFee);
+
                 let waMessage = '';
                 if (lang === 'ar') {
+                    const deliveryText = deliveryFee > 0 ? `$${deliveryFee.toFixed(2)}` : 'مجاني (Free)';
                     waMessage += `*طلب جديد من المتجر* 🛍️\n`;
                     waMessage += `*رقم الطلب:* #${orderId}\n`;
                     if (orderData && orderData.customer) {
                         waMessage += `*الاسم:* ${orderData.customer.name || ''}\n`;
                         if (orderData.customer.phone) waMessage += `*الهاتف:* ${orderData.customer.phone}\n`;
-                        waMessage += `*العنوان:* ${orderData.customer.address || ''}\n`;
+                        waMessage += `*العنوان (التوصيل):* ${orderData.customer.address || ''}\n`;
                     }
-                    if (orderData && orderData.items && orderData.items.length > 0) {
+                    if (hasItems) {
                         waMessage += `\n*المنتجات المطلوبة:*\n`;
                         orderData.items.forEach(item => {
                             const unitPrice = item.currency === 'LBP' ? `${(item.price || 0).toLocaleString()} LBP` : `$${(item.price || 0).toFixed(2)}`;
                             waMessage += `▫️ ${item.quantity}x ${item.title} (${unitPrice})\n`;
                         });
                     }
-                    if (orderData && orderData.totalAmount !== undefined) {
-                        waMessage += `\n*المجموع الإجمالي:* $${Number(orderData.totalAmount).toFixed(2)}\n`;
+                    waMessage += `\n*مجموع المنتجات:* $${itemsTotalUSD.toFixed(2)}\n`;
+                    waMessage += `*كلفة التوصيل (الدليفري):* ${deliveryText}\n`;
+                    waMessage += `*المجموع الإجمالي:* $${finalTotalUSD.toFixed(2)}\n`;
+                } else if (lang === 'fr') {
+                    const deliveryText = deliveryFee > 0 ? `$${deliveryFee.toFixed(2)}` : 'Gratuit';
+                    waMessage += `*Nouvelle Commande* 🛍️\n`;
+                    waMessage += `*N° Commande:* #${orderId}\n`;
+                    if (orderData && orderData.customer) {
+                        waMessage += `*Nom:* ${orderData.customer.name || ''}\n`;
+                        if (orderData.customer.phone) waMessage += `*Téléphone:* ${orderData.customer.phone}\n`;
+                        waMessage += `*Adresse de livraison:* ${orderData.customer.address || ''}\n`;
                     }
+                    if (hasItems) {
+                        waMessage += `\n*Articles commandés:*\n`;
+                        orderData.items.forEach(item => {
+                            const unitPrice = item.currency === 'LBP' ? `${(item.price || 0).toLocaleString()} LBP` : `$${(item.price || 0).toFixed(2)}`;
+                            waMessage += `▫️ ${item.quantity}x ${item.title} (${unitPrice})\n`;
+                        });
+                    }
+                    waMessage += `\n*Sous-total:* $${itemsTotalUSD.toFixed(2)}\n`;
+                    waMessage += `*Frais de livraison:* ${deliveryText}\n`;
+                    waMessage += `*Montant Total:* $${finalTotalUSD.toFixed(2)}\n`;
                 } else {
+                    const deliveryText = deliveryFee > 0 ? `$${deliveryFee.toFixed(2)}` : 'Free';
                     waMessage += `*New Store Order* 🛍️\n`;
                     waMessage += `*Order ID:* #${orderId}\n`;
                     if (orderData && orderData.customer) {
                         waMessage += `*Name:* ${orderData.customer.name || ''}\n`;
                         if (orderData.customer.phone) waMessage += `*Phone:* ${orderData.customer.phone}\n`;
-                        waMessage += `*Address:* ${orderData.customer.address || ''}\n`;
+                        waMessage += `*Delivery Address:* ${orderData.customer.address || ''}\n`;
                     }
-                    if (orderData && orderData.items && orderData.items.length > 0) {
+                    if (hasItems) {
                         waMessage += `\n*Ordered Items:*\n`;
                         orderData.items.forEach(item => {
                             const unitPrice = item.currency === 'LBP' ? `${(item.price || 0).toLocaleString()} LBP` : `$${(item.price || 0).toFixed(2)}`;
                             waMessage += `▫️ ${item.quantity}x ${item.title} (${unitPrice})\n`;
                         });
                     }
-                    if (orderData && orderData.totalAmount !== undefined) {
-                        waMessage += `\n*Total Amount:* $${Number(orderData.totalAmount).toFixed(2)}\n`;
-                    }
+                    waMessage += `\n*Items Subtotal:* $${itemsTotalUSD.toFixed(2)}\n`;
+                    waMessage += `*Delivery Fee:* ${deliveryText}\n`;
+                    waMessage += `*Total Amount:* $${finalTotalUSD.toFixed(2)}\n`;
                 }
 
                 const encodedMsg = encodeURIComponent(waMessage);
