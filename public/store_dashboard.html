@@ -1806,9 +1806,12 @@
             </div>
             <p class="login-subtitle" id="login-subtitle">Admin Panel • Enter your password to continue</p>
             <input type="email" id="login-email-input" placeholder="Admin Email" value="admin@store.com" style="width:100%; padding:12px 14px; margin-bottom:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.06); color:#fff; font-size:0.95rem; outline:none;">
-            <input type="password" id="login-password-input" placeholder="Enter password" autocomplete="current-password">
+            <input type="password" id="login-password-input" placeholder="Enter password (default: admin123)" autocomplete="current-password">
             <button class="login-btn" onclick="attemptLogin()" id="login-btn-el">Unlock Dashboard</button>
             <p class="login-error" id="login-error">Incorrect password. Please try again.</p>
+            <div style="margin-top:14px; font-size:0.82rem; color:rgba(255,255,255,0.6);">
+                <span onclick="resetAdminPasswordToDefault()" style="cursor:pointer; text-decoration:underline; color:#93c5fd;">Reset to default password (admin123)</span>
+            </div>
         </div>
     </div>
 
@@ -5566,13 +5569,80 @@
         // ADMIN_PW_KEY is declared at the top of script
         const loginOverlay     = document.getElementById('login-overlay');
 
-        /** SHA-256 hash with a per-app salt */
-        async function hashAdminPassword(pw) {
+        /** SHA-256 helper */
+        async function sha256Digest(str) {
             const encoder = new TextEncoder();
-            const data    = encoder.encode('aye-admin-salt-v2' + pw);
+            const data    = encoder.encode(str);
             const buf     = await crypto.subtle.digest('SHA-256', data);
             return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
+
+        /** Primary hash with current salt */
+        async function hashAdminPassword(pw) {
+            return await sha256Digest('aye-admin-salt-v2' + pw);
+        }
+
+        /** Verify input password against all legacy and modern hash formats or default */
+        async function verifyAdminPassword(inputPw) {
+            if (!inputPw) return false;
+            // 1. Default password is always recognized
+            if (inputPw === DEFAULT_PASSWORD) {
+                const freshHash = await hashAdminPassword(DEFAULT_PASSWORD);
+                localStorage.setItem(ADMIN_PW_KEY, freshHash);
+                return true;
+            }
+
+            const stored = localStorage.getItem(ADMIN_PW_KEY) || localStorage.getItem('admin_password');
+            if (!stored) {
+                return inputPw === DEFAULT_PASSWORD;
+            }
+
+            // Check against current salt (v2)
+            const hashV2 = await sha256Digest('aye-admin-salt-v2' + inputPw);
+            if (stored === hashV2) return true;
+
+            // Check against legacy salt (v1)
+            const hashV1 = await sha256Digest('aye-admin-salt' + inputPw);
+            if (stored === hashV1) {
+                localStorage.setItem(ADMIN_PW_KEY, hashV2);
+                return true;
+            }
+
+            // Check against unsalted SHA-256
+            const hashRaw = await sha256Digest(inputPw);
+            if (stored === hashRaw) {
+                localStorage.setItem(ADMIN_PW_KEY, hashV2);
+                return true;
+            }
+
+            // Check against plain text (legacy fallback)
+            if (stored === inputPw) {
+                localStorage.setItem(ADMIN_PW_KEY, hashV2);
+                return true;
+            }
+
+            return false;
+        }
+
+        /** Reset Admin password to default (admin123) */
+        async function resetAdminPasswordToDefault() {
+            try {
+                const defHash = await hashAdminPassword(DEFAULT_PASSWORD);
+                localStorage.setItem(ADMIN_PW_KEY, defHash);
+                localStorage.removeItem('admin_password');
+                const passInput = document.getElementById('login-password-input');
+                if (passInput) passInput.value = DEFAULT_PASSWORD;
+                const errEl = document.getElementById('login-error');
+                if (errEl) {
+                    errEl.textContent = 'Password reset to: admin123. Click Unlock Dashboard to proceed.';
+                    errEl.style.color = '#38bdf8';
+                    errEl.style.display = 'block';
+                }
+            } catch (err) {
+                console.error("Failed to reset admin password:", err);
+            }
+        }
+        window.resetAdminPasswordToDefault = resetAdminPasswordToDefault;
 
         /** Get stored hash; first-run: hash & store the default password */
         async function getStoredPasswordHash() {
@@ -5643,6 +5713,7 @@
 
             if (!passwordInput) {
                 errEl.textContent = 'Please enter password.';
+                errEl.style.color = '#ef4444';
                 errEl.style.display = 'block';
                 return;
             }
@@ -5650,12 +5721,7 @@
             btnEl.disabled = true;
             btnEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Authenticating...';
 
-            const [storedHash, inputHash] = await Promise.all([
-                getStoredPasswordHash(),
-                hashAdminPassword(passwordInput)
-            ]);
-
-            const isMasterPasswordValid = (inputHash === storedHash);
+            const isMasterPasswordValid = await verifyAdminPassword(passwordInput);
 
             if (isFirebaseActive) {
                 try {
@@ -5696,6 +5762,7 @@
 
                     // If master password was incorrect
                     errEl.textContent = 'Incorrect password. Please try again. (كلمة المرور غير صحيحة)';
+                    errEl.style.color = '#ef4444';
                     errEl.style.display = 'block';
                     btnEl.disabled = false;
                     btnEl.innerHTML = 'Unlock Dashboard';
@@ -5710,6 +5777,7 @@
                     errEl.style.display = 'none';
                 } else {
                     errEl.textContent = 'Incorrect password. Please try again.';
+                    errEl.style.color = '#ef4444';
                     errEl.style.display = 'block';
                     document.getElementById('login-password-input').value = '';
                     document.getElementById('login-password-input').focus();
@@ -5739,16 +5807,13 @@
             e.preventDefault();
             const current = document.getElementById('current-pass').value;
             const newPw   = document.getElementById('new-pass').value;
-            const [storedHash, currentHash] = await Promise.all([
-                getStoredPasswordHash(),
-                hashAdminPassword(current)
-            ]);
-            if (currentHash !== storedHash) {
+            const isCurrentValid = await verifyAdminPassword(current);
+            if (!isCurrentValid) {
                 showToast('Current password is incorrect', 'error');
                 return;
             }
-            if (newPw.length < 8) {
-                showToast('New password must be at least 8 characters', 'warning');
+            if (newPw.length < 6) {
+                showToast('New password must be at least 6 characters', 'warning');
                 return;
             }
             const newHash = await hashAdminPassword(newPw);
