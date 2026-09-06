@@ -1741,7 +1741,8 @@
                 <i class="fa-solid fa-store" style="color:#3b82f6;"></i>
                 <span id="login-title">Store</span>
             </div>
-            <p class="login-subtitle" id="login-subtitle">Admin Panel — Enter your password to continue</p>
+            <p class="login-subtitle" id="login-subtitle">Admin Panel • Enter your password to continue</p>
+            <input type="email" id="login-email-input" placeholder="Admin Email" value="admin@store.com" style="width:100%; padding:12px 14px; margin-bottom:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.06); color:#fff; font-size:0.95rem; outline:none;">
             <input type="password" id="login-password-input" placeholder="Enter password" autocomplete="current-password">
             <button class="login-btn" onclick="attemptLogin()" id="login-btn-el">Unlock Dashboard</button>
             <p class="login-error" id="login-error">Incorrect password. Please try again.</p>
@@ -2120,12 +2121,6 @@
                 isFirebaseActive = true;
                 dbStatusDot.className = 'status-dot active';
                 dbStatusText.textContent = 'Firebase Connected (Online)';
-                // Anonymous sign-in so Firestore rules can trust this is the admin dashboard
-                firebase.auth().signInAnonymously().then(() => {
-                    console.log('[Security] Admin dashboard: anonymous auth active.');
-                }).catch(err => {
-                    console.warn('[Security] Anonymous auth failed (rules may block writes):', err.message);
-                });
             } catch (error) {
                 console.error("Firebase initialization failed:", error);
                 dbStatusDot.className = 'status-dot inactive';
@@ -2557,7 +2552,7 @@
             // ORDERS
             subscribeToOrders(callback) {
                 if (isFirebaseActive) {
-                    return db.collection('orders').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+                    return db.collection('orders').orderBy('createdAt', 'desc').limit(150).onSnapshot(snapshot => {
                         const orders = [];
                         snapshot.forEach(doc => {
                             orders.push({ id: doc.id, ...doc.data() });
@@ -5157,7 +5152,7 @@
         });
 
         // ─────────────────────────────────────────────────────────────────────
-        // ADMIN LOGIN & SESSION  (SHA-256 hashed password)
+        // ADMIN LOGIN & FIREBASE AUTH SESSION
         // ─────────────────────────────────────────────────────────────────────
         const DEFAULT_PASSWORD = 'admin123';
         const SESSION_KEY      = 'admin_session_token';
@@ -5176,46 +5171,139 @@
         async function getStoredPasswordHash() {
             const stored = localStorage.getItem(ADMIN_PW_KEY);
             if (stored) return stored;
-            // Migrate old plain-text password if it exists
             const oldPlain = localStorage.getItem('admin_password');
             const basePw   = oldPlain || DEFAULT_PASSWORD;
             const hashed   = await hashAdminPassword(basePw);
             localStorage.setItem(ADMIN_PW_KEY, hashed);
-            localStorage.removeItem('admin_password'); // remove old plain-text key
+            localStorage.removeItem('admin_password');
             return hashed;
+        }
+
+        let isDashboardUnlocked = false;
+        function unlockDashboardUI() {
+            if (isDashboardUnlocked) return;
+            isDashboardUnlocked = true;
+            loginOverlay.style.animation = 'none';
+            loginOverlay.style.opacity   = '0';
+            loginOverlay.style.transition = 'opacity 0.4s';
+            setTimeout(() => { 
+                loginOverlay.style.display = 'none'; 
+                initGlobalDataSubscriptions();
+            }, 400);
+        }
+
+        function lockDashboardUI() {
+            isDashboardUnlocked = false;
+            loginOverlay.style.display = 'flex';
+            loginOverlay.style.opacity = '1';
+            activeDbListeners.forEach(unsub => { if (typeof unsub === 'function') unsub(); });
+            activeDbListeners = [];
+        }
+
+        // Firebase Auth State Observer
+        if (isFirebaseActive && typeof firebase !== 'undefined' && firebase.auth) {
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user && !user.isAnonymous) {
+                    console.log('[Security] Verified Admin session active:', user.email);
+                    sessionStorage.setItem(SESSION_KEY, 'authenticated');
+                    unlockDashboardUI();
+                } else {
+                    console.log('[Security] Admin authentication required.');
+                    const localToken = sessionStorage.getItem(SESSION_KEY);
+                    if (!localToken) {
+                        lockDashboardUI();
+                    }
+                }
+            });
         }
 
         function checkSession() {
             const token = sessionStorage.getItem(SESSION_KEY);
             if (token === 'authenticated') {
-                loginOverlay.style.display = 'none';
+                if (!isFirebaseActive) {
+                    unlockDashboardUI();
+                } else if (firebase.auth().currentUser && !firebase.auth().currentUser.isAnonymous) {
+                    unlockDashboardUI();
+                }
             }
-            // else overlay stays visible
         }
 
         async function attemptLogin() {
-            const input  = document.getElementById('login-password-input').value;
-            const errEl  = document.getElementById('login-error');
-            const [storedHash, inputHash] = await Promise.all([
-                getStoredPasswordHash(),
-                hashAdminPassword(input)
-            ]);
-            if (inputHash === storedHash) {
-                sessionStorage.setItem(SESSION_KEY, 'authenticated');
-                loginOverlay.style.animation = 'none';
-                loginOverlay.style.opacity   = '0';
-                loginOverlay.style.transition = 'opacity 0.4s';
-                setTimeout(() => { loginOverlay.style.display = 'none'; }, 400);
-                errEl.style.display = 'none';
-            } else {
+            const emailInput = document.getElementById('login-email-input')?.value?.trim() || 'admin@store.com';
+            const passwordInput = document.getElementById('login-password-input').value;
+            const errEl = document.getElementById('login-error');
+            const btnEl = document.getElementById('login-btn-el');
+
+            if (!passwordInput) {
+                errEl.textContent = 'Please enter password.';
                 errEl.style.display = 'block';
-                document.getElementById('login-password-input').value = '';
-                document.getElementById('login-password-input').focus();
+                return;
+            }
+
+            btnEl.disabled = true;
+            btnEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Authenticating...';
+
+            if (isFirebaseActive) {
+                try {
+                    await firebase.auth().signInWithEmailAndPassword(emailInput, passwordInput);
+                    errEl.style.display = 'none';
+                    btnEl.disabled = false;
+                    btnEl.innerHTML = 'Unlock Dashboard';
+                } catch (authErr) {
+                    console.warn("Firebase Auth sign-in failed, checking first-time bootstrap:", authErr);
+                    const [storedHash, inputHash] = await Promise.all([
+                        getStoredPasswordHash(),
+                        hashAdminPassword(passwordInput)
+                    ]);
+                    
+                    if (inputHash === storedHash) {
+                        try {
+                            // First-time bootstrap: create admin user in Firebase Auth
+                            await firebase.auth().createUserWithEmailAndPassword(emailInput, passwordInput);
+                            errEl.style.display = 'none';
+                            btnEl.disabled = false;
+                            btnEl.innerHTML = 'Unlock Dashboard';
+                            return;
+                        } catch (createErr) {
+                            console.log("Bootstrap notice:", createErr.message);
+                        }
+                    }
+
+                    errEl.textContent = authErr.message || 'Incorrect credentials. Please try again.';
+                    errEl.style.display = 'block';
+                    btnEl.disabled = false;
+                    btnEl.innerHTML = 'Unlock Dashboard';
+                    document.getElementById('login-password-input').value = '';
+                    document.getElementById('login-password-input').focus();
+                }
+            } else {
+                // Offline LocalStorage mode
+                const [storedHash, inputHash] = await Promise.all([
+                    getStoredPasswordHash(),
+                    hashAdminPassword(passwordInput)
+                ]);
+                if (inputHash === storedHash) {
+                    sessionStorage.setItem(SESSION_KEY, 'authenticated');
+                    unlockDashboardUI();
+                    errEl.style.display = 'none';
+                } else {
+                    errEl.textContent = 'Incorrect password. Please try again.';
+                    errEl.style.display = 'block';
+                    document.getElementById('login-password-input').value = '';
+                    document.getElementById('login-password-input').focus();
+                }
+                btnEl.disabled = false;
+                btnEl.innerHTML = 'Unlock Dashboard';
             }
         }
 
-        function adminLogout() {
+        async function adminLogout() {
             sessionStorage.removeItem(SESSION_KEY);
+            if (isFirebaseActive && firebase.auth) {
+                try {
+                    await firebase.auth().signOut();
+                } catch (e) {}
+            }
             window.location.reload();
         }
 
@@ -5243,7 +5331,17 @@
             }
             const newHash = await hashAdminPassword(newPw);
             localStorage.setItem(ADMIN_PW_KEY, newHash);
-            localStorage.removeItem('admin_password'); // ensure old key is gone
+            localStorage.removeItem('admin_password');
+
+            if (isFirebaseActive && firebase.auth().currentUser) {
+                try {
+                    await firebase.auth().currentUser.updatePassword(newPw);
+                    console.log("Firebase Auth admin password updated.");
+                } catch (authPwErr) {
+                    console.warn("Firebase Auth password update notice:", authPwErr.message);
+                }
+            }
+
             showToast('Password changed successfully!');
             document.getElementById('change-password-form').reset();
         });

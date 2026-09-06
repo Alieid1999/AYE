@@ -41,74 +41,77 @@ service cloud.firestore {
                 && request.resource.data.password.size() <= 128));
     }
 
-    // ─── Helper: request comes from an authenticated session (admin dashboard) ─
-    // The dashboard signs in anonymously via Firebase Auth, giving it a valid
-    // request.auth token. Unauthenticated API callers (curl, scripts, etc.)
-    // have request.auth == null and are blocked from destructive operations.
-    function isSignedIn() {
-      return request.auth != null;
+    // ─── Security Helper: Admin Authenticated Session ──────────────────────────
+    // Privileged operations (managing products, viewing all orders/customers,
+    // managing suppliers, and updating store settings) strictly require an authenticated
+    // Firebase account with a non-anonymous sign-in provider (e.g., Email/Password).
+    // Anonymous users (unauthenticated callers) are blocked.
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.firebase.sign_in_provider != 'anonymous';
     }
 
     // ─── Products ──────────────────────────────────────────────────────────────
     // • Public read  — the storefront must be able to display products
-    // • Write/Delete — require Firebase Auth (admin dashboard uses Anonymous Auth)
+    // • Write/Delete — strictly require verified admin authentication
     match /products/{productId} {
       allow read: if true;
-      allow create, update: if isSignedIn() && isValidProduct();
-      allow delete: if isSignedIn();
+      allow create, update: if isAdmin() && isValidProduct();
+      allow delete: if isAdmin();
     }
 
     // ─── Orders ────────────────────────────────────────────────────────────────
-    // • get  — customers can look up a specific order by ID
-    // • list — only authenticated sessions (admin dashboard) may enumerate
-    // • create — any visitor (no account needed to place an order)
-    // • update — status field or customer info, only by authenticated admin
-    // • delete — never
+    // • get    — customers can look up a specific order by ID
+    // • list   — only verified admin may enumerate all store orders
+    // • create — any visitor can place an order
+    // • update — only verified admin can update status or customer info
+    // • delete — only verified admin
     match /orders/{orderId} {
       allow get: if true;
-      allow list: if isSignedIn();
+      allow list: if isAdmin();
       allow create: if isValidOrder();
-      allow update: if isSignedIn();
-      allow delete: if false;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
     }
 
     // ─── Customer profiles ─────────────────────────────────────────────────────
-    // • get  — needed for sign-in lookups from the storefront
-    // • list — only authenticated admin may enumerate all customers
-    // • create / update — customers manage their own profile (no auth required
-    //   because the storefront has no Firebase Auth for end-users)
-    // • delete — never
+    // • get    — needed for sign-in lookups from storefront
+    // • list   — only verified admin may list all customer accounts
+    // • create — customers create account
+    // • update — customers update their profile
+    // • delete — only verified admin
     match /customers/{customerId} {
       allow get: if true;
-      allow list: if isSignedIn();
+      allow list: if isAdmin();
       allow create: if isValidCustomerCreate();
       allow update: if isValidCustomerUpdate();
-      allow delete: if false;
+      allow delete: if isAdmin();
     }
 
     // ─── Store settings ────────────────────────────────────────────────────────
     // • read  — storefront needs categories & gateway config for OTP & logo
-    // • write — only authenticated admin
+    // • write — only verified admin
     match /settings/{docId} {
       allow read: if docId in ['categories', 'gateways', 'logo'];
-      allow write: if isSignedIn() && docId in ['categories', 'gateways', 'logo'];
+      allow write: if isAdmin() && docId in ['categories', 'gateways', 'logo'];
     }
 
-
     // ─── Suppliers ─────────────────────────────────────────────────────────────
+    // • read / write — confidential supplier costs, only verified admin
     match /suppliers/{supplierId} {
-      allow read, write: if isSignedIn();
+      allow read, write: if isAdmin();
     }
 
     // ─── Product reviews ───────────────────────────────────────────────────────
     // • read   — public storefront displays ratings/reviews
     // • write  — allowed from storefront (customers), constrained shape/size
+    // • delete — only verified admin
     match /product_reviews/{productId} {
       allow read: if true;
       allow create, update: if request.resource.data.keys().hasOnly(['reviews', 'updatedAt'])
         && request.resource.data.reviews is list
         && request.resource.data.reviews.size() <= 500;
-      allow delete: if isSignedIn();
+      allow delete: if isAdmin();
     }
   }
 }

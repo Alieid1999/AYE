@@ -2336,8 +2336,8 @@
         }
 
         async function hashPassword(password) {
-            // Return plain text password as requested by the user
-            return password;
+            if (!password) return '';
+            return await sha256Hash(password);
         }
 
         function isPasswordHash(value) {
@@ -2345,29 +2345,28 @@
         }
 
         async function verifyPassword(inputPassword, storedPassword) {
-            if (!storedPassword) return false;
-            if (isPasswordHash(storedPassword)) {
-                const hashed = await sha256Hash(inputPassword);
-                return hashed === storedPassword.toLowerCase();
-            }
+            if (!storedPassword || !inputPassword) return false;
+            const hashed = await sha256Hash(inputPassword);
+            if (storedPassword.toLowerCase() === hashed.toLowerCase()) return true;
+            // Legacy plaintext fallback check
             return inputPassword === storedPassword;
         }
 
         async function upgradeStoredPasswordIfNeeded(docId, inputPassword, storedPassword) {
-            // If the stored password is a legacy SHA-256 hash, upgrade it to plain text upon successful login
-            if (isPasswordHash(storedPassword)) {
-                console.log("Upgrading legacy hashed password to plain text for customer:", docId);
+            // Automatically upgrade legacy plaintext password to salted SHA-256 hash in Firestore
+            if (storedPassword && !isPasswordHash(storedPassword)) {
+                const secureHashed = await sha256Hash(inputPassword);
                 if (isFirebaseActive) {
                     try {
-                        await db.collection('customers').doc(docId).update({ password: inputPassword });
-                        console.log("Password upgraded to plain text in Firestore successfully.");
+                        await db.collection('customers').doc(docId).update({ password: secureHashed });
+                        console.log("Customer password secured with SHA-256 hash.");
                     } catch (err) {
-                        console.error("Failed to upgrade password in Firestore:", err);
+                        console.error("Failed to update password hash:", err);
                     }
                 } else {
                     const mockCustomers = JSON.parse(localStorage.getItem('mock_customers')) || {};
                     if (mockCustomers[docId]) {
-                        mockCustomers[docId].password = inputPassword;
+                        mockCustomers[docId].password = secureHashed;
                         localStorage.setItem('mock_customers', JSON.stringify(mockCustomers));
                         window.dispatchEvent(new Event('local_customers_changed'));
                     }
@@ -2402,6 +2401,78 @@
             }
         }
 
+        function drawCaptchaOnCanvas(canvasId, text) {
+            let el = document.getElementById(canvasId);
+            if (!el) return;
+            
+            let canvas = el;
+            if (el.tagName.toLowerCase() !== 'canvas') {
+                const newCanvas = document.createElement('canvas');
+                newCanvas.id = canvasId;
+                newCanvas.width = 130;
+                newCanvas.height = 38;
+                newCanvas.style.borderRadius = '6px';
+                newCanvas.style.border = '1px solid #cbd5e1';
+                newCanvas.style.cursor = 'pointer';
+                newCanvas.style.display = 'inline-block';
+                newCanvas.title = 'Click to refresh code';
+                newCanvas.onclick = () => {
+                    if (canvasId === 'signin-captcha-canvas') generateSigninCaptcha();
+                    else generateCaptcha();
+                };
+                el.parentNode.replaceChild(newCanvas, el);
+                canvas = newCanvas;
+            } else {
+                canvas.width = 130;
+                canvas.height = 38;
+            }
+
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+
+            // Background gradient
+            const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            grad.addColorStop(0, '#f8fafc');
+            grad.addColorStop(1, '#e2e8f0');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Add random noise lines
+            for (let i = 0; i < 4; i++) {
+                ctx.strokeStyle = `rgba(${Math.floor(Math.random()*150)}, ${Math.floor(Math.random()*150)}, ${Math.floor(Math.random()*150)}, 0.45)`;
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.stroke();
+            }
+
+            // Add random noise dots
+            for (let i = 0; i < 20; i++) {
+                ctx.fillStyle = `rgba(${Math.floor(Math.random()*150)}, ${Math.floor(Math.random()*150)}, ${Math.floor(Math.random()*150)}, 0.4)`;
+                ctx.beginPath();
+                ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, 1, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Draw rotated characters
+            const charWidth = (canvas.width - 20) / Math.max(text.length, 1);
+            for (let i = 0; i < text.length; i++) {
+                ctx.save();
+                const char = text[i];
+                const x = 10 + i * charWidth + (charWidth / 2);
+                const y = 26 + (Math.random() * 4 - 2);
+                const angle = (Math.random() - 0.5) * 0.35;
+                ctx.translate(x, y);
+                ctx.rotate(angle);
+                ctx.textAlign = 'center';
+                ctx.font = 'bold 20px monospace';
+                ctx.fillStyle = ['#1e293b', '#0f172a', '#1d4ed8', '#047857', '#b91c1c'][i % 5];
+                ctx.fillText(char, 0, 0);
+                ctx.restore();
+            }
+        }
+
         function generateCaptcha() {
             const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
             let code = '';
@@ -2409,9 +2480,7 @@
                 code += chars.charAt(Math.floor(Math.random() * chars.length));
             }
             generatedCaptcha = code;
-            if (captchaCanvas) {
-                captchaCanvas.textContent = code;
-            }
+            drawCaptchaOnCanvas('captcha-canvas', code);
             const input = document.getElementById('captcha-input');
             if (input) input.value = '';
         }
@@ -2423,10 +2492,7 @@
                 code += chars.charAt(Math.floor(Math.random() * chars.length));
             }
             generatedSigninCaptcha = code;
-            const signinCaptchaCanvas = document.getElementById('signin-captcha-canvas');
-            if (signinCaptchaCanvas) {
-                signinCaptchaCanvas.textContent = code;
-            }
+            drawCaptchaOnCanvas('signin-captcha-canvas', code);
             const input = document.getElementById('signin-captcha-input');
             if (input) input.value = '';
         }
@@ -2455,35 +2521,8 @@
             window.onAuthSuccess = onSuccessCallback;
         }
 
-        // Global memory cache for zero-delay instant response
-        let globalCustomersMemoryMap = null;
-
-        async function prefetchCustomersMap() {
-            if (globalCustomersMemoryMap) return;
-            const localCache = JSON.parse(localStorage.getItem('customer_cache') || '{}');
-            globalCustomersMemoryMap = { ...localCache };
-
-            if (typeof isFirebaseActive !== 'undefined' && isFirebaseActive && typeof db !== 'undefined') {
-                try {
-                    const snapshot = await db.collection('customers').get();
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        const cleanId = doc.id.replace(/[^0-9]/g, '');
-                        globalCustomersMemoryMap[cleanId] = data;
-                        if (data.phone) {
-                            const cleanPhone = data.phone.replace(/[^0-9]/g, '');
-                            globalCustomersMemoryMap[cleanPhone] = data;
-                        }
-                    });
-                    localStorage.setItem('customer_cache', JSON.stringify(globalCustomersMemoryMap));
-                } catch (e) {
-                    console.log("Prefetch background notice:", e.message);
-                }
-            }
-        }
-
-        // Prefetch on page load & when auth modal opens
-        window.addEventListener('DOMContentLoaded', prefetchCustomersMap);
+        // Global memory cache for instant response
+        let globalCustomersMemoryMap = {};
 
         function checkPhoneLiveInstant(val) {
             const statusEl = document.getElementById('phone-live-status');
