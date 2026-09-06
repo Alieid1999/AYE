@@ -3919,6 +3919,9 @@
                 cartItemsList.appendChild(itemDiv);
             });
 
+            const deliveryFee = Number(gatewaySettings?.delivery_fee_usd !== undefined ? gatewaySettings.delivery_fee_usd : (localStorage.getItem('store_delivery_fee_usd') || 0));
+            const lang = localStorage.getItem('store_lang') || 'en';
+
             let totalHTML = "";
             if (totalUSD > 0 && totalLBP > 0) {
                 totalHTML = `$${totalUSD.toFixed(2)} + ${totalLBP.toLocaleString()} L.L.`;
@@ -3926,6 +3929,15 @@
                 totalHTML = `${totalLBP.toLocaleString()} L.L.`;
             } else {
                 totalHTML = `$${totalUSD.toFixed(2)}`;
+            }
+
+            if (deliveryFee > 0 && totalUSD > 0) {
+                const totalWithDelivery = totalUSD + deliveryFee;
+                if (lang === 'ar') {
+                    totalHTML += ` <span style="font-size:0.85rem; font-weight:normal; color:var(--text-light);">(+ $${deliveryFee.toFixed(2)} توصيل = <strong style="color:var(--primary-color);">$${totalWithDelivery.toFixed(2)}</strong>)</span>`;
+                } else {
+                    totalHTML += ` <span style="font-size:0.85rem; font-weight:normal; color:var(--text-light);">(+ $${deliveryFee.toFixed(2)} delivery = <strong style="color:var(--primary-color);">$${totalWithDelivery.toFixed(2)}</strong>)</span>`;
+                }
             }
             cartTotalPrice.innerHTML = totalHTML;
 
@@ -4440,11 +4452,11 @@
                         }
                     });
                 }
-                if (orderData && orderData.subtotalUSD !== undefined) {
+                if (orderData && orderData.subtotalUSD !== undefined && Number(orderData.subtotalUSD) > 0) {
                     itemsTotalUSD = Number(orderData.subtotalUSD);
                 }
 
-                const finalTotalUSD = (orderData && orderData.totalAmount !== undefined) ? Number(orderData.totalAmount) : (itemsTotalUSD + deliveryFee);
+                const finalTotalUSD = itemsTotalUSD + deliveryFee;
 
                 let waMessage = '';
                 if (lang === 'ar') {
@@ -4465,7 +4477,7 @@
                     }
                     waMessage += `\n*مجموع المنتجات:* $${itemsTotalUSD.toFixed(2)}\n`;
                     waMessage += `*كلفة التوصيل (الدليفري):* ${deliveryText}\n`;
-                    waMessage += `*المجموع الإجمالي:* $${finalTotalUSD.toFixed(2)}\n`;
+                    waMessage += `*المجموع الإجمالي (مع التوصيل):* $${finalTotalUSD.toFixed(2)}\n`;
                 } else if (lang === 'fr') {
                     const deliveryText = deliveryFee > 0 ? `$${deliveryFee.toFixed(2)}` : 'Gratuit';
                     waMessage += `*Nouvelle Commande* 🛍️\n`;
@@ -4484,7 +4496,7 @@
                     }
                     waMessage += `\n*Sous-total:* $${itemsTotalUSD.toFixed(2)}\n`;
                     waMessage += `*Frais de livraison:* ${deliveryText}\n`;
-                    waMessage += `*Montant Total:* $${finalTotalUSD.toFixed(2)}\n`;
+                    waMessage += `*Montant Total (avec livraison):* $${finalTotalUSD.toFixed(2)}\n`;
                 } else {
                     const deliveryText = deliveryFee > 0 ? `$${deliveryFee.toFixed(2)}` : 'Free';
                     waMessage += `*New Store Order* 🛍️\n`;
@@ -4503,7 +4515,7 @@
                     }
                     waMessage += `\n*Items Subtotal:* $${itemsTotalUSD.toFixed(2)}\n`;
                     waMessage += `*Delivery Fee:* ${deliveryText}\n`;
-                    waMessage += `*Total Amount:* $${finalTotalUSD.toFixed(2)}\n`;
+                    waMessage += `*Total Amount (including delivery):* $${finalTotalUSD.toFixed(2)}\n`;
                 }
 
                 const encodedMsg = encodeURIComponent(waMessage);
