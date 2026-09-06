@@ -5657,13 +5657,26 @@
                     btnEl.disabled = false;
                     btnEl.innerHTML = 'Unlock Dashboard';
                 } catch (authErr) {
-                    console.warn("Firebase Auth sign-in failed, checking first-time bootstrap:", authErr);
+                    console.warn("Firebase Auth sign-in notice:", authErr.code, authErr.message);
                     const [storedHash, inputHash] = await Promise.all([
                         getStoredPasswordHash(),
                         hashAdminPassword(passwordInput)
                     ]);
                     
                     if (inputHash === storedHash) {
+                        // If Email/Password provider is disabled in Firebase Console
+                        if (authErr.code === 'auth/operation-not-allowed') {
+                            console.warn("[Firebase] Email/Password provider is not yet enabled in Firebase Console. Using local admin session.");
+                            sessionStorage.setItem(SESSION_KEY, 'authenticated');
+                            try { await firebase.auth().signInAnonymously(); } catch (e) {}
+                            unlockDashboardUI();
+                            errEl.style.display = 'none';
+                            btnEl.disabled = false;
+                            btnEl.innerHTML = 'Unlock Dashboard';
+                            showToast('Admin logged in! (Please enable Email/Password in Firebase Console -> Auth)', 'warning');
+                            return;
+                        }
+
                         try {
                             // First-time bootstrap: create admin user in Firebase Auth
                             await firebase.auth().createUserWithEmailAndPassword(emailInput, passwordInput);
@@ -5672,11 +5685,25 @@
                             btnEl.innerHTML = 'Unlock Dashboard';
                             return;
                         } catch (createErr) {
-                            console.log("Bootstrap notice:", createErr.message);
+                            console.log("Bootstrap notice:", createErr.code, createErr.message);
+                            if (createErr.code === 'auth/operation-not-allowed') {
+                                sessionStorage.setItem(SESSION_KEY, 'authenticated');
+                                try { await firebase.auth().signInAnonymously(); } catch (e) {}
+                                unlockDashboardUI();
+                                errEl.style.display = 'none';
+                                btnEl.disabled = false;
+                                btnEl.innerHTML = 'Unlock Dashboard';
+                                showToast('Admin logged in! (Please enable Email/Password in Firebase Console -> Auth)', 'warning');
+                                return;
+                            }
                         }
                     }
 
-                    errEl.textContent = authErr.message || 'Incorrect credentials. Please try again.';
+                    if (authErr.code === 'auth/operation-not-allowed') {
+                        errEl.innerHTML = 'Email/Password sign-in is disabled in Firebase Console.<br><small>Go to Firebase Console → Authentication → Sign-in method → Enable Email/Password.</small>';
+                    } else {
+                        errEl.textContent = authErr.message || 'Incorrect credentials. Please try again.';
+                    }
                     errEl.style.display = 'block';
                     btnEl.disabled = false;
                     btnEl.innerHTML = 'Unlock Dashboard';
