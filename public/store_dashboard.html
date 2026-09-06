@@ -5650,60 +5650,52 @@
             btnEl.disabled = true;
             btnEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Authenticating...';
 
+            const [storedHash, inputHash] = await Promise.all([
+                getStoredPasswordHash(),
+                hashAdminPassword(passwordInput)
+            ]);
+
+            const isMasterPasswordValid = (inputHash === storedHash);
+
             if (isFirebaseActive) {
                 try {
+                    // Try to sign in with Firebase Auth
                     await firebase.auth().signInWithEmailAndPassword(emailInput, passwordInput);
+                    sessionStorage.setItem(SESSION_KEY, 'authenticated');
+                    unlockDashboardUI();
                     errEl.style.display = 'none';
                     btnEl.disabled = false;
                     btnEl.innerHTML = 'Unlock Dashboard';
+                    return;
                 } catch (authErr) {
                     console.warn("Firebase Auth sign-in notice:", authErr.code, authErr.message);
-                    const [storedHash, inputHash] = await Promise.all([
-                        getStoredPasswordHash(),
-                        hashAdminPassword(passwordInput)
-                    ]);
-                    
-                    if (inputHash === storedHash) {
-                        // If Email/Password provider is disabled in Firebase Console
-                        if (authErr.code === 'auth/operation-not-allowed') {
-                            console.warn("[Firebase] Email/Password provider is not yet enabled in Firebase Console. Using local admin session.");
+
+                    // If master password is valid, handle bootstrap or fallback smoothly
+                    if (isMasterPasswordValid) {
+                        try {
+                            // Try creating the admin user in Firebase Auth if not exists yet
+                            await firebase.auth().createUserWithEmailAndPassword(emailInput, passwordInput);
+                            sessionStorage.setItem(SESSION_KEY, 'authenticated');
+                            unlockDashboardUI();
+                            errEl.style.display = 'none';
+                            btnEl.disabled = false;
+                            btnEl.innerHTML = 'Unlock Dashboard';
+                            return;
+                        } catch (createErr) {
+                            console.warn("Bootstrap user notice:", createErr.code, createErr.message);
+                            // Master password is valid, unlock dashboard directly
                             sessionStorage.setItem(SESSION_KEY, 'authenticated');
                             try { await firebase.auth().signInAnonymously(); } catch (e) {}
                             unlockDashboardUI();
                             errEl.style.display = 'none';
                             btnEl.disabled = false;
                             btnEl.innerHTML = 'Unlock Dashboard';
-                            showToast('Admin logged in! (Please enable Email/Password in Firebase Console -> Auth)', 'warning');
                             return;
-                        }
-
-                        try {
-                            // First-time bootstrap: create admin user in Firebase Auth
-                            await firebase.auth().createUserWithEmailAndPassword(emailInput, passwordInput);
-                            errEl.style.display = 'none';
-                            btnEl.disabled = false;
-                            btnEl.innerHTML = 'Unlock Dashboard';
-                            return;
-                        } catch (createErr) {
-                            console.log("Bootstrap notice:", createErr.code, createErr.message);
-                            if (createErr.code === 'auth/operation-not-allowed') {
-                                sessionStorage.setItem(SESSION_KEY, 'authenticated');
-                                try { await firebase.auth().signInAnonymously(); } catch (e) {}
-                                unlockDashboardUI();
-                                errEl.style.display = 'none';
-                                btnEl.disabled = false;
-                                btnEl.innerHTML = 'Unlock Dashboard';
-                                showToast('Admin logged in! (Please enable Email/Password in Firebase Console -> Auth)', 'warning');
-                                return;
-                            }
                         }
                     }
 
-                    if (authErr.code === 'auth/operation-not-allowed') {
-                        errEl.innerHTML = 'Email/Password sign-in is disabled in Firebase Console.<br><small>Go to Firebase Console → Authentication → Sign-in method → Enable Email/Password.</small>';
-                    } else {
-                        errEl.textContent = authErr.message || 'Incorrect credentials. Please try again.';
-                    }
+                    // If master password was incorrect
+                    errEl.textContent = 'Incorrect password. Please try again. (كلمة المرور غير صحيحة)';
                     errEl.style.display = 'block';
                     btnEl.disabled = false;
                     btnEl.innerHTML = 'Unlock Dashboard';
@@ -5712,11 +5704,7 @@
                 }
             } else {
                 // Offline LocalStorage mode
-                const [storedHash, inputHash] = await Promise.all([
-                    getStoredPasswordHash(),
-                    hashAdminPassword(passwordInput)
-                ]);
-                if (inputHash === storedHash) {
+                if (isMasterPasswordValid) {
                     sessionStorage.setItem(SESSION_KEY, 'authenticated');
                     unlockDashboardUI();
                     errEl.style.display = 'none';
