@@ -3790,11 +3790,8 @@
             for (let i = 0; i < productsToSave.length; i++) {
                 btnBulkSave.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving ${i + 1}/${productsToSave.length}...`;
                 try {
-                    await DBService.addProduct(productsToSave[i]);
+                    await saveProductAndAutoPublish(productsToSave[i]);
                     successCount++;
-                    if (typeof autoPublishProductToInstagram === 'function') {
-                        autoPublishProductToInstagram(productsToSave[i]);
-                    }
                 } catch (err) {
                     console.error("Failed to add product:", productsToSave[i].title, err);
                 }
@@ -5445,7 +5442,7 @@
             importConfirmBtn.disabled  = true;
 
             try {
-                await DBService.addProduct({
+                await saveProductAndAutoPublish({
                     title: product.title,
                     image: product.image,
                     costPrice: costPrice || 0,
@@ -5530,7 +5527,7 @@
                 if (btn && !btn.disabled) {
                     try {
                         const p = scrapedProducts[i];
-                        await DBService.addProduct({
+                        await saveProductAndAutoPublish({
                             title: p.title,
                             image: p.image,
                             costPrice: Number(costP) || 0,
@@ -5640,6 +5637,13 @@
                 }
             } catch (err) {
                 console.error("Failed to reset admin password:", err);
+            }
+        }
+
+        async function saveProductAndAutoPublish(product) {
+            await DBService.addProduct(product);
+            if (typeof autoPublishProductToInstagram === 'function') {
+                await autoPublishProductToInstagram(product);
             }
         }
         window.resetAdminPasswordToDefault = resetAdminPasswordToDefault;

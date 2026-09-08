@@ -1149,7 +1149,7 @@
         /* PWA Install Banner */
         /* Top Banner PWA Install (Matching exact design) */
         .pwa-top-bar {
-            display: flex !important;
+            display: none !important;
             position: relative;
             width: 100%;
             background: #2d3139;
@@ -1160,6 +1160,9 @@
             z-index: 999999;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             direction: ltr; /* Keeps icon left, text left, button right like system banner */
+        }
+        .pwa-top-bar.active {
+            display: flex !important;
         }
         .pwa-top-left {
             display: flex;
@@ -4882,8 +4885,9 @@
                     const { outcome } = await deferredPrompt.userChoice;
                     console.log(`User response to install prompt: ${outcome}`);
                     deferredPrompt = null;
+                } else if (isIos() && pwaIosModal) {
+                    pwaIosModal.classList.add('active');
                 } else {
-                    // Alert user if browser doesn't support or has already installed
                     showToast(localStorage.getItem('store_lang') === 'ar' ? 'التطبيق مثبت بالفعل أو افتح القائمة للتثبيت' : 'App is already installed or open menu to install');
                 }
             });
@@ -5003,20 +5007,6 @@
         });
 
     </script>
-
-    <!-- PWA Top Install Bar (Matching screenshot style) -->
-    <div class="pwa-top-bar" id="pwa-top-bar">
-        <div class="pwa-top-left">
-            <div class="pwa-top-icon">
-                <img src="icon.svg" alt="App Icon">
-            </div>
-            <div class="pwa-top-info">
-                <span class="pwa-top-title" id="pwa-top-title">Install Store App Online Free</span>
-                <span class="pwa-top-sub" id="pwa-top-domain">store.app</span>
-            </div>
-        </div>
-        <button type="button" class="pwa-top-btn" id="pwa-top-install-btn">Install</button>
-    </div>
 
     <!-- PWA iOS Share Sheet Instruction Modal -->
     <div class="pwa-ios-modal" id="pwa-ios-modal">
