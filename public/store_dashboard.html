@@ -6758,7 +6758,7 @@
         // ─────────────────────────────────────────────────────────────────────
         let scannerItemsList = [];
         let scannerEngine = 'gemini';
-        const DEFAULT_GEMINI_KEY = 'AQ.Ab8RN6JQZjc4N3mFeJEWyIYv2MTIRlb_h3xWTwhnblwFSU3WzA';
+        const DEFAULT_GEMINI_KEY = 'AQ.Ab8RN6L4HF3ggI6xr5vOQXGbZPlS2OgW7YYNU8IPZNKD5GahVg';
 
         // Initialize Gemini Key & Markup settings
         function initScannerSettings() {
@@ -7242,15 +7242,15 @@
             }
         }
 
-        // Gemini Vision API (Google AI Studio Free Tier)
+                // Gemini Vision API (Google AI Studio)
         async function extractWithGeminiVision(dataUrl, mimeType, apiKey) {
             const base64Data = dataUrl.split(',')[1];
             const cleanMime = mimeType || 'image/jpeg';
 
             const promptText = `Analyze this product/device image carefully. Extract and return a JSON object with:
-1. "title": Device brand and model name (e.g. "iPhone 14 Pro Max 256GB" or "Dell Latitude 5420 i7 16GB").
-2. "price": The numeric price/cost found in the image (e.g. 150 or 349.99). If no price is present, return 0. Only raw numbers.
-3. "description": Clean bullet-pointed specifications in Arabic and English (specs, condition, storage, RAM, color).
+1. "title": The precise brand, device model, specs (e.g. "iPhone 14 Pro Max 256GB" or "Dell Latitude 5420 i7 16GB").
+2. "price": The exact numeric price or cost found in the image (e.g. 150 or 349.99). If no price is in the image, return 0. Only raw numbers.
+3. "description": Clean bullet-pointed specs in Arabic and English (specs, RAM, Storage, CPU, screen, condition, color).
 4. "category": Best matching category from: ["Keyboards", "Mice & Mousepads", "Laptops & PCs", "Monitors & Displays", "PC Components", "Headsets & Audio", "Desk & Setup", "Cables & Adapters", "Other"].
 
 Return ONLY valid JSON like:
@@ -7274,36 +7274,39 @@ Return ONLY valid JSON like:
                 }
             };
 
-            const models = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+            const models = ['gemini-3.6-flash', 'gemini-2.5-flash', 'gemini-1.5-flash'];
             let lastErr = null;
 
             for (const model of models) {
-                try {
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-                        method: 'POST',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'x-goog-api-key': apiKey
-                        },
-                        body: JSON.stringify(requestBody)
-                    });
+                for (let attempt = 0; attempt < 2; attempt++) {
+                    try {
+                        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+                            method: 'POST',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'x-goog-api-key': apiKey
+                            },
+                            body: JSON.stringify(requestBody)
+                        });
 
-                    if (response.ok) {
-                        const data = await response.json();
-                        const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-                        const parsed = parseJsonFromText(rawText);
-                        if (parsed) return parsed;
-                    } else {
-                        const errData = await response.json().catch(() => ({}));
-                        lastErr = new Error(errData.error?.message || `HTTP ${response.status}`);
-                        if (response.status === 401 || response.status === 400) {
-                            throw lastErr; // don't retry other models if auth fails
+                        if (response.ok) {
+                            const data = await response.json();
+                            const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                            const parsed = parseJsonFromText(rawText);
+                            if (parsed) return parsed;
+                        } else {
+                            const errData = await response.json().catch(() => ({}));
+                            lastErr = new Error(errData.error?.message || `HTTP ${response.status}`);
+                            if (response.status === 503) {
+                                // Wait 800ms and retry if temporary spike
+                                await new Promise(r => setTimeout(r, 800));
+                                continue;
+                            }
+                            break;
                         }
-                    }
-                } catch (e) {
-                    lastErr = e;
-                    if (e.message && (e.message.includes('401') || e.message.includes('UNAUTHENTICATED'))) {
-                        throw e;
+                    } catch (e) {
+                        lastErr = e;
+                        await new Promise(r => setTimeout(r, 500));
                     }
                 }
             }
@@ -7311,7 +7314,7 @@ Return ONLY valid JSON like:
             throw lastErr || new Error("Failed to extract data from Gemini");
         }
 
-                // Tesseract.js Client-Side Local OCR
+        // Tesseract.js Client-Side Local OCR
         async function extractWithTesseractOCR(dataUrl) {
             if (typeof Tesseract === 'undefined') {
                 console.warn("Tesseract library not loaded");
