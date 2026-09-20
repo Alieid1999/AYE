@@ -6756,6 +6756,7 @@
         // ─────────────────────────────────────────────────────────────────────
         let scannerItemsList = [];
         let scannerEngine = 'gemini';
+        const DEFAULT_GEMINI_KEY = 'AQ.Ab8RN6JQZjc4N3mFeJEWyIYv2MTIRlb_h3xWTwhnblwFSU3WzA';
 
         // Initialize Gemini Key & Markup settings
         function initScannerSettings() {
@@ -6804,7 +6805,7 @@
 
             if (btnOpenKey && keyModal) {
                 btnOpenKey.addEventListener('click', () => {
-                    if (keyInput) keyInput.value = localStorage.getItem('gemini_api_key') || '';
+                    if (keyInput) keyInput.value = localStorage.getItem('gemini_api_key') || DEFAULT_GEMINI_KEY || '';
                     keyModal.classList.add('active');
                 });
             }
@@ -6893,7 +6894,7 @@
         }
 
         function updateGeminiKeyButtonStatus() {
-            const hasKey = !!localStorage.getItem('gemini_api_key');
+            const hasKey = !!(localStorage.getItem('gemini_api_key') || DEFAULT_GEMINI_KEY);
             const textEl = document.getElementById('gemini-key-status-text');
             const btnEl = document.getElementById('btn-open-gemini-key');
             if (textEl && btnEl) {
@@ -7173,7 +7174,7 @@
 
         // Process Single Image via Gemini Vision or Tesseract OCR
         async function processSingleScannerItem(item) {
-            const apiKey = localStorage.getItem('gemini_api_key');
+            const apiKey = localStorage.getItem('gemini_api_key') || DEFAULT_GEMINI_KEY;
             let extractionSuccess = false;
 
             if (scannerEngine === 'gemini' && apiKey) {
