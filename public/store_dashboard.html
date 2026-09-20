@@ -7258,13 +7258,21 @@
             const base64Data = dataUrl.split(',')[1];
             const cleanMime = mimeType && mimeType.startsWith('image/') ? mimeType : 'image/jpeg';
 
-            const promptText = `Analyze this product/device image carefully. Extract and return a JSON object with:
-1. "title": The precise brand, device model, specs (e.g. "iPhone 14 Pro Max 256GB" or "Dell Latitude 5420 i7 16GB").
-2. "price": The exact numeric price or cost found in the image (e.g. 150 or 349.99). If no price is in the image, return 0. Only raw numbers.
-3. "description": Clean bullet-pointed specs in Arabic and English (specs, RAM, Storage, CPU, screen, condition, color).
+            const promptText = `Analyze this product/device image carefully. Extract and return a clean JSON object with all text and specifications strictly in ENGLISH ONLY:
+1. "title": Device brand and model name in English (e.g. "HP 17.3\" Laptop Intel Core Ultra 5 8GB 512GB SSD" or "iPhone 14 Pro Max 256GB").
+2. "price": The exact numeric price or cost found in the image (e.g. 464 or 150). If no price is present, return 0. Only raw numbers without currency symbols.
+3. "description": Clean bullet-pointed specifications strictly in ENGLISH ONLY (e.g.
+• Display: 17.3\" FHD IPS
+• Processor: Intel Core Ultra 5
+• RAM: 8GB DDR5
+• Storage: 512GB NVMe SSD
+• Graphics: Intel Graphics
+• OS: Windows 11
+• Condition: Factory Refurbished
+• Warranty: 1 Year Warranty). Do NOT include any Arabic text.
 4. "category": Best matching category from: ["Keyboards", "Mice & Mousepads", "Laptops & PCs", "Monitors & Displays", "PC Components", "Headsets & Audio", "Desk & Setup", "Cables & Adapters", "Other"].
 
-Return ONLY valid JSON like:
+Return ONLY valid JSON:
 {"title":"...","price":0.00,"description":"...","category":"..."}`;
 
             const requestBody = {
@@ -7461,7 +7469,10 @@ Return ONLY valid JSON like:
             const item = scannerItemsList.find(i => i.id === itemId);
             if (!item) return;
 
-            const textToCopy = `📱 *${item.title}*\n💰 *السعر:* $${item.sellingPrice}\n🏷️ *التصنيف:* ${item.category}\n\n📋 *المواصفات والوصف:*\n${item.description || 'متوفر الآن'}`;
+            const priceLabel = currentLang === 'ar' ? 'السعر:' : 'Price:';
+            const catLabel = currentLang === 'ar' ? 'التصنيف:' : 'Category:';
+            const descLabel = currentLang === 'ar' ? 'المواصفات والوصف:' : 'Specifications:';
+            const textToCopy = `📱 *${item.title}*\n💰 *${priceLabel}* $${item.sellingPrice}\n🏷️ *${catLabel}* ${item.category}\n\n📋 *${descLabel}*\n${item.description || ''}`;
             navigator.clipboard.writeText(textToCopy).then(() => {
                 showToast(currentLang === 'ar' ? 'تم نسخ بيانات الجهاز للحافظة!' : 'Product info copied to clipboard!');
             }).catch(() => {
