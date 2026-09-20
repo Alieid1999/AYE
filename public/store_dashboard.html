@@ -7311,39 +7311,63 @@ Return ONLY valid JSON like:
             throw lastErr || new Error("Failed to extract data from Gemini");
         }
 
-        // Tesseract.js Client-Side Local OCR with canvas image optimization
+                // Tesseract.js Client-Side Local OCR
         async function extractWithTesseractOCR(dataUrl) {
             if (typeof Tesseract === 'undefined') {
+                console.warn("Tesseract library not loaded");
                 return null;
             }
 
-            const result = await Tesseract.recognize(dataUrl, 'eng+ara', {
-                logger: m => {}
-            });
+            try {
+                const result = await Tesseract.recognize(dataUrl, 'eng', {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            console.log(`OCR Progress: ${Math.round((m.progress || 0) * 100)}%`);
+                        }
+                    }
+                });
 
-            const text = result?.data?.text || '';
-            const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                const text = result?.data?.text || '';
+                const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
-            let detectedPrice = 0;
-            // Regex for price: $120, 120$, 120 USD, 120.00
-            const priceRegex = /(?:\$|USD|IQD|ل\.ل|EUR|€|£)?\s*(\d+(?:\.\d{1,2})?)\s*(?:\$|USD|IQD|ل\.ل|EUR|€|£)?/i;
-            for (const line of lines) {
-                const match = line.match(priceRegex);
-                if (match && Number(match[1]) > 5 && Number(match[1]) < 100000) {
-                    detectedPrice = parseFloat(match[1]);
-                    break;
+                let detectedPrice = 0;
+                // Regex for price: $120, 120$, 120 USD, 120.00
+                const priceRegex = /(?:\$|USD|IQD|EUR|€|£)?\s*(\d+(?:\.\d{1,2})?)\s*(?:\$|USD|IQD|EUR|€|£)?/i;
+                for (const line of lines) {
+                    const match = line.match(priceRegex);
+                    if (match && Number(match[1]) > 5 && Number(match[1]) < 100000) {
+                        detectedPrice = parseFloat(match[1]);
+                        break;
+                    }
                 }
+
+                // Look for brand names
+                const brands = ['iphone', 'samsung', 'xiaomi', 'redmi', 'oppo', 'vivo', 'realme', 'huawei', 'honor', 'macbook', 'dell', 'hp', 'lenovo', 'asus', 'acer', 'sony', 'playstation', 'ps5', 'xbox', 'ipad', 'apple watch', 'airpods'];
+                let titleCandidate = '';
+                for (const line of lines) {
+                    const lower = line.toLowerCase();
+                    if (brands.some(b => lower.includes(b))) {
+                        titleCandidate = line;
+                        break;
+                    }
+                }
+
+                if (!titleCandidate && lines.length > 0) {
+                    titleCandidate = lines.find(l => l.length >= 3 && !l.startsWith('$')) || '';
+                }
+
+                const descLines = lines.filter(l => l !== titleCandidate).slice(0, 6).join('\n• ');
+
+                return {
+                    title: titleCandidate ? titleCandidate.substring(0, 60) : '',
+                    price: detectedPrice,
+                    description: descLines ? ('• ' + descLines) : '',
+                    category: 'Other'
+                };
+            } catch (err) {
+                console.error("Tesseract execution error:", err);
+                return null;
             }
-
-            const titleCandidate = lines.find(l => l.length >= 4 && !l.startsWith('$')) || '';
-            const descLines = lines.slice(0, 8).join('\n• ');
-
-            return {
-                title: titleCandidate ? titleCandidate.substring(0, 60) : '',
-                price: detectedPrice,
-                description: descLines ? ('• ' + descLines) : '',
-                category: 'Other'
-            };
         }
 
         // Save Single Item to Store Database
