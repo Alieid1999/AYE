@@ -1,10 +1,10 @@
 {
-  "name": "Store",
-  "short_name": "Store",
-  "description": "Store - Shop the latest products",
+  "name": "CyberPC & Tech Store",
+  "short_name": "CyberPC",
+  "description": "CyberPC & Tech Store - High-Performance PCs, Keyboards, Mice & Gaming Gear",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#f8fafc",
+  "background_color": "#0f172a",
   "theme_color": "#3b82f6",
   "orientation": "portrait-primary",
   "icons": [

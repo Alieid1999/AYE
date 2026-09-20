@@ -2225,7 +2225,7 @@
         // ----------------------------------------
         // DATABASE INTEGRATION & Fallback Logic
         // ----------------------------------------
-        const DEFAULT_CATEGORIES = ['Laptops', 'Headphones', 'Phones', 'Smartwatches', 'Accessories', 'Other'];
+        const DEFAULT_CATEGORIES = ['Keyboards', 'Mice & Mousepads', 'Laptops & PCs', 'Monitors & Displays', 'PC Components', 'Headsets & Audio', 'Desk & Setup', 'Cables & Adapters', 'Other'];
 
         const firebaseConfig = {
             apiKey: "AIzaSyDSIsmOtYSuQe7Y8XsUwfstc8UNQw2ykkM",
@@ -4789,7 +4789,12 @@
             }
         }
 
-
+        async function saveProductAndAutoPublish(product) {
+            await DBService.addProduct(product);
+            if (typeof autoPublishProductToInstagram === 'function') {
+                await autoPublishProductToInstagram(product);
+            }
+        }
 
                            // Manual Backup & Restore Logic
               const btnExportBackup = document.getElementById('btn-export-backup');
@@ -5639,13 +5644,6 @@
                 console.error("Failed to reset admin password:", err);
             }
         }
-
-        async function saveProductAndAutoPublish(product) {
-            await DBService.addProduct(product);
-            if (typeof autoPublishProductToInstagram === 'function') {
-                await autoPublishProductToInstagram(product);
-            }
-        }
         window.resetAdminPasswordToDefault = resetAdminPasswordToDefault;
 
         /** Get stored hash; first-run: hash & store the default password */
@@ -6482,6 +6480,41 @@
         setupSuppliersHandlers();
         const systemLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase().startsWith('ar') ? 'ar' : 'en';
         applyDashLanguage(localStorage.getItem('store_lang') || systemLang);
+
+    
+        // ─────────────────────────────────────────────────────────────────────
+        // ADMIN KEYBOARD SHORTCUTS
+        // ─────────────────────────────────────────────────────────────────────
+        document.addEventListener('keydown', (e) => {
+            const isTyping = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName);
+            
+            // ESC: Close open modals
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+            }
+
+            // Ctrl + K: Search products / orders
+            if (e.ctrlKey && (e.key === 'k' || e.key === 'K')) {
+                e.preventDefault();
+                const searchInput = document.querySelector('input[type="search"], input[placeholder*="Search"], #product-search-input');
+                if (searchInput) {
+                    searchInput.focus();
+                    searchInput.select();
+                }
+            }
+
+            // Ctrl + N or Alt + N: New Product
+            if ((e.ctrlKey || e.altKey) && (e.key === 'n' || e.key === 'N')) {
+                e.preventDefault();
+                const prodNav = document.querySelector('[data-tab="products"]');
+                if (prodNav) prodNav.click();
+                const nameInput = document.getElementById('title');
+                if (nameInput) {
+                    nameInput.focus();
+                    nameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
 
     </script>
 </body>
