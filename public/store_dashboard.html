@@ -3091,6 +3091,7 @@
         let allProducts = [];
         let allOrders = [];
         let allCustomers = [];
+        let allSuppliers = [];
         let activeGatewaySettings = null;
 
         function normalizeGatewayUrl(url) {
@@ -6311,14 +6312,15 @@
             if (!container) return;
             container.innerHTML = '';
             
-            if (allSuppliers.length === 0) {
+            const list = (typeof allSuppliers !== "undefined" && Array.isArray(allSuppliers)) ? allSuppliers : [];
+            if (list.length === 0) {
                 const currentLang = localStorage.getItem('store_lang') || 'en';
                 const msg = currentLang === 'ar' ? 'لا يوجد موردين مضافين.' : 'No suppliers added.';
                 container.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 20px;">${msg}</td></tr>`;
                 return;
             }
 
-            allSuppliers.forEach(sup => {
+            list.forEach(sup => {
                 const tr = document.createElement('tr');
                 const addressText = sup.isOnline ? 
                     (localStorage.getItem('store_lang') === 'ar' ? 'متجر أونلاين 🌐' : 'Online Store 🌐') : 
@@ -6344,7 +6346,7 @@
             container.querySelectorAll('.edit-sup').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const id = e.currentTarget.dataset.id;
-                    const sup = allSuppliers.find(s => s.id === id);
+                    const sup = list.find(s => s.id === id);
                     if (sup) {
                         editingSupplierId = id;
                         document.getElementById('sup-name').value = sup.name;
