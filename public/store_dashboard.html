@@ -958,7 +958,122 @@
         .import-confirm-grid .form-group.full {
             grid-column: 1 / -1;
         }
+    
+        /* ─────────────────────────────────────────────────────────────
+           AI PRODUCT SCANNER STYLES
+           ───────────────────────────────────────────────────────────── */
+        .scanner-dropzone {
+            border: 2px dashed #93c5fd;
+            background: #f0f7ff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .scanner-dropzone:hover, .scanner-dropzone.dragover {
+            border-color: var(--primary-color);
+            background: #e0f2fe;
+            transform: translateY(-2px);
+        }
+        .scanner-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 20px;
+        }
+        .scanner-item-card {
+            background: #ffffff;
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            position: relative;
+            transition: all 0.25s ease;
+        }
+        .scanner-item-card:hover {
+            border-color: #93c5fd;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
+        }
+        .scanner-item-card.status-processing {
+            border-color: #fbbf24;
+            background: #fffdfa;
+        }
+        .scanner-item-card.status-ready {
+            border-color: #3b82f6;
+        }
+        .scanner-item-card.status-saved {
+            border-color: #10b981;
+            background: #fafffc;
+        }
+        .scanner-item-card.status-error {
+            border-color: #ef4444;
+            background: #fffaf9;
+        }
+        .scanner-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+        .scanner-thumb-container {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .scanner-thumb-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .scanner-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+        .scanner-status-pill.processing { background: #fef3c7; color: #b45309; }
+        .scanner-status-pill.ready { background: #dbeafe; color: #1d4ed8; }
+        .scanner-status-pill.saved { background: #dcfce7; color: #15803d; }
+        .scanner-status-pill.error { background: #fee2e2; color: #b91c1c; }
+        .scanner-price-box {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 8px;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        .scanner-markup-badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            font-size: 0.78rem;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
     </style>
+    <!-- Tesseract.js for Free Local OCR -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 <body>
 
@@ -976,6 +1091,7 @@
         <ul class="sidebar-menu" id="sidebar-menu">
             <li data-tab="dashboard" class="active"><i class="fa-solid fa-chart-pie"></i> <span data-i18n="navDashboard">Dashboard</span></li>
             <li data-tab="products"><i class="fa-solid fa-boxes-stacked"></i> <span data-i18n="navProducts">Products</span></li>
+            <li data-tab="scanner"><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="navScanner">AI Product Scanner</span></li>
             <li data-tab="orders"><i class="fa-solid fa-receipt"></i> <span data-i18n="navOrders">Orders</span></li>
             <li data-tab="analytics"><i class="fa-solid fa-chart-line"></i> <span data-i18n="navAnalytics">Analytics</span></li>
             <li data-tab="pending-orders"><i class="fa-solid fa-clock-rotate-left"></i> <span data-i18n="navPendingOrders">Pending Orders</span></li>
@@ -1182,6 +1298,97 @@
                     </div>
                 </div>
             </section>
+
+                        <!-- 2C. AI PRODUCT SCANNER TAB -->
+            <section id="tab-scanner" class="tab-content">
+                <div class="dashboard-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+                        <div>
+                            <h2 class="card-title" style="border:none; padding:0; margin:0;" data-i18n="scannerTitle">
+                                <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--primary-color);"></i> AI Image Product Scanner
+                            </h2>
+                            <p style="margin-top:6px; font-size:0.9rem; color:var(--text-light);" data-i18n="scannerSubtitle">
+                                Upload product/device images to automatically extract Device Name, Price (+ $15 markup), and Description for each item in its own outline.
+                            </p>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                            <!-- Engine Selector & Free Key -->
+                            <div style="display:flex; align-items:center; gap:8px; background:#f1f5f9; padding:6px 12px; border-radius:8px; border:1px solid var(--border-color);">
+                                <label style="font-size:0.85rem; font-weight:600; color:var(--text-dark); display:flex; align-items:center; gap:5px;">
+                                    <i class="fa-solid fa-microchip"></i> <span data-i18n="scannerEngineLabel">Engine:</span>
+                                </label>
+                                <select id="scanner-engine-select" style="padding:4px 8px; border-radius:6px; border:1px solid var(--border-color); font-size:0.85rem; font-weight:600; outline:none; background:#fff; cursor:pointer;">
+                                    <option value="gemini" selected>Google Gemini (Free AI - Super Accurate)</option>
+                                    <option value="tesseract">Local OCR (Free - Offline/No Key)</option>
+                                </select>
+                                <button type="button" id="btn-open-gemini-key" class="btn-secondary" style="padding:4px 10px; font-size:0.82rem; margin:0; display:inline-flex; align-items:center; gap:5px; border-radius:6px;" title="Configure Free Gemini Key">
+                                    <i class="fa-solid fa-key" style="color:#f59e0b;"></i> <span id="gemini-key-status-text">Free API Key</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Global Markup Setting (Default +15$) -->
+                            <div style="display:flex; align-items:center; gap:8px; background:#f1f5f9; padding:6px 12px; border-radius:8px; border:1px solid var(--border-color);">
+                                <label for="scanner-global-markup" style="font-size:0.85rem; font-weight:600; color:var(--text-dark); display:flex; align-items:center; gap:5px;">
+                                    <i class="fa-solid fa-plus" style="color:var(--success-color);"></i> <span data-i18n="scannerMarkupLabel">Markup:</span>
+                                </label>
+                                <div style="position:relative; display:inline-flex; align-items:center;">
+                                    <span style="position:absolute; left:8px; font-weight:bold; color:var(--text-light); font-size:0.85rem;">$</span>
+                                    <input type="number" id="scanner-global-markup" value="15" min="0" step="1" style="width:70px; padding:4px 8px 4px 20px; border-radius:6px; border:1px solid var(--border-color); font-size:0.85rem; font-weight:bold; text-align:center; outline:none; background:#fff;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upload / Drop Zone -->
+                    <div class="scanner-dropzone" id="scanner-dropzone">
+                        <input type="file" id="scanner-file-input" multiple accept="image/*" style="display:none;">
+                        <div class="dropzone-content" style="text-align:center; padding:35px 20px;">
+                            <div style="width:65px; height:65px; background:rgba(59,130,246,0.1); border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-bottom:12px; color:var(--primary-color); font-size:1.8rem;">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                            </div>
+                            <h3 style="font-size:1.15rem; font-weight:700; color:var(--text-dark); margin-bottom:6px;" data-i18n="scannerDropTitle">
+                                Drag &amp; Drop multiple product images here
+                            </h3>
+                            <p style="font-size:0.88rem; color:var(--text-light); margin-bottom:15px;" data-i18n="scannerDropSub">
+                                or click to select files from your computer • You can also paste screenshots directly with <b>Ctrl + V</b>
+                            </p>
+                            <button type="button" class="btn-submit" onclick="document.getElementById('scanner-file-input').click()" style="margin:0 auto; padding:10px 24px; font-size:0.95rem;">
+                                <i class="fa-solid fa-images"></i> <span data-i18n="scannerSelectBtn">Select Images</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Batch Action Bar -->
+                    <div id="scanner-batch-bar" style="display:none; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-top:25px; background:#f8fafc; padding:12px 16px; border-radius:10px; border:1px solid var(--border-color);">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="font-weight:700; color:var(--text-dark); font-size:0.95rem;">
+                                <i class="fa-solid fa-layer-group" style="color:var(--primary-color);"></i> <span id="scanner-items-count">0 items</span>
+                            </span>
+                            <span id="scanner-overall-status" style="font-size:0.85rem; color:var(--text-light);"></span>
+                        </div>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                            <button type="button" class="btn-submit" id="btn-scanner-save-all" style="margin:0; background-color:var(--success-color); padding:8px 16px; font-size:0.88rem;">
+                                <i class="fa-solid fa-floppy-disk"></i> <span data-i18n="scannerSaveAllBtn">Add All Ready to Store</span>
+                            </button>
+                            <button type="button" class="btn-secondary" id="btn-scanner-clear-all" style="margin:0; padding:8px 16px; font-size:0.88rem; color:#ef4444;">
+                                <i class="fa-solid fa-trash"></i> <span data-i18n="scannerClearAllBtn">Clear All</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Cards Container (Individual outline for each image) -->
+                    <div class="scanner-cards-grid" id="scanner-cards-container" style="margin-top:20px;">
+                        <!-- Dynamically populated outline cards -->
+                    </div>
+
+                    <!-- Empty State Placeholder -->
+                    <div id="scanner-empty-state" style="text-align:center; padding:50px 20px; color:var(--text-light);">
+                        <i class="fa-regular fa-image fa-3x" style="color:#cbd5e1; margin-bottom:12px;"></i>
+                        <p style="font-weight:500;" data-i18n="scannerEmpty">No images uploaded yet. Drop or select images above to start scanning.</p>
+                    </div>
+                </div>
+            </section>
+
 
             <!-- 2B. IMPORTER TAB -->
             <section id="tab-importer" class="tab-content">
@@ -1958,6 +2165,36 @@
                 totalSellingPrice:  "Total Selling",
                 storeName:          "Store",
                 navDashboard:       "Dashboard",
+                navScanner:         "AI Product Scanner",
+                scannerTitle:       "AI Image Product Scanner",
+                scannerSubtitle:    "Upload product/device images to automatically extract Device Name, Price (+ $15 markup), and Description for each item in its own outline.",
+                scannerEngineLabel: "Engine:",
+                scannerMarkupLabel: "Auto Markup:",
+                scannerDropTitle:   "Drag & Drop multiple product images here",
+                scannerDropSub:     "or click to select files from your computer • You can also paste screenshots directly with Ctrl + V",
+                scannerSelectBtn:   "Select Images",
+                scannerSaveAllBtn:  "Add All Ready to Store",
+                scannerClearAllBtn: "Clear All",
+                scannerEmpty:       "No images uploaded yet. Drop or select images above to start scanning.",
+                geminiModalTitle:   "Free Gemini API Key",
+                geminiModalSub:     "Google AI Studio provides 100% free API keys (no credit card required).",
+                geminiKeyLabel:     "Your Gemini API Key",
+                geminiHowToGet:     "How to get a FREE API key in 10 seconds:",
+                btnSaveKey:         "Save Key",
+                cardDeviceName:     "Device / Product Name",
+                cardOrigPrice:      "Extracted Price ($)",
+                cardMarkup:         "Markup",
+                cardFinalPrice:     "Selling Price ($)",
+                cardDesc:           "Specifications & Description",
+                cardCategory:       "Category",
+                cardStatusProcessing:"Scanning Image...",
+                cardStatusReady:    "Ready to Add",
+                cardStatusSaved:    "Saved to Store",
+                cardStatusError:    "Scan Failed",
+                btnAddToStore:      "Add to Store",
+                btnCopyInfo:        "Copy Info",
+                btnRemoveCard:      "Remove",
+
                 navProducts:        "Products",
                 navImporter:        "Product Importer",
                 navOrders:          "Orders",
@@ -2071,6 +2308,36 @@
              ar: {
                  storeName:          "متجر",
                  navDashboard:       "لوحة التحكم",
+                navScanner:         "ماسح الصور الذكي",
+                scannerTitle:       "ماسح ومستخرج المنتجات الذكي من الصور",
+                scannerSubtitle:    "ارفع صور الأجهزة لاستخراج اسم الجهاز، السعر، وإضافة 15$ تلقائياً، والوصف في بطاقة مستقلة لكل صورة.",
+                scannerEngineLabel: "المحرك:",
+                scannerMarkupLabel: "الزيادة التلقائية:",
+                scannerDropTitle:   "اسحب وأفلت صور المنتجات والأجهزة هنا",
+                scannerDropSub:     "أو انقر لاختيار الصور من جهازك • يمكنك أيضاً لصق لقطات الشاشة مباشرة بـ Ctrl + V",
+                scannerSelectBtn:   "اختيار الصور",
+                scannerSaveAllBtn:  "إضافة كافة المنتجات الجاهزة للمتجر",
+                scannerClearAllBtn: "مسح الكل",
+                scannerEmpty:       "لم يتم رفع أي صور بعد. اسحب أو اختر الصور في الأعلى لبدء الفحص.",
+                geminiModalTitle:   "مفتاح Gemini API المجاني",
+                geminiModalSub:     "توفر Google AI Studio مفاتيح API مجانية تماماً وبدون أي بطاقة بنكية.",
+                geminiKeyLabel:     "مفتاح Gemini الخاص بك",
+                geminiHowToGet:     "كيفية الحصول على مفتاح مجاني خلال 10 ثوانٍ:",
+                btnSaveKey:         "حفظ المفتاح",
+                cardDeviceName:     "اسم الجهاز / الموديل",
+                cardOrigPrice:      "السعر الأصلي ($)",
+                cardMarkup:         "الزيادة",
+                cardFinalPrice:     "سعر البيع النهائي ($)",
+                cardDesc:           "المواصفات والوصف",
+                cardCategory:       "التصنيف",
+                cardStatusProcessing:"جاري فحص الصورة ذكياً...",
+                cardStatusReady:    "جاهز للإضافة",
+                cardStatusSaved:    "تمت الإضافة للمتجر",
+                cardStatusError:    "فشل التعرف",
+                btnAddToStore:      "إضافة للمتجر",
+                btnCopyInfo:        "نسخ التفاصيل",
+                btnRemoveCard:      "حذف البطاقة",
+
                  navProducts:        "المنتجات",
                  navImporter:        "استيراد المنتجات",
                  navOrders:          "الطلبات",
@@ -6483,6 +6750,690 @@
 
     
         // ─────────────────────────────────────────────────────────────────────
+        
+        // ─────────────────────────────────────────────────────────────────────
+        // AI IMAGE PRODUCT SCANNER & EXTRACTOR ENGINE
+        // ─────────────────────────────────────────────────────────────────────
+        let scannerItemsList = [];
+        let scannerEngine = 'gemini';
+
+        // Initialize Gemini Key & Markup settings
+        function initScannerSettings() {
+            const savedMarkup = localStorage.getItem('scanner_markup') || '15';
+            const markupInput = document.getElementById('scanner-global-markup');
+            if (markupInput) markupInput.value = savedMarkup;
+
+            const savedEngine = localStorage.getItem('scanner_engine') || 'gemini';
+            const engineSelect = document.getElementById('scanner-engine-select');
+            if (engineSelect) {
+                engineSelect.value = savedEngine;
+                scannerEngine = savedEngine;
+            }
+
+            updateGeminiKeyButtonStatus();
+
+            // Setup listeners
+            if (markupInput) {
+                markupInput.addEventListener('input', (e) => {
+                    const val = e.target.value;
+                    localStorage.setItem('scanner_markup', val);
+                    // Update all existing ready cards
+                    scannerItemsList.forEach(item => {
+                        if (item.status !== 'saved') {
+                            item.markup = Number(val) || 0;
+                            item.sellingPrice = Number((item.costPrice + item.markup).toFixed(2));
+                            renderScannerItemValues(item.id);
+                        }
+                    });
+                });
+            }
+
+            if (engineSelect) {
+                engineSelect.addEventListener('change', (e) => {
+                    scannerEngine = e.target.value;
+                    localStorage.setItem('scanner_engine', scannerEngine);
+                });
+            }
+
+            // Gemini Key Modal listeners
+            const btnOpenKey = document.getElementById('btn-open-gemini-key');
+            const keyModal = document.getElementById('gemini-key-modal');
+            const keyInput = document.getElementById('gemini-api-key-input');
+            const btnSaveKey = document.getElementById('btn-save-gemini-key');
+            const btnRemoveKey = document.getElementById('btn-remove-gemini-key');
+
+            if (btnOpenKey && keyModal) {
+                btnOpenKey.addEventListener('click', () => {
+                    if (keyInput) keyInput.value = localStorage.getItem('gemini_api_key') || '';
+                    keyModal.classList.add('active');
+                });
+            }
+
+            if (btnSaveKey && keyModal) {
+                btnSaveKey.addEventListener('click', () => {
+                    const val = (keyInput ? keyInput.value : '').trim();
+                    if (val) {
+                        localStorage.setItem('gemini_api_key', val);
+                        showToast(currentLang === 'ar' ? 'تم حفظ مفتاح Gemini بنجاح!' : 'Gemini API Key saved successfully!');
+                    } else {
+                        localStorage.removeItem('gemini_api_key');
+                    }
+                    keyModal.classList.remove('active');
+                    updateGeminiKeyButtonStatus();
+                });
+            }
+
+            if (btnRemoveKey && keyModal) {
+                btnRemoveKey.addEventListener('click', () => {
+                    localStorage.removeItem('gemini_api_key');
+                    if (keyInput) keyInput.value = '';
+                    showToast(currentLang === 'ar' ? 'تم حذف مفتاح Gemini.' : 'Gemini Key removed.');
+                    keyModal.classList.remove('active');
+                    updateGeminiKeyButtonStatus();
+                });
+            }
+
+            // File input & Dropzone listeners
+            const fileInput = document.getElementById('scanner-file-input');
+            const dropzone = document.getElementById('scanner-dropzone');
+
+            if (fileInput) {
+                fileInput.addEventListener('change', (e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                        handleScannerUploadedFiles(Array.from(e.target.files));
+                        fileInput.value = '';
+                    }
+                });
+            }
+
+            if (dropzone) {
+                dropzone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropzone.classList.add('dragover');
+                });
+                dropzone.addEventListener('dragleave', () => {
+                    dropzone.classList.remove('dragover');
+                });
+                dropzone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropzone.classList.remove('dragover');
+                    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                        handleScannerUploadedFiles(Array.from(e.dataTransfer.files));
+                    }
+                });
+            }
+
+            // Batch actions
+            const btnSaveAll = document.getElementById('btn-scanner-save-all');
+            const btnClearAll = document.getElementById('btn-scanner-clear-all');
+
+            if (btnSaveAll) btnSaveAll.addEventListener('click', saveAllReadyScannerItems);
+            if (btnClearAll) btnClearAll.addEventListener('click', clearAllScannerItems);
+
+            // Clipboard Paste support on dashboard
+            window.addEventListener('paste', (e) => {
+                const scannerTab = document.getElementById('tab-scanner');
+                if (scannerTab && scannerTab.classList.contains('active')) {
+                    const items = e.clipboardData?.items;
+                    if (items) {
+                        const imageFiles = [];
+                        for (let i = 0; i < items.length; i++) {
+                            if (items[i].type.indexOf('image') !== -1) {
+                                const blob = items[i].getAsFile();
+                                if (blob) imageFiles.push(blob);
+                            }
+                        }
+                        if (imageFiles.length > 0) {
+                            e.preventDefault();
+                            handleScannerUploadedFiles(imageFiles);
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateGeminiKeyButtonStatus() {
+            const hasKey = !!localStorage.getItem('gemini_api_key');
+            const textEl = document.getElementById('gemini-key-status-text');
+            const btnEl = document.getElementById('btn-open-gemini-key');
+            if (textEl && btnEl) {
+                if (hasKey) {
+                    textEl.textContent = currentLang === 'ar' ? 'المفتاح مفعل ✓' : 'Key Active ✓';
+                    btnEl.style.borderColor = 'var(--success-color)';
+                    btnEl.style.color = 'var(--success-color)';
+                } else {
+                    textEl.textContent = currentLang === 'ar' ? 'مفتاح مجاني (Free Key)' : 'Set Free Key';
+                    btnEl.style.borderColor = 'var(--border-color)';
+                    btnEl.style.color = 'var(--text-dark)';
+                }
+            }
+        }
+
+        // Handle uploaded files (single or batch)
+        function handleScannerUploadedFiles(files) {
+            const validImageFiles = files.filter(f => f.type.startsWith('image/'));
+            if (validImageFiles.length === 0) {
+                showToast(currentLang === 'ar' ? 'يرجى اختيار ملفات صور صالحة.' : 'Please select valid image files.', true);
+                return;
+            }
+
+            const markupVal = Number(document.getElementById('scanner-global-markup')?.value) || 15;
+
+            validImageFiles.forEach(file => {
+                const itemId = 'scan_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const dataUrl = e.target.result;
+                    const itemObj = {
+                        id: itemId,
+                        file: file,
+                        dataUrl: dataUrl,
+                        title: file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " "),
+                        costPrice: 0,
+                        markup: markupVal,
+                        sellingPrice: markupVal,
+                        category: getCategories()[0] || 'Other',
+                        description: '',
+                        status: 'processing', // processing, ready, saved, error
+                        errorMsg: ''
+                    };
+                    scannerItemsList.unshift(itemObj);
+                    renderScannerUI();
+                    processSingleScannerItem(itemObj);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Render UI cards container and batch header
+        function renderScannerUI() {
+            const container = document.getElementById('scanner-cards-container');
+            const emptyState = document.getElementById('scanner-empty-state');
+            const batchBar = document.getElementById('scanner-batch-bar');
+            const countEl = document.getElementById('scanner-items-count');
+            const statusEl = document.getElementById('scanner-overall-status');
+
+            if (!container) return;
+
+            if (scannerItemsList.length === 0) {
+                container.innerHTML = '';
+                if (emptyState) emptyState.style.display = 'block';
+                if (batchBar) batchBar.style.display = 'none';
+                return;
+            }
+
+            if (emptyState) emptyState.style.display = 'none';
+            if (batchBar) batchBar.style.display = 'flex';
+
+            const readyCount = scannerItemsList.filter(i => i.status === 'ready').length;
+            const savedCount = scannerItemsList.filter(i => i.status === 'saved').length;
+            const processingCount = scannerItemsList.filter(i => i.status === 'processing').length;
+
+            if (countEl) countEl.textContent = `${scannerItemsList.length} ${currentLang === 'ar' ? 'صور / أجهزة' : 'items'}`;
+            if (statusEl) {
+                if (processingCount > 0) {
+                    statusEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin" style="color:#f59e0b;"></i> ${processingCount} ${currentLang === 'ar' ? 'قيد الفحص...' : 'processing...'}`;
+                } else if (savedCount === scannerItemsList.length) {
+                    statusEl.innerHTML = `<span style="color:var(--success-color); font-weight:700;"><i class="fa-solid fa-circle-check"></i> ${currentLang === 'ar' ? 'تم حفظ الكل في المتجر' : 'All saved to store'}</span>`;
+                } else {
+                    statusEl.innerHTML = `<span style="color:var(--primary-color); font-weight:600;">${readyCount} ${currentLang === 'ar' ? 'جاهز للإضافة' : 'ready to add'}</span>`;
+                }
+            }
+
+            // Render cards if not rendered
+            scannerItemsList.forEach(item => {
+                let cardEl = document.getElementById(`card-${item.id}`);
+                if (!cardEl) {
+                    cardEl = createScannerCardElement(item);
+                    container.prepend(cardEl);
+                } else {
+                    updateScannerCardElement(cardEl, item);
+                }
+            });
+        }
+
+        // Create DOM element for an individual scanner outline card
+        function createScannerCardElement(item) {
+            const card = document.createElement('div');
+            card.id = `card-${item.id}`;
+            card.className = `scanner-item-card status-${item.status}`;
+
+            const catOptions = getCategories().map(c => 
+                `<option value="${escapeHtml(c)}" ${c === item.category ? 'selected' : ''}>${escapeHtml(c)}</option>`
+            ).join('');
+
+            card.innerHTML = `
+                <div class="scanner-card-header">
+                    <span class="scanner-status-pill ${item.status}" id="status-pill-${item.id}">
+                        ${getStatusPillHtml(item)}
+                    </span>
+                    <button type="button" class="action-btn" onclick="removeScannerItem('${item.id}')" title="Remove" style="color:#ef4444; font-size:0.95rem; padding:4px 8px;">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="scanner-thumb-container">
+                    <img src="${item.dataUrl}" alt="Device Image">
+                </div>
+
+                <!-- Device Name -->
+                <div class="form-group" style="margin-bottom:0;">
+                    <label style="font-weight:700; font-size:0.85rem; color:var(--text-dark); display:flex; align-items:center; gap:5px;">
+                        <i class="fa-solid fa-mobile-screen-button" style="color:var(--primary-color);"></i>
+                        <span>${currentLang === 'ar' ? 'اسم الجهاز / الموديل:' : 'Device Name / Title:'}</span>
+                    </label>
+                    <input type="text" id="title-${item.id}" value="${escapeHtml(item.title)}" placeholder="e.g. iPhone 13 Pro Max 256GB" style="width:100%; padding:9px 12px; border:1px solid var(--border-color); border-radius:8px; font-weight:700; font-size:0.92rem; outline:none; background:#fff;">
+                </div>
+
+                <!-- Price Row: Original + 15$ = Final -->
+                <div class="form-group" style="margin-bottom:0;">
+                    <label style="font-weight:700; font-size:0.85rem; color:var(--text-dark); display:flex; align-items:center; justify-content:space-between;">
+                        <span><i class="fa-solid fa-tags" style="color:var(--success-color);"></i> ${currentLang === 'ar' ? 'التسعير والأرباح:' : 'Pricing & Margin:'}</span>
+                        <span style="font-size:0.75rem; color:var(--text-light); font-weight:normal;">+ $15 Markup</span>
+                    </label>
+                    <div class="scanner-price-box">
+                        <div>
+                            <span style="font-size:0.72rem; color:var(--text-light); font-weight:600; display:block; margin-bottom:2px;">${currentLang === 'ar' ? 'السعر المستخرج' : 'Original Cost'}</span>
+                            <div style="position:relative;">
+                                <span style="position:absolute; left:6px; top:6px; font-size:0.78rem; font-weight:bold; color:var(--text-light);">$</span>
+                                <input type="number" id="cost-${item.id}" value="${item.costPrice}" min="0" step="0.01" style="width:100%; padding:5px 6px 5px 18px; border:1px solid var(--border-color); border-radius:6px; font-size:0.88rem; font-weight:700; outline:none;">
+                            </div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div class="scanner-markup-badge" id="markup-badge-${item.id}">+ $${item.markup}</div>
+                        </div>
+                        <div>
+                            <span style="font-size:0.72rem; color:var(--primary-color); font-weight:700; display:block; margin-bottom:2px;">${currentLang === 'ar' ? 'سعر البيع النهائي' : 'Selling Price'}</span>
+                            <div style="position:relative;">
+                                <span style="position:absolute; left:6px; top:6px; font-size:0.78rem; font-weight:bold; color:var(--primary-color);">$</span>
+                                <input type="number" id="selling-${item.id}" value="${item.sellingPrice}" min="0" step="0.01" style="width:100%; padding:5px 6px 5px 18px; border:2px solid var(--primary-color); border-radius:6px; font-size:0.95rem; font-weight:800; color:var(--primary-color); outline:none; background:#fff;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category -->
+                <div class="form-group" style="margin-bottom:0;">
+                    <label style="font-weight:700; font-size:0.85rem; color:var(--text-dark);">${currentLang === 'ar' ? 'التصنيف:' : 'Category:'}</label>
+                    <select id="cat-${item.id}" style="width:100%; padding:8px 12px; border:1px solid var(--border-color); border-radius:8px; font-size:0.88rem; outline:none; background:#fff;">
+                        ${catOptions}
+                    </select>
+                </div>
+
+                <!-- Description / Specs -->
+                <div class="form-group" style="margin-bottom:0;">
+                    <label style="font-weight:700; font-size:0.85rem; color:var(--text-dark); display:flex; align-items:center; justify-content:space-between;">
+                        <span><i class="fa-solid fa-align-left" style="color:var(--text-light);"></i> ${currentLang === 'ar' ? 'المواصفات والوصف:' : 'Specifications & Description:'}</span>
+                    </label>
+                    <textarea id="desc-${item.id}" rows="3" placeholder="${currentLang === 'ar' ? 'مواصفات الجهاز المستخرجة...' : 'Device specs...'}" style="width:100%; padding:8px 12px; border:1px solid var(--border-color); border-radius:8px; font-size:0.85rem; outline:none; resize:vertical; font-family:inherit;">${escapeHtml(item.description)}</textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="display:flex; gap:8px; margin-top:5px;">
+                    <button type="button" class="btn-submit" id="btn-add-${item.id}" onclick="saveSingleScannerItem('${item.id}')" style="flex:1; justify-content:center; margin:0; padding:9px 12px; font-size:0.88rem; background-color:${item.status === 'saved' ? 'var(--success-color)' : 'var(--primary-color)'};">
+                        <i class="${item.status === 'saved' ? 'fa-solid fa-circle-check' : 'fa-solid fa-plus'}"></i>
+                        <span>${item.status === 'saved' ? (currentLang === 'ar' ? 'تمت الإضافة ✓' : 'Added ✓') : (currentLang === 'ar' ? 'إضافة للمتجر' : 'Add to Store')}</span>
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="copySingleScannerItem('${item.id}')" title="Copy Info" style="margin:0; padding:9px 12px; font-size:0.88rem;">
+                        <i class="fa-solid fa-copy"></i>
+                    </button>
+                </div>
+            `;
+
+            // Bind live editing events
+            bindScannerCardInputEvents(card, item);
+
+            return card;
+        }
+
+        function getStatusPillHtml(item) {
+            if (item.status === 'processing') {
+                return `<i class="fa-solid fa-spinner fa-spin"></i> ${currentLang === 'ar' ? 'جاري الفحص الذكي...' : 'Scanning Image...'}`;
+            } else if (item.status === 'ready') {
+                return `<i class="fa-solid fa-wand-magic-sparkles"></i> ${currentLang === 'ar' ? 'جاهز (+15$ مضافة)' : 'Ready (+ $15 Added)'}`;
+            } else if (item.status === 'saved') {
+                return `<i class="fa-solid fa-check"></i> ${currentLang === 'ar' ? 'تم الحفظ في المتجر' : 'Saved to Store'}`;
+            } else {
+                return `<i class="fa-solid fa-triangle-exclamation"></i> ${currentLang === 'ar' ? 'فحص يدوي' : 'Manual Edit'}`;
+            }
+        }
+
+        function updateScannerCardElement(cardEl, item) {
+            cardEl.className = `scanner-item-card status-${item.status}`;
+            const pill = cardEl.querySelector(`#status-pill-${item.id}`);
+            if (pill) {
+                pill.className = `scanner-status-pill ${item.status}`;
+                pill.innerHTML = getStatusPillHtml(item);
+            }
+            renderScannerItemValues(item.id);
+        }
+
+        function renderScannerItemValues(itemId) {
+            const item = scannerItemsList.find(i => i.id === itemId);
+            if (!item) return;
+
+            const titleEl = document.getElementById(`title-${itemId}`);
+            const costEl = document.getElementById(`cost-${itemId}`);
+            const markupBadge = document.getElementById(`markup-badge-${itemId}`);
+            const sellingEl = document.getElementById(`selling-${itemId}`);
+            const descEl = document.getElementById(`desc-${itemId}`);
+            const catEl = document.getElementById(`cat-${itemId}`);
+            const btnAdd = document.getElementById(`btn-add-${itemId}`);
+
+            if (titleEl && document.activeElement !== titleEl) titleEl.value = item.title;
+            if (costEl && document.activeElement !== costEl) costEl.value = item.costPrice;
+            if (markupBadge) markupBadge.textContent = `+ $${item.markup}`;
+            if (sellingEl && document.activeElement !== sellingEl) sellingEl.value = item.sellingPrice;
+            if (descEl && document.activeElement !== descEl) descEl.value = item.description;
+            if (catEl && document.activeElement !== catEl) catEl.value = item.category;
+
+            if (btnAdd) {
+                if (item.status === 'saved') {
+                    btnAdd.style.backgroundColor = 'var(--success-color)';
+                    btnAdd.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${currentLang === 'ar' ? 'تمت الإضافة ✓' : 'Added ✓'}</span>`;
+                } else {
+                    btnAdd.style.backgroundColor = 'var(--primary-color)';
+                    btnAdd.innerHTML = `<i class="fa-solid fa-plus"></i> <span>${currentLang === 'ar' ? 'إضافة للمتجر' : 'Add to Store'}</span>`;
+                }
+            }
+        }
+
+        function bindScannerCardInputEvents(cardEl, item) {
+            const titleEl = cardEl.querySelector(`#title-${item.id}`);
+            const costEl = cardEl.querySelector(`#cost-${item.id}`);
+            const sellingEl = cardEl.querySelector(`#selling-${item.id}`);
+            const descEl = cardEl.querySelector(`#desc-${item.id}`);
+            const catEl = cardEl.querySelector(`#cat-${item.id}`);
+
+            if (titleEl) {
+                titleEl.addEventListener('input', (e) => { item.title = e.target.value; });
+            }
+            if (descEl) {
+                descEl.addEventListener('input', (e) => { item.description = e.target.value; });
+            }
+            if (catEl) {
+                catEl.addEventListener('change', (e) => { item.category = e.target.value; });
+            }
+            if (costEl) {
+                costEl.addEventListener('input', (e) => {
+                    item.costPrice = Number(e.target.value) || 0;
+                    item.sellingPrice = Number((item.costPrice + item.markup).toFixed(2));
+                    if (sellingEl) sellingEl.value = item.sellingPrice;
+                });
+            }
+            if (sellingEl) {
+                sellingEl.addEventListener('input', (e) => {
+                    item.sellingPrice = Number(e.target.value) || 0;
+                    item.markup = Number((item.sellingPrice - item.costPrice).toFixed(2));
+                    const badge = cardEl.querySelector(`#markup-badge-${item.id}`);
+                    if (badge) badge.textContent = `+ $${item.markup}`;
+                });
+            }
+        }
+
+        // Process Single Image via Gemini Vision or Tesseract OCR
+        async function processSingleScannerItem(item) {
+            const apiKey = localStorage.getItem('gemini_api_key');
+            let extractionSuccess = false;
+
+            if (scannerEngine === 'gemini' && apiKey) {
+                try {
+                    const result = await extractWithGeminiVision(item.dataUrl, item.file.type, apiKey);
+                    if (result && result.title) {
+                        item.title = result.title;
+                        item.costPrice = Number(result.price) || 0;
+                        item.sellingPrice = Number((item.costPrice + item.markup).toFixed(2));
+                        item.description = result.description || '';
+                        if (result.category) {
+                            const foundCat = getCategories().find(c => c.toLowerCase() === result.category.toLowerCase() || result.category.toLowerCase().includes(c.toLowerCase()));
+                            if (foundCat) item.category = foundCat;
+                        }
+                        item.status = 'ready';
+                        extractionSuccess = true;
+                    }
+                } catch (geminiErr) {
+                    console.warn("Gemini Vision failed, falling back to OCR:", geminiErr);
+                }
+            }
+
+            // Fallback to OCR if Gemini failed or no key
+            if (!extractionSuccess) {
+                try {
+                    const ocrResult = await extractWithTesseractOCR(item.dataUrl);
+                    if (ocrResult) {
+                        if (ocrResult.title) item.title = ocrResult.title;
+                        if (ocrResult.price > 0) item.costPrice = ocrResult.price;
+                        item.sellingPrice = Number((item.costPrice + item.markup).toFixed(2));
+                        if (ocrResult.description) item.description = ocrResult.description;
+                        if (ocrResult.category) item.category = ocrResult.category;
+                    }
+                    item.status = 'ready';
+                } catch (ocrErr) {
+                    console.error("OCR Extraction failed:", ocrErr);
+                    item.status = 'ready'; // Still allow manual edit and save
+                }
+            }
+
+            renderScannerUI();
+        }
+
+        // Gemini Vision API (Google AI Studio Free Tier)
+        async function extractWithGeminiVision(dataUrl, mimeType, apiKey) {
+            const base64Data = dataUrl.split(',')[1];
+            const cleanMime = mimeType || 'image/jpeg';
+
+            const promptText = `
+You are an expert product and electronics catalog extractor.
+Analyze this product/device image carefully.
+Extract:
+1. "title": The clear brand, device name, model, storage/RAM if visible (e.g. "iPhone 14 Pro Max 256GB" or "Dell Latitude 5420 i7 16GB").
+2. "price": The exact numeric price/cost found in the image (e.g. 150 or 349.99). If no price is present, return 0. Return only the raw number.
+3. "description": Clean bullet-pointed specs (RAM, Storage, Processor, Screen, Battery/Condition, Color, etc.) in Arabic & English.
+4. "category": Best matching category from: ["Keyboards", "Mice & Mousepads", "Laptops & PCs", "Monitors & Displays", "PC Components", "Headsets & Audio", "Desk & Setup", "Cables & Adapters", "Other"].
+
+Return ONLY a valid JSON object without markdown formatting:
+{
+  "title": "...",
+  "price": 0.00,
+  "description": "...",
+  "category": "..."
+}
+`;
+
+            const requestBody = {
+                contents: [{
+                    parts: [
+                        { text: promptText },
+                        {
+                            inline_data: {
+                                mime_type: cleanMime,
+                                data: base64Data
+                            }
+                        }
+                    ]
+                }],
+                generationConfig: {
+                    temperature: 0.2,
+                    maxOutputTokens: 800
+                }
+            };
+
+            // Try gemini-2.0-flash, fallback to gemini-1.5-flash
+            let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+            }
+
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(errData.error?.message || `API HTTP error ${response.status}`);
+            }
+
+            const data = await response.json();
+            const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            const jsonStr = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+            return JSON.parse(jsonStr);
+        }
+
+        // Tesseract.js Client-Side Local OCR
+        async function extractWithTesseractOCR(dataUrl) {
+            if (typeof Tesseract === 'undefined') {
+                return null;
+            }
+
+            const result = await Tesseract.recognize(dataUrl, 'eng+ara', {
+                logger: m => console.log(m)
+            });
+
+            const text = result?.data?.text || '';
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+            let detectedPrice = 0;
+            // Regex for price: $120, 120$, 120 USD, 120.00
+            const priceRegex = /(?:\$|USD|IQD|ل\.ل|EUR|€|£)?\s*(\d+(?:\.\d{1,2})?)\s*(?:\$|USD|IQD|ل\.ل|EUR|€|£)?/i;
+            for (const line of lines) {
+                const match = line.match(priceRegex);
+                if (match && Number(match[1]) > 5 && Number(match[1]) < 100000) {
+                    detectedPrice = parseFloat(match[1]);
+                    break;
+                }
+            }
+
+            const titleCandidate = lines.find(l => l.length >= 4 && !l.startsWith('$')) || 'Device Item';
+            const descLines = lines.slice(1, 6).join('\n• ');
+
+            return {
+                title: titleCandidate.substring(0, 60),
+                price: detectedPrice,
+                description: descLines ? ('• ' + descLines) : '',
+                category: 'Other'
+            };
+        }
+
+        // Save Single Item to Store Database
+        async function saveSingleScannerItem(itemId) {
+            const item = scannerItemsList.find(i => i.id === itemId);
+            if (!item) return;
+
+            const btn = document.getElementById(`btn-add-${itemId}`);
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Saving...</span>`;
+            }
+
+            try {
+                const productData = {
+                    title: item.title || 'Untitled Device',
+                    image: item.dataUrl,
+                    images: [item.dataUrl],
+                    costPrice: Number(item.costPrice) || 0,
+                    price: Number(item.sellingPrice) || 0,
+                    currency: 'USD',
+                    stock: 1,
+                    category: item.category || 'Other',
+                    description: item.description || '',
+                    supplier: 'AI Scanner',
+                    createdAt: Date.now()
+                };
+
+                await DBService.addProduct(productData);
+                item.status = 'saved';
+                showToast(currentLang === 'ar' ? `تمت إضافة "${item.title}" إلى المتجر بنجاح!` : `Added "${item.title}" to store!`);
+            } catch (err) {
+                console.error("Error adding product:", err);
+                showToast(currentLang === 'ar' ? `فشل الحفظ: ${err.message}` : `Save failed: ${err.message}`, true);
+            } finally {
+                if (btn) btn.disabled = false;
+                renderScannerUI();
+            }
+        }
+
+        // Save All Ready Items to Store
+        async function saveAllReadyScannerItems() {
+            const readyItems = scannerItemsList.filter(i => i.status === 'ready' || i.status === 'error');
+            if (readyItems.length === 0) {
+                showToast(currentLang === 'ar' ? 'لا توجد عناصر جاهزة للحفظ.' : 'No ready items to save.', true);
+                return;
+            }
+
+            const btnSaveAll = document.getElementById('btn-scanner-save-all');
+            if (btnSaveAll) {
+                btnSaveAll.disabled = true;
+                btnSaveAll.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>${currentLang === 'ar' ? 'جاري الحفظ...' : 'Saving all...'}</span>`;
+            }
+
+            let savedCount = 0;
+            for (const item of readyItems) {
+                try {
+                    const productData = {
+                        title: item.title || 'Untitled Device',
+                        image: item.dataUrl,
+                        images: [item.dataUrl],
+                        costPrice: Number(item.costPrice) || 0,
+                        price: Number(item.sellingPrice) || 0,
+                        currency: 'USD',
+                        stock: 1,
+                        category: item.category || 'Other',
+                        description: item.description || '',
+                        supplier: 'AI Scanner',
+                        createdAt: Date.now()
+                    };
+                    await DBService.addProduct(productData);
+                    item.status = 'saved';
+                    savedCount++;
+                } catch (err) {
+                    console.error("Bulk save item error:", err);
+                }
+            }
+
+            if (btnSaveAll) {
+                btnSaveAll.disabled = false;
+                btnSaveAll.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> <span data-i18n="scannerSaveAllBtn">${currentLang === 'ar' ? 'إضافة كافة المنتجات الجاهزة للمتجر' : 'Add All Ready to Store'}</span>`;
+            }
+
+            showToast(currentLang === 'ar' ? `تم حفظ ${savedCount} منتج في المتجر بنجاح!` : `Saved ${savedCount} products to store!`);
+            renderScannerUI();
+        }
+
+        // Copy Single Item Info to Clipboard
+        function copySingleScannerItem(itemId) {
+            const item = scannerItemsList.find(i => i.id === itemId);
+            if (!item) return;
+
+            const textToCopy = `📱 *${item.title}*\n💰 *السعر:* $${item.sellingPrice}\n🏷️ *التصنيف:* ${item.category}\n\n📋 *المواصفات والوصف:*\n${item.description || 'متوفر الآن'}`;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showToast(currentLang === 'ar' ? 'تم نسخ بيانات الجهاز للحافظة!' : 'Product info copied to clipboard!');
+            }).catch(() => {
+                showToast('Failed to copy', true);
+            });
+        }
+
+        // Remove Single Item Card
+        function removeScannerItem(itemId) {
+            scannerItemsList = scannerItemsList.filter(i => i.id !== itemId);
+            const cardEl = document.getElementById(`card-${itemId}`);
+            if (cardEl) cardEl.remove();
+            renderScannerUI();
+        }
+
+        // Clear All Scanner Items
+        function clearAllScannerItems() {
+            if (scannerItemsList.length === 0) return;
+            if (confirm(currentLang === 'ar' ? 'هل أنت متأكد من مسح جميع البطاقات؟' : 'Are you sure you want to clear all scanned cards?')) {
+                scannerItemsList = [];
+                renderScannerUI();
+            }
+        }
+
         // ADMIN KEYBOARD SHORTCUTS
         // ─────────────────────────────────────────────────────────────────────
         document.addEventListener('keydown', (e) => {
@@ -6517,5 +7468,46 @@
         });
 
     </script>
+    <!-- Free Gemini API Key Modal -->
+    <div class="modal-overlay" id="gemini-key-modal">
+        <div class="modal-content" style="max-width: 540px;">
+            <span class="close-modal" onclick="document.getElementById('gemini-key-modal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></span>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px; border-bottom:1px solid var(--border-color); padding-bottom:12px;">
+                <div style="width:40px; height:40px; border-radius:8px; background:rgba(59,130,246,0.1); color:var(--primary-color); display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
+                    <i class="fa-solid fa-key"></i>
+                </div>
+                <div>
+                    <h2 class="card-title" style="border:none; padding:0; margin:0;" data-i18n="geminiModalTitle">Free Gemini API Key</h2>
+                    <p style="font-size:0.82rem; color:var(--text-light); margin-top:2px;" data-i18n="geminiModalSub">Google AI Studio provides 100% free API keys (no credit card required).</p>
+                </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:14px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="gemini-api-key-input" style="font-weight:600;" data-i18n="geminiKeyLabel">Your Gemini API Key (مفتاحك المجاني)</label>
+                    <input type="password" id="gemini-api-key-input" placeholder="AIzaSy..." style="width:100%; padding:10px 14px; border:1px solid var(--border-color); border-radius:8px; font-family:monospace; font-size:0.95rem; outline:none;">
+                </div>
+
+                <div style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid var(--border-color); font-size:0.85rem; line-height:1.6; color:var(--text-dark);">
+                    <strong style="display:block; margin-bottom:6px; color:var(--primary-color);" data-i18n="geminiHowToGet">How to get a FREE API key in 10 seconds:</strong>
+                    <ol style="padding-inline-start:18px; margin:0; display:flex; flex-direction:column; gap:4px;">
+                        <li>Open <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--primary-color); font-weight:700; text-decoration:underline;">Google AI Studio (اضغط هنا)</a></li>
+                        <li>Sign in with your Google account and click <b>"Create API Key"</b></li>
+                        <li>Copy the generated key and paste it above! (100% مجاني ومضمون)</li>
+                    </ol>
+                </div>
+
+                <div style="display:flex; gap:10px; margin-top:5px;">
+                    <button type="button" class="btn-submit" id="btn-save-gemini-key" style="flex:1; justify-content:center; margin:0;">
+                        <i class="fa-solid fa-check"></i> <span data-i18n="btnSaveKey">Save Key (حفظ المفتاح)</span>
+                    </button>
+                    <button type="button" class="btn-secondary" id="btn-remove-gemini-key" style="margin:0; color:#ef4444;">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
