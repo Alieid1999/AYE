@@ -1340,9 +1340,9 @@
                     </div>
 
                     <!-- Upload / Drop Zone -->
-                    <div class="scanner-dropzone" id="scanner-dropzone">
-                        <input type="file" id="scanner-file-input" multiple accept="image/*" style="display:none;">
-                        <div class="dropzone-content" style="text-align:center; padding:35px 20px;">
+                    <div class="scanner-dropzone" id="scanner-dropzone" onclick="triggerScannerFileInput()" style="cursor:pointer;">
+                        <input type="file" id="scanner-file-input" multiple accept="image/*,image/jpeg,image/png,image/webp,image/gif" style="display:none;" onchange="handleScannerInputChange(this)">
+                        <div class="dropzone-content" style="text-align:center; padding:35px 20px; pointer-events:none;">
                             <div style="width:65px; height:65px; background:rgba(59,130,246,0.1); border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-bottom:12px; color:var(--primary-color); font-size:1.8rem;">
                                 <i class="fa-solid fa-cloud-arrow-up"></i>
                             </div>
@@ -1350,9 +1350,9 @@
                                 Drag &amp; Drop multiple product images here
                             </h3>
                             <p style="font-size:0.88rem; color:var(--text-light); margin-bottom:15px;" data-i18n="scannerDropSub">
-                                or click to select files from your computer • You can also paste screenshots directly with <b>Ctrl + V</b>
+                                or click anywhere to select files • You can also paste screenshots directly with <b>Ctrl + V</b>
                             </p>
-                            <button type="button" class="btn-submit" onclick="document.getElementById('scanner-file-input').click()" style="margin:0 auto; padding:10px 24px; font-size:0.95rem;">
+                            <button type="button" class="btn-submit" style="margin:0 auto; padding:10px 24px; font-size:0.95rem; pointer-events:auto;" onclick="event.stopPropagation(); triggerScannerFileInput();">
                                 <i class="fa-solid fa-images"></i> <span data-i18n="scannerSelectBtn">Select Images</span>
                             </button>
                         </div>
@@ -3092,6 +3092,7 @@
         let allOrders = [];
         let allCustomers = [];
         let allSuppliers = [];
+        let currentLang = localStorage.getItem("store_lang") || "ar";
         let activeGatewaySettings = null;
 
         function normalizeGatewayUrl(url) {
@@ -6245,6 +6246,7 @@
         // dashTranslations hoisted to top
 
         function applyDashLanguage(lang) {
+            currentLang = lang;
             const t = dashTranslations[lang];
             document.documentElement.lang = lang;
             document.documentElement.dir  = lang === 'ar' ? 'rtl' : 'ltr';
@@ -6754,13 +6756,28 @@
         // ─────────────────────────────────────────────────────────────────────
         
         // ─────────────────────────────────────────────────────────────────────
+                // ─────────────────────────────────────────────────────────────────────
         // AI IMAGE PRODUCT SCANNER & EXTRACTOR ENGINE
         // ─────────────────────────────────────────────────────────────────────
         let scannerItemsList = [];
         let scannerEngine = 'gemini';
         const DEFAULT_GEMINI_KEY = 'AQ.Ab8RN6L4HF3ggI6xr5vOQXGbZPlS2OgW7YYNU8IPZNKD5GahVg';
 
-        // Initialize Gemini Key & Markup settings
+        function triggerScannerFileInput() {
+            const input = document.getElementById('scanner-file-input');
+            if (input) {
+                input.value = '';
+                input.click();
+            }
+        }
+
+        function handleScannerInputChange(input) {
+            if (input && input.files && input.files.length > 0) {
+                handleScannerUploadedFiles(Array.from(input.files));
+                input.value = '';
+            }
+        }
+
         function initScannerSettings() {
             const savedMarkup = localStorage.getItem('scanner_markup') || '15';
             const markupInput = document.getElementById('scanner-global-markup');
@@ -6773,14 +6790,16 @@
                 scannerEngine = savedEngine;
             }
 
+            if (!localStorage.getItem('gemini_api_key')) {
+                localStorage.setItem('gemini_api_key', DEFAULT_GEMINI_KEY);
+            }
+
             updateGeminiKeyButtonStatus();
 
-            // Setup listeners
             if (markupInput) {
                 markupInput.addEventListener('input', (e) => {
                     const val = e.target.value;
                     localStorage.setItem('scanner_markup', val);
-                    // Update all existing ready cards
                     scannerItemsList.forEach(item => {
                         if (item.status !== 'saved') {
                             item.markup = Number(val) || 0;
@@ -6798,7 +6817,6 @@
                 });
             }
 
-            // Gemini Key Modal listeners
             const btnOpenKey = document.getElementById('btn-open-gemini-key');
             const keyModal = document.getElementById('gemini-key-modal');
             const keyInput = document.getElementById('gemini-api-key-input');
@@ -6836,29 +6854,22 @@
                 });
             }
 
-            // File input & Dropzone listeners
-            const fileInput = document.getElementById('scanner-file-input');
+            // Dropzone drag & drop
             const dropzone = document.getElementById('scanner-dropzone');
-
-            if (fileInput) {
-                fileInput.addEventListener('change', (e) => {
-                    if (e.target.files && e.target.files.length > 0) {
-                        handleScannerUploadedFiles(Array.from(e.target.files));
-                        fileInput.value = '';
-                    }
-                });
-            }
-
             if (dropzone) {
                 dropzone.addEventListener('dragover', (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     dropzone.classList.add('dragover');
                 });
-                dropzone.addEventListener('dragleave', () => {
+                dropzone.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     dropzone.classList.remove('dragover');
                 });
                 dropzone.addEventListener('drop', (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     dropzone.classList.remove('dragover');
                     if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
                         handleScannerUploadedFiles(Array.from(e.dataTransfer.files));
@@ -6866,14 +6877,13 @@
                 });
             }
 
-            // Batch actions
             const btnSaveAll = document.getElementById('btn-scanner-save-all');
             const btnClearAll = document.getElementById('btn-scanner-clear-all');
 
             if (btnSaveAll) btnSaveAll.addEventListener('click', saveAllReadyScannerItems);
             if (btnClearAll) btnClearAll.addEventListener('click', clearAllScannerItems);
 
-            // Clipboard Paste support on dashboard
+            // Clipboard Paste support
             window.addEventListener('paste', (e) => {
                 const scannerTab = document.getElementById('tab-scanner');
                 if (scannerTab && scannerTab.classList.contains('active')) {
@@ -6912,11 +6922,18 @@
             }
         }
 
+        function isImageFile(file) {
+            if (!file) return false;
+            if (file.type && file.type.toLowerCase().startsWith('image/')) return true;
+            const name = file.name ? file.name.toLowerCase() : '';
+            return /\.(jpg|jpeg|png|webp|gif|bmp|svg|heic|avif)$/i.test(name) || !file.name;
+        }
+
         // Handle uploaded files (single or batch)
         function handleScannerUploadedFiles(files) {
-            const validImageFiles = files.filter(f => f.type.startsWith('image/'));
+            const validImageFiles = files.filter(isImageFile);
             if (validImageFiles.length === 0) {
-                showToast(currentLang === 'ar' ? 'يرجى اختيار ملفات صور صالحة.' : 'Please select valid image files.', true);
+                showToast(currentLang === 'ar' ? 'يرجى اختيار ملفات صور صالحة.' : 'Please select valid image files.', 'warning');
                 return;
             }
 
@@ -6927,17 +6944,20 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const dataUrl = e.target.result;
+                    const cleanName = (file.name || 'Device').replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+                    const defaultCat = (typeof getCategories === 'function' && getCategories().length > 0) ? getCategories()[0] : 'Other';
+                    
                     const itemObj = {
                         id: itemId,
                         file: file,
                         dataUrl: dataUrl,
-                        title: file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " "),
+                        title: cleanName,
                         costPrice: 0,
                         markup: markupVal,
                         sellingPrice: markupVal,
-                        category: getCategories()[0] || 'Other',
+                        category: defaultCat,
                         description: '',
-                        status: 'processing', // processing, ready, saved, error
+                        status: 'processing',
                         errorMsg: ''
                     };
                     scannerItemsList.unshift(itemObj);
@@ -6983,7 +7003,7 @@
                 }
             }
 
-            // Render cards if not rendered
+            // Render each card
             scannerItemsList.forEach(item => {
                 let cardEl = document.getElementById(`card-${item.id}`);
                 if (!cardEl) {
@@ -7001,7 +7021,8 @@
             card.id = `card-${item.id}`;
             card.className = `scanner-item-card status-${item.status}`;
 
-            const catOptions = getCategories().map(c => 
+            const availableCats = typeof getCategories === 'function' ? getCategories() : ['Other'];
+            const catOptions = availableCats.map(c => 
                 `<option value="${escapeHtml(c)}" ${c === item.category ? 'selected' : ''}>${escapeHtml(c)}</option>`
             ).join('');
 
@@ -7032,7 +7053,7 @@
                 <div class="form-group" style="margin-bottom:0;">
                     <label style="font-weight:700; font-size:0.85rem; color:var(--text-dark); display:flex; align-items:center; justify-content:space-between;">
                         <span><i class="fa-solid fa-tags" style="color:var(--success-color);"></i> ${currentLang === 'ar' ? 'التسعير والأرباح:' : 'Pricing & Margin:'}</span>
-                        <span style="font-size:0.75rem; color:var(--text-light); font-weight:normal;">+ $15 Markup</span>
+                        <span style="font-size:0.75rem; color:var(--text-light); font-weight:normal;">+ $${item.markup} Markup</span>
                     </label>
                     <div class="scanner-price-box">
                         <div>
@@ -7083,9 +7104,7 @@
                 </div>
             `;
 
-            // Bind live editing events
             bindScannerCardInputEvents(card, item);
-
             return card;
         }
 
@@ -7174,22 +7193,20 @@
             }
         }
 
-                // Process Single Image via Gemini Vision or Tesseract OCR
+        // Process Single Image via Gemini Vision or Tesseract OCR
         async function processSingleScannerItem(item) {
-            const apiKey = (localStorage.getItem('gemini_api_key') || '').trim();
+            const apiKey = (localStorage.getItem('gemini_api_key') || DEFAULT_GEMINI_KEY || '').trim();
             let extractionSuccess = false;
-            let lastError = '';
 
-            // Check if user has an AI key (proper Gemini keys start with AIzaSy)
             if (scannerEngine === 'gemini' && apiKey) {
                 try {
-                    const result = await extractWithGeminiVision(item.dataUrl, item.file.type, apiKey);
-                    if (result && (result.title || result.price || result.description)) {
+                    const result = await extractWithGeminiVision(item.dataUrl, item.file?.type || 'image/jpeg', apiKey);
+                    if (result && (result.title || result.price !== undefined || result.description)) {
                         if (result.title) item.title = result.title;
                         item.costPrice = Number(result.price) || 0;
                         item.sellingPrice = Number((item.costPrice + item.markup).toFixed(2));
                         item.description = result.description || '';
-                        if (result.category) {
+                        if (result.category && typeof getCategories === 'function') {
                             const foundCat = getCategories().find(c => c.toLowerCase() === result.category.toLowerCase() || result.category.toLowerCase().includes(c.toLowerCase()));
                             if (foundCat) item.category = foundCat;
                         }
@@ -7197,11 +7214,7 @@
                         extractionSuccess = true;
                     }
                 } catch (geminiErr) {
-                    console.warn("Gemini Vision failed:", geminiErr);
-                    lastError = geminiErr.message || 'Gemini error';
-                    if (lastError.includes('401') || lastError.includes('UNAUTHENTICATED')) {
-                        showToast(currentLang === 'ar' ? 'تنبيه: مفتاح Gemini غير صالح. المفتاح الصحيح يبدأ بـ AIzaSy...' : 'Warning: Invalid Gemini Key. Real key starts with AIzaSy...', true);
-                    }
+                    console.warn("Gemini Vision attempt note:", geminiErr);
                 }
             }
 
@@ -7218,7 +7231,7 @@
                     }
                     item.status = 'ready';
                 } catch (ocrErr) {
-                    console.error("OCR Extraction failed:", ocrErr);
+                    console.error("OCR Extraction note:", ocrErr);
                     item.status = 'ready';
                 }
             }
@@ -7226,7 +7239,6 @@
             renderScannerUI();
         }
 
-        // Helper to safely extract JSON from AI response
         function parseJsonFromText(text) {
             if (!text) return null;
             try {
@@ -7237,15 +7249,14 @@
                 const cleaned = text.replace(/```json/gi, '').replace(/```/gi, '').trim();
                 return JSON.parse(cleaned);
             } catch (e) {
-                console.warn("JSON parsing error:", e);
                 return null;
             }
         }
 
-                // Gemini Vision API (Google AI Studio)
+        // Gemini Vision API (Google AI Studio)
         async function extractWithGeminiVision(dataUrl, mimeType, apiKey) {
             const base64Data = dataUrl.split(',')[1];
-            const cleanMime = mimeType || 'image/jpeg';
+            const cleanMime = mimeType && mimeType.startsWith('image/') ? mimeType : 'image/jpeg';
 
             const promptText = `Analyze this product/device image carefully. Extract and return a JSON object with:
 1. "title": The precise brand, device model, specs (e.g. "iPhone 14 Pro Max 256GB" or "Dell Latitude 5420 i7 16GB").
@@ -7278,36 +7289,31 @@ Return ONLY valid JSON like:
             let lastErr = null;
 
             for (const model of models) {
-                for (let attempt = 0; attempt < 2; attempt++) {
-                    try {
-                        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-                            method: 'POST',
-                            headers: { 
-                                'Content-Type': 'application/json',
-                                'x-goog-api-key': apiKey
-                            },
-                            body: JSON.stringify(requestBody)
-                        });
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'x-goog-api-key': apiKey
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
 
-                        if (response.ok) {
-                            const data = await response.json();
-                            const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-                            const parsed = parseJsonFromText(rawText);
-                            if (parsed) return parsed;
-                        } else {
-                            const errData = await response.json().catch(() => ({}));
-                            lastErr = new Error(errData.error?.message || `HTTP ${response.status}`);
-                            if (response.status === 503) {
-                                // Wait 800ms and retry if temporary spike
-                                await new Promise(r => setTimeout(r, 800));
-                                continue;
-                            }
-                            break;
+                    if (response.ok) {
+                        const data = await response.json();
+                        const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                        const parsed = parseJsonFromText(rawText);
+                        if (parsed) return parsed;
+                    } else {
+                        const errData = await response.json().catch(() => ({}));
+                        lastErr = new Error(errData.error?.message || `HTTP ${response.status}`);
+                        if (response.status === 503) {
+                            await new Promise(r => setTimeout(r, 600));
+                            continue;
                         }
-                    } catch (e) {
-                        lastErr = e;
-                        await new Promise(r => setTimeout(r, 500));
                     }
+                } catch (e) {
+                    lastErr = e;
                 }
             }
 
@@ -7317,24 +7323,18 @@ Return ONLY valid JSON like:
         // Tesseract.js Client-Side Local OCR
         async function extractWithTesseractOCR(dataUrl) {
             if (typeof Tesseract === 'undefined') {
-                console.warn("Tesseract library not loaded");
                 return null;
             }
 
             try {
                 const result = await Tesseract.recognize(dataUrl, 'eng', {
-                    logger: m => {
-                        if (m.status === 'recognizing text') {
-                            console.log(`OCR Progress: ${Math.round((m.progress || 0) * 100)}%`);
-                        }
-                    }
+                    logger: () => {}
                 });
 
                 const text = result?.data?.text || '';
                 const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
                 let detectedPrice = 0;
-                // Regex for price: $120, 120$, 120 USD, 120.00
                 const priceRegex = /(?:\$|USD|IQD|EUR|€|£)?\s*(\d+(?:\.\d{1,2})?)\s*(?:\$|USD|IQD|EUR|€|£)?/i;
                 for (const line of lines) {
                     const match = line.match(priceRegex);
@@ -7344,7 +7344,6 @@ Return ONLY valid JSON like:
                     }
                 }
 
-                // Look for brand names
                 const brands = ['iphone', 'samsung', 'xiaomi', 'redmi', 'oppo', 'vivo', 'realme', 'huawei', 'honor', 'macbook', 'dell', 'hp', 'lenovo', 'asus', 'acer', 'sony', 'playstation', 'ps5', 'xbox', 'ipad', 'apple watch', 'airpods'];
                 let titleCandidate = '';
                 for (const line of lines) {
@@ -7368,7 +7367,6 @@ Return ONLY valid JSON like:
                     category: 'Other'
                 };
             } catch (err) {
-                console.error("Tesseract execution error:", err);
                 return null;
             }
         }
@@ -7404,7 +7402,7 @@ Return ONLY valid JSON like:
                 showToast(currentLang === 'ar' ? `تمت إضافة "${item.title}" إلى المتجر بنجاح!` : `Added "${item.title}" to store!`);
             } catch (err) {
                 console.error("Error adding product:", err);
-                showToast(currentLang === 'ar' ? `فشل الحفظ: ${err.message}` : `Save failed: ${err.message}`, true);
+                showToast(currentLang === 'ar' ? `فشل الحفظ: ${err.message}` : `Save failed: ${err.message}`, 'error');
             } finally {
                 if (btn) btn.disabled = false;
                 renderScannerUI();
@@ -7415,7 +7413,7 @@ Return ONLY valid JSON like:
         async function saveAllReadyScannerItems() {
             const readyItems = scannerItemsList.filter(i => i.status === 'ready' || i.status === 'error');
             if (readyItems.length === 0) {
-                showToast(currentLang === 'ar' ? 'لا توجد عناصر جاهزة للحفظ.' : 'No ready items to save.', true);
+                showToast(currentLang === 'ar' ? 'لا توجد عناصر جاهزة للحفظ.' : 'No ready items to save.', 'warning');
                 return;
             }
 
@@ -7467,7 +7465,7 @@ Return ONLY valid JSON like:
             navigator.clipboard.writeText(textToCopy).then(() => {
                 showToast(currentLang === 'ar' ? 'تم نسخ بيانات الجهاز للحافظة!' : 'Product info copied to clipboard!');
             }).catch(() => {
-                showToast('Failed to copy', true);
+                showToast('Failed to copy', 'error');
             });
         }
 
