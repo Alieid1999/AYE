@@ -6930,6 +6930,105 @@
         }
 
         // Handle uploaded files (single or batch)
+                // Match device name / category to high-resolution clean commercial product studio photos
+        function getCleanProductImage(title, category) {
+            const t = (title || '').toLowerCase();
+            const c = (category || '').toLowerCase();
+
+            // MacBooks
+            if (t.includes('macbook') || t.includes('apple laptop') || t.includes('m1') || t.includes('m2') || t.includes('m3')) {
+                return 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop';
+            }
+            // HP Laptops
+            if (t.includes('hp') && (t.includes('laptop') || t.includes('victus') || t.includes('pavilion') || t.includes('envy') || t.includes('17') || t.includes('15') || t.includes('14') || t.includes('ultra') || t.includes('spectre'))) {
+                return 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop';
+            }
+            // Dell Laptops
+            if (t.includes('dell') || t.includes('latitude') || t.includes('xps') || t.includes('inspiron') || t.includes('alienware') || t.includes('precision') || t.includes('vostro')) {
+                return 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=800&auto=format&fit=crop';
+            }
+            // Lenovo Laptops
+            if (t.includes('lenovo') || t.includes('thinkpad') || t.includes('ideapad') || t.includes('legion') || t.includes('yoga')) {
+                return 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=800&auto=format&fit=crop';
+            }
+            // Asus Laptops
+            if (t.includes('asus') || t.includes('rog') || t.includes('tuf') || t.includes('zenbook') || t.includes('vivobook')) {
+                return 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=800&auto=format&fit=crop';
+            }
+            // Acer Laptops
+            if (t.includes('acer') || t.includes('predator') || t.includes('nitro') || t.includes('aspire') || t.includes('swift')) {
+                return 'https://images.unsplash.com/photo-1595327656903-2f54e38ce097?w=800&auto=format&fit=crop';
+            }
+            // Generic Laptops
+            if (t.includes('laptop') || t.includes('notebook') || c.includes('laptop') || c.includes('pc')) {
+                return 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop';
+            }
+
+            // iPhones
+            if (t.includes('iphone 15') || t.includes('15 pro')) {
+                return 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop';
+            }
+            if (t.includes('iphone 14') || t.includes('14 pro')) {
+                return 'https://images.unsplash.com/photo-1663499482523-1c0c1bae4ce1?w=800&auto=format&fit=crop';
+            }
+            if (t.includes('iphone 13') || t.includes('13 pro')) {
+                return 'https://images.unsplash.com/photo-1632661674596-df8be070a5c5?w=800&auto=format&fit=crop';
+            }
+            if (t.includes('iphone 12') || t.includes('iphone 11') || t.includes('iphone x') || t.includes('iphone')) {
+                return 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=800&auto=format&fit=crop';
+            }
+
+            // Samsung Phones
+            if (t.includes('s24') || t.includes('s23') || t.includes('s22') || (t.includes('ultra') && t.includes('samsung')) || t.includes('galaxy s')) {
+                return 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&auto=format&fit=crop';
+            }
+            if (t.includes('samsung') || t.includes('galaxy')) {
+                return 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=800&auto=format&fit=crop';
+            }
+
+            // Xiaomi / Redmi
+            if (t.includes('xiaomi') || t.includes('redmi') || t.includes('poco')) {
+                return 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop';
+            }
+            // Generic Phones
+            if (t.includes('phone') || c.includes('phone')) {
+                return 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop';
+            }
+
+            // Audio & Headphones
+            if (t.includes('airpods') || t.includes('earbuds') || t.includes('tws')) {
+                return 'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=800&auto=format&fit=crop';
+            }
+            if (t.includes('sony') && (t.includes('wh') || t.includes('wf') || t.includes('headphone'))) {
+                return 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop';
+            }
+            if (t.includes('headset') || t.includes('headphone') || c.includes('headset') || c.includes('audio')) {
+                return 'https://images.unsplash.com/photo-1599669454699-248893623440?w=800&auto=format&fit=crop';
+            }
+
+            // Keyboards & Mice
+            if (t.includes('keyboard') || c.includes('keyboard')) {
+                return 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800&auto=format&fit=crop';
+            }
+            if (t.includes('mouse') || c.includes('mice')) {
+                return 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=800&auto=format&fit=crop';
+            }
+            // Monitors
+            if (t.includes('monitor') || t.includes('screen') || t.includes('display') || c.includes('monitor')) {
+                return 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800&auto=format&fit=crop';
+            }
+            // Smartwatch / iPad
+            if (t.includes('watch') || t.includes('smartwatch')) {
+                return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop';
+            }
+            if (t.includes('ipad') || t.includes('tablet')) {
+                return 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=800&auto=format&fit=crop';
+            }
+
+            // Default Clean Tech Photo
+            return 'https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=800&auto=format&fit=crop';
+        }
+
         function handleScannerUploadedFiles(files) {
             const validImageFiles = files.filter(isImageFile);
             if (validImageFiles.length === 0) {
@@ -6951,6 +7050,7 @@
                         id: itemId,
                         file: file,
                         dataUrl: dataUrl,
+                        cleanImage: getCleanProductImage(cleanName, defaultCat),
                         title: cleanName,
                         costPrice: 0,
                         markup: markupVal,
@@ -7021,7 +7121,19 @@
             card.id = `card-${item.id}`;
             card.className = `scanner-item-card status-${item.status}`;
 
-            const availableCats = typeof getCategories === 'function' ? getCategories() : ['Other'];
+            const availableCats = (typeof getCategories === 'function' && getCategories().length > 0) ? getCategories() : DEFAULT_CATEGORIES;
+            // Ensure item has a valid category
+            if (!item.category || !availableCats.includes(item.category)) {
+                const lowerTitle = (item.title || '').toLowerCase();
+                if (lowerTitle.includes('laptop') || lowerTitle.includes('pc') || lowerTitle.includes('macbook') || lowerTitle.includes('dell') || lowerTitle.includes('hp')) {
+                    item.category = availableCats.find(c => c.toLowerCase().includes('laptop')) || availableCats[0];
+                } else if (lowerTitle.includes('phone') || lowerTitle.includes('iphone') || lowerTitle.includes('samsung') || lowerTitle.includes('redmi')) {
+                    item.category = availableCats.find(c => c.toLowerCase().includes('phone')) || availableCats[0];
+                } else {
+                    item.category = availableCats[0];
+                }
+            }
+
             const catOptions = availableCats.map(c => 
                 `<option value="${escapeHtml(c)}" ${c === item.category ? 'selected' : ''}>${escapeHtml(c)}</option>`
             ).join('');
@@ -7036,8 +7148,18 @@
                     </button>
                 </div>
 
-                <div class="scanner-thumb-container">
-                    <img src="${item.dataUrl}" alt="Device Image">
+                <!-- Product Clean Store Image Preview + Original Reference Thumbnail -->
+                <div style="position:relative;">
+                    <div class="scanner-thumb-container" id="thumb-container-${item.id}">
+                        <img src="${item.cleanImage || item.dataUrl}" id="img-preview-${item.id}" alt="Clean Product Photo" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">
+                        <span style="position:absolute; bottom:8px; left:8px; background:rgba(15,23,42,0.85); color:#fff; font-size:0.75rem; font-weight:700; padding:4px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:5px;">
+                            <i class="fa-solid fa-camera"></i> Clean Product Photo (صورة المتجر)
+                        </span>
+                    </div>
+                    <!-- Small original scanned flyer badge -->
+                    <div style="position:absolute; top:8px; right:8px; width:46px; height:46px; border-radius:6px; overflow:hidden; border:2px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,0.25); cursor:pointer;" title="Original Scanned Flyer (الصورة المرفوعة الأصلية)" onclick="window.open('${item.dataUrl}', '_blank')">
+                        <img src="${item.dataUrl}" style="width:100%; height:100%; object-fit:cover;" alt="Original">
+                    </div>
                 </div>
 
                 <!-- Device Name -->
@@ -7143,6 +7265,8 @@
             const btnAdd = document.getElementById(`btn-add-${itemId}`);
 
             if (titleEl && document.activeElement !== titleEl) titleEl.value = item.title;
+            const imgEl = document.getElementById(`img-preview-${itemId}`);
+            if (imgEl && item.cleanImage) imgEl.src = item.cleanImage;
             if (costEl && document.activeElement !== costEl) costEl.value = item.costPrice;
             if (markupBadge) markupBadge.textContent = `+ $${item.markup}`;
             if (sellingEl && document.activeElement !== sellingEl) sellingEl.value = item.sellingPrice;
@@ -7202,7 +7326,10 @@
                 try {
                     const result = await extractWithGeminiVision(item.dataUrl, item.file?.type || 'image/jpeg', apiKey);
                     if (result && (result.title || result.price !== undefined || result.description)) {
-                        if (result.title) item.title = result.title;
+                        if (result.title) {
+                            item.title = result.title;
+                            item.cleanImage = getCleanProductImage(item.title, item.category);
+                        }
                         item.costPrice = Number(result.price) || 0;
                         item.sellingPrice = Number((item.costPrice + item.markup).toFixed(2));
                         item.description = result.description || '';
@@ -7223,7 +7350,10 @@
                 try {
                     const ocrResult = await extractWithTesseractOCR(item.dataUrl);
                     if (ocrResult) {
-                        if (ocrResult.title && ocrResult.title !== 'Device Item') item.title = ocrResult.title;
+                        if (ocrResult.title && ocrResult.title !== 'Device Item') {
+                            item.title = ocrResult.title;
+                            item.cleanImage = getCleanProductImage(item.title, item.category);
+                        }
                         if (ocrResult.price > 0) item.costPrice = ocrResult.price;
                         item.sellingPrice = Number((item.costPrice + item.markup).toFixed(2));
                         if (ocrResult.description) item.description = ocrResult.description;
@@ -7384,6 +7514,19 @@ Return ONLY valid JSON:
             const item = scannerItemsList.find(i => i.id === itemId);
             if (!item) return;
 
+            // Sync latest values from DOM
+            const titleInput = document.getElementById(`title-${itemId}`);
+            const costInput = document.getElementById(`cost-${itemId}`);
+            const sellingInput = document.getElementById(`selling-${itemId}`);
+            const catInput = document.getElementById(`cat-${itemId}`);
+            const descInput = document.getElementById(`desc-${itemId}`);
+
+            if (titleInput) item.title = titleInput.value.trim();
+            if (costInput) item.costPrice = Number(costInput.value) || 0;
+            if (sellingInput) item.sellingPrice = Number(sellingInput.value) || 0;
+            if (catInput) item.category = catInput.value;
+            if (descInput) item.description = descInput.value.trim();
+
             const btn = document.getElementById(`btn-add-${itemId}`);
             if (btn) {
                 btn.disabled = true;
@@ -7393,16 +7536,16 @@ Return ONLY valid JSON:
             try {
                 const productData = {
                     title: item.title || 'Untitled Device',
-                    image: item.dataUrl,
-                    images: [item.dataUrl],
+                    image: item.cleanImage || item.dataUrl,
+                    images: [item.cleanImage || item.dataUrl, item.dataUrl],
                     costPrice: Number(item.costPrice) || 0,
                     price: Number(item.sellingPrice) || 0,
                     currency: 'USD',
-                    stock: 1,
+                    stock: 10,
                     category: item.category || 'Other',
                     description: item.description || '',
                     supplier: 'AI Scanner',
-                    createdAt: Date.now()
+                    createdAt: new Date().toISOString()
                 };
 
                 await DBService.addProduct(productData);
