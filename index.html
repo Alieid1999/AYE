@@ -1771,6 +1771,9 @@
                     </button>
                 </div>
             </div>
+            <button id="open-web-services-btn" onclick="openWebServicesModal()" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; transition: all 0.3s; box-shadow: 0 4px 10px rgba(59,130,246,0.3);">
+                <i class="fa-solid fa-laptop-code"></i> <span data-i18n="navWebServices">Web Development & Installments</span>
+            </button>
             <button id="open-track-btn" style="background: none; border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-dark); transition: all 0.3s;">
                 <i class="fa-solid fa-truck-fast"></i> <span data-i18n="trackOrder">Track My Orders</span>
             </button>
@@ -1791,6 +1794,24 @@
             <p data-i18n="heroSubtitle">The best devices and accessories at unbeatable prices. Shop now and get exclusive discounts.</p>
         </div>
     </header>
+
+    <!-- Web Development Promotion Banner -->
+    <div style="padding: 0 5%; margin-top: -15px; margin-bottom: 25px;">
+        <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid rgba(59,130,246,0.3); border-radius: 16px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15); color: #fff;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(59,130,246,0.2); border: 1px solid rgba(59,130,246,0.4); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #60a5fa; flex-shrink: 0;">
+                    <i class="fa-solid fa-laptop-code"></i>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; color: #f8fafc;" data-i18n="webBannerTitle">نصمم ونطور مواقع إلكترونية بالتقسيط المريح والكاش</h3>
+                    <p style="font-size: 0.88rem; color: #94a3b8; line-height: 1.5;" data-i18n="webBannerSub">متاجر إلكترونية، مواقع شركات، وأنظمة مخصصة مع خطط تقسيط شهرية مرنة وصيانة دورية شاملة.</p>
+                </div>
+            </div>
+            <button onclick="openWebServicesModal()" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; border: none; padding: 12px 22px; border-radius: 10px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(37,99,235,0.4); transition: transform 0.2s;">
+                <i class="fa-solid fa-calculator"></i> <span data-i18n="btnCalculateInstallment">احسب قسطك واطلب موقعك</span>
+            </button>
+        </div>
+    </div>
 
     <!-- Search & Filter Container -->
     <div class="search-filter-container">
@@ -2192,6 +2213,114 @@
         </div>
     </div>
 
+    <!-- Web Development & Installment Services Modal -->
+    <div class="modal-overlay" id="web-services-modal">
+        <div class="modal-content" style="max-width: 740px;">
+            <span class="close-modal" onclick="closeWebServicesModal()"><i class="fa-solid fa-xmark"></i></span>
+            
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 14px;">
+                <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(59,130,246,0.1); color: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+                    <i class="fa-solid fa-laptop-code"></i>
+                </div>
+                <div>
+                    <h2 class="modal-title" style="margin: 0; padding: 0; border: none; font-size: 1.4rem;" data-i18n="webModalTitle">خدمات إنشاء وتطوير المواقع بالتقسيط المريح</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 2px;" data-i18n="webModalSub">حلول برمجية متكاملة لمشروعك مع خيارات دفع ميسرة (كاش أو تقسيط) وخدمات صيانة شهرية.</p>
+                </div>
+            </div>
+
+            <!-- Features Highlights Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;">
+                <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; text-align: center;">
+                    <i class="fa-solid fa-store fa-2x" style="color: var(--primary-color); margin-bottom: 6px;"></i>
+                    <h4 style="font-size: 0.95rem; margin-bottom: 3px;" data-i18n="webPkgStore">متاجر إلكترونية</h4>
+                    <p style="font-size: 0.78rem; color: var(--text-light);" data-i18n="webPkgStoreDesc">سلة مشتريات، دفع أونلاين، لوحة تحكم، وإدارة طلبات.</p>
+                </div>
+                <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; text-align: center;">
+                    <i class="fa-solid fa-building fa-2x" style="color: #10b981; margin-bottom: 6px;"></i>
+                    <h4 style="font-size: 0.95rem; margin-bottom: 3px;" data-i18n="webPkgCorp">مواقع شركات وتعريفية</h4>
+                    <p style="font-size: 0.78rem; color: var(--text-light);" data-i18n="webPkgCorpDesc">عرض الخدمات، دومين رسمي، إيميلات عمل، وسرعة فائقة.</p>
+                </div>
+                <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; text-align: center;">
+                    <i class="fa-solid fa-screwdriver-wrench fa-2x" style="color: #f59e0b; margin-bottom: 6px;"></i>
+                    <h4 style="font-size: 0.95rem; margin-bottom: 3px;" data-i18n="webPkgMaint">صيانة ودعم شهري</h4>
+                    <p style="font-size: 0.78rem; color: var(--text-light);" data-i18n="webPkgMaintDesc">نسخ احتياطي دوري، حماية، وتحديثات مستمرة لضمان العمل.</p>
+                </div>
+            </div>
+
+            <!-- Installment Calculator Section -->
+            <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; margin-bottom: 20px;">
+                <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-dark); margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-calculator" style="color: var(--primary-color);"></i>
+                    <span data-i18n="calcTitle">حاسبة الأسعار والأقساط التقديرية</span>
+                </h3>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label style="font-weight: 600; font-size: 0.88rem; margin-bottom: 4px;" data-i18n="labelChooseType">نوع الموقع المطلوب:</label>
+                        <select id="user-web-type" onchange="updatePublicInstallmentCalc()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: #fff; font-size: 0.92rem; font-weight: 500;">
+                            <option value="350">متجر إلكتروني قياسي ($350)</option>
+                            <option value="550">متجر إلكتروني احترافي متقدم ($550)</option>
+                            <option value="250">موقع تعريفي للشركة ($250)</option>
+                            <option value="180">صفحة هبوط تسويقية / بورتفوليو ($180)</option>
+                            <option value="800">نظام ويب مخصص أو منصة خاصة ($800)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label style="font-weight: 600; font-size: 0.88rem; margin-bottom: 4px;" data-i18n="labelChoosePlan">خطة الدفع المفضلة:</label>
+                        <select id="user-web-plan" onchange="updatePublicInstallmentCalc()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: #fff; font-size: 0.92rem; font-weight: 500;">
+                            <option value="cash">كاش كامل (خصم 10% فوري 🎁)</option>
+                            <option value="3" selected>تقسيط على 3 أشهر</option>
+                            <option value="6">تقسيط على 6 أشهر</option>
+                            <option value="12">تقسيط على 12 شهر</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Monthly Maintenance Addon Checkbox -->
+                <div style="margin-top: 14px; display: flex; align-items: center; gap: 10px; background: #fff; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <input type="checkbox" id="user-web-include-maint" checked onchange="updatePublicInstallmentCalc()" style="width: 18px; height: 18px; cursor: pointer;">
+                    <label for="user-web-include-maint" style="font-size: 0.88rem; cursor: pointer; color: var(--text-dark); margin: 0;">
+                        <strong data-i18n="includeMaintenance">إضافة باقة الصيانة والدعم الفني الشهري</strong> (+ $20 / شهرياً)
+                    </label>
+                </div>
+
+                <!-- Live Results Card -->
+                <div style="margin-top: 16px; background: linear-gradient(135deg, #1e293b, #0f172a); color: #fff; border-radius: 10px; padding: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; text-align: center;">
+                    <div>
+                        <span style="font-size: 0.78rem; color: #94a3b8;" data-i18n="calcTotal">إجمالي تكلفة الموقع:</span>
+                        <strong id="public-calc-total" style="display: block; font-size: 1.25rem; color: #60a5fa; margin-top: 2px;">$350</strong>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.78rem; color: #94a3b8;" data-i18n="calcDownPayment">الدفعة الأولى المطلوبة:</span>
+                        <strong id="public-calc-downpayment" style="display: block; font-size: 1.25rem; color: #34d399; margin-top: 2px;">$116</strong>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.78rem; color: #94a3b8;" data-i18n="calcMonthly">القسط الشهري:</span>
+                        <strong id="public-calc-monthly" style="display: block; font-size: 1.25rem; color: #fbbf24; margin-top: 2px;">$116 / شهر</strong>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.78rem; color: #94a3b8;" data-i18n="calcMaint">الصيانة الشهرية:</span>
+                        <strong id="public-calc-maint" style="display: block; font-size: 1.25rem; color: #38bdf8; margin-top: 2px;">$20 / شهر</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Client Info & WhatsApp Order Button -->
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <input type="text" id="user-web-client-name" placeholder="اسمك الكريم / اسم شركتك *" style="padding: 11px 14px; border-radius: 8px; border: 1px solid var(--border-color); outline: none; font-size: 0.95rem;">
+                    <input type="tel" id="user-web-client-phone" placeholder="رقم هاتفك / الواتساب *" style="padding: 11px 14px; border-radius: 8px; border: 1px solid var(--border-color); outline: none; font-size: 0.95rem;">
+                </div>
+                <textarea id="user-web-client-notes" rows="2" placeholder="ملاحظات أو ميزات خاصة ترغب بإضافتها لموقعك..." style="padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-color); outline: none; font-size: 0.92rem;"></textarea>
+
+                <button type="button" onclick="submitPublicWebOrder()" class="btn-primary" style="background: linear-gradient(135deg, #25D366, #128C7E); padding: 14px; justify-content: center; font-size: 1.05rem; margin-top: 5px;">
+                    <i class="fa-brands fa-whatsapp fa-lg"></i> <span data-i18n="btnOrderWebWhatsApp">طلب الموقع والمتابعة عبر الواتساب فوراً</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Message -->
     <div class="toast-message" id="toast-msg">
         <i class="fa-solid fa-circle-check"></i> <span id="toast-text">Operation successful!</span>
@@ -2317,6 +2446,27 @@
                 reviewPurchaseRequired: "You can only review products you already purchased.",
                 reviewEmpty:       "No reviews yet. Be the first to review this product.",
                 reviewSubmitted:   "Review submitted successfully!",
+                navWebServices:    "Web Development & Installments",
+                webBannerTitle:    "Custom Websites with Easy Monthly Installments & Cash",
+                webBannerSub:      "E-commerce stores, corporate sites, and custom web apps with flexible monthly installment plans & full maintenance.",
+                btnCalculateInstallment: "Calculate Installment & Order",
+                webModalTitle:     "Web Design & Development with Installments",
+                webModalSub:       "Turnkey web solutions for your business with easy payment plans (Cash / Installments) & monthly maintenance.",
+                webPkgStore:       "E-Commerce Stores",
+                webPkgStoreDesc:   "Shopping cart, checkout, admin dashboard & order tracking.",
+                webPkgCorp:        "Corporate & Portfolio",
+                webPkgCorpDesc:    "Service showcases, custom domain, work emails & ultra fast speed.",
+                webPkgMaint:       "Monthly Maintenance & Support",
+                webPkgMaintDesc:   "Automated backups, security patches & continuous updates.",
+                calcTitle:         "Interactive Pricing & Installment Calculator",
+                labelChooseType:   "Select Website Type:",
+                labelChoosePlan:   "Preferred Payment Plan:",
+                includeMaintenance:"Add Monthly Maintenance & Technical Support",
+                calcTotal:         "Total Project Cost:",
+                calcDownPayment:   "Required Down Payment:",
+                calcMonthly:       "Monthly Installment:",
+                calcMaint:         "Monthly Maintenance:",
+                btnOrderWebWhatsApp: "Order Website via WhatsApp",
             },
             ar: {
                 storeName:         "متجر الحواسيب ومستلزمات القيمنق",
@@ -2433,6 +2583,27 @@
                 reviewPurchaseRequired: "يمكنك تقييم المنتجات التي اشتريتها فقط.",
                 reviewEmpty:       "لا توجد تقييمات بعد. كن أول من يقيّم هذا المنتج.",
                 reviewSubmitted:   "تم إرسال التقييم بنجاح!",
+                navWebServices:    "تصميم مواقع بالتقسيط",
+                webBannerTitle:    "نصمم ونطور مواقع إلكترونية بالتقسيط المريح والكاش",
+                webBannerSub:      "متاجر إلكترونية، مواقع شركات، وأنظمة مخصصة مع خطط تقسيط شهرية مرنة وصيانة دورية شاملة.",
+                btnCalculateInstallment: "احسب قسطك واطلب موقعك",
+                webModalTitle:     "خدمات إنشاء وتطوير المواقع بالتقسيط المريح",
+                webModalSub:       "حلول برمجية متكاملة لمشروعك مع خيارات دفع ميسرة (كاش أو تقسيط) وخدمات صيانة شهرية.",
+                webPkgStore:       "متاجر إلكترونية",
+                webPkgStoreDesc:   "سلة مشتريات، دفع أونلاين، لوحة تحكم، وإدارة طلبات.",
+                webPkgCorp:        "مواقع شركات وتعريفية",
+                webPkgCorpDesc:    "عرض الخدمات، دومين رسمي، إيميلات عمل، وسرعة فائقة.",
+                webPkgMaint:       "صيانة ودعم شهري",
+                webPkgMaintDesc:   "نسخ احتياطي دوري، حماية، وتحديثات مستمرة لضمان العمل.",
+                calcTitle:         "حاسبة الأسعار والأقساط التقديرية",
+                labelChooseType:   "نوع الموقع المطلوب:",
+                labelChoosePlan:   "خطة الدفع المفضلة:",
+                includeMaintenance:"إضافة باقة الصيانة والدعم الفني الشهري",
+                calcTotal:         "إجمالي تكلفة الموقع:",
+                calcDownPayment:   "الدفعة الأولى المطلوبة:",
+                calcMonthly:       "القسط الشهري:",
+                calcMaint:         "الصيانة الشهرية:",
+                btnOrderWebWhatsApp: "طلب الموقع والمتابعة عبر الواتساب فوراً",
             },
             fr: {
                 storeName:         "CyberPC & Tech Boutique",
@@ -2543,6 +2714,27 @@
                 reviewPurchaseRequired: "Vous ne pouvez noter que les produits deja achetes.",
                 reviewEmpty:       "Aucun avis pour le moment. Soyez le premier à noter ce produit.",
                 reviewSubmitted:   "Avis publié avec succès !",
+                navWebServices:    "Création de Sites & Paiement Échelonné",
+                webBannerTitle:    "Création de Sites Web au Comptant et par Facilités de Paiement",
+                webBannerSub:      "Boutiques en ligne, sites vitrines et applications web sur mesure avec mensualités flexibles et maintenance complète.",
+                btnCalculateInstallment: "Calculer mes Mensualités & Commander",
+                webModalTitle:     "Services de Conception Web & Facilités de Paiement",
+                webModalSub:       "Solutions web complètes pour votre entreprise avec plans de paiement souples (Comptant ou Mensualités) et maintenance.",
+                webPkgStore:       "Boutiques E-Commerce",
+                webPkgStoreDesc:   "Panier, paiement en ligne, tableau de bord admin et gestion des commandes.",
+                webPkgCorp:        "Sites Entreprises & Vitrines",
+                webPkgCorpDesc:    "Présentation de services, nom de domaine officiel, e-mails pro et rapidité optimale.",
+                webPkgMaint:       "Maintenance & Support Mensuel",
+                webPkgMaintDesc:   "Sauvegardes régulières, sécurité et mises à jour continues.",
+                calcTitle:         "Calculateur Interactif de Tarifs et Mensualités",
+                labelChooseType:   "Type de Site Souhaité :",
+                labelChoosePlan:   "Mode de Paiement :",
+                includeMaintenance:"Ajouter le Forfait de Maintenance & Support Mensuel",
+                calcTotal:         "Coût Total du Projet :",
+                calcDownPayment:   "Acompte Initial Requis :",
+                calcMonthly:       "Mensualité :",
+                calcMaint:         "Maintenance Mensuelle :",
+                btnOrderWebWhatsApp: "Commander le Site via WhatsApp",
             }
         };
 
@@ -2559,6 +2751,149 @@
                 iconEl.classList.add('fa-eye');
             }
         }
+
+        // Web Development & Installment Services Modal & Calculator
+        function openWebServicesModal() {
+            const modal = document.getElementById('web-services-modal');
+            if (modal) {
+                modal.classList.add('active');
+                updatePublicInstallmentCalc();
+            }
+        }
+        window.openWebServicesModal = openWebServicesModal;
+
+        function closeWebServicesModal() {
+            const modal = document.getElementById('web-services-modal');
+            if (modal) modal.classList.remove('active');
+        }
+        window.closeWebServicesModal = closeWebServicesModal;
+
+        function updatePublicInstallmentCalc() {
+            const typeSelect = document.getElementById('user-web-type');
+            const planSelect = document.getElementById('user-web-plan');
+            const maintCheck = document.getElementById('user-web-include-maint');
+            
+            if (!typeSelect || !planSelect) return;
+            
+            let baseCost = parseFloat(typeSelect.value) || 350;
+            const plan = planSelect.value;
+            const isMaint = maintCheck ? maintCheck.checked : true;
+            const maintCost = isMaint ? 20 : 0;
+            
+            let totalCost = baseCost;
+            let downPayment = 0;
+            let monthly = 0;
+            
+            if (plan === 'cash') {
+                // 10% Cash discount
+                totalCost = Math.round(baseCost * 0.9);
+                downPayment = totalCost;
+                monthly = 0;
+            } else {
+                const months = parseInt(plan, 10) || 3;
+                totalCost = baseCost;
+                downPayment = Math.ceil(totalCost / months);
+                monthly = Math.ceil(totalCost / months);
+            }
+            
+            const totalEl = document.getElementById('public-calc-total');
+            const downEl = document.getElementById('public-calc-downpayment');
+            const monthlyEl = document.getElementById('public-calc-monthly');
+            const maintEl = document.getElementById('public-calc-maint');
+            
+            const isRTL = document.documentElement.dir === 'rtl';
+            
+            if (totalEl) totalEl.textContent = `$${totalCost}`;
+            if (downEl) downEl.textContent = `$${downPayment}`;
+            if (monthlyEl) {
+                monthlyEl.textContent = plan === 'cash' 
+                    ? (isRTL ? 'كاش كامل (بدون أقساط)' : 'Full Cash (No installments)')
+                    : `$${monthly} / ${isRTL ? 'شهر' : 'mo'}`;
+            }
+            if (maintEl) {
+                maintEl.textContent = isMaint 
+                    ? `$${maintCost} / ${isRTL ? 'شهر' : 'mo'}` 
+                    : (isRTL ? 'بدون صيانة' : 'No Maintenance');
+            }
+        }
+        window.updatePublicInstallmentCalc = updatePublicInstallmentCalc;
+
+        function submitPublicWebOrder() {
+            const typeSelect = document.getElementById('user-web-type');
+            const planSelect = document.getElementById('user-web-plan');
+            const maintCheck = document.getElementById('user-web-include-maint');
+            const clientNameInput = document.getElementById('user-web-client-name');
+            const clientPhoneInput = document.getElementById('user-web-client-phone');
+            const clientNotesInput = document.getElementById('user-web-client-notes');
+            
+            const clientName = (clientNameInput?.value || '').trim();
+            const clientPhone = (clientPhoneInput?.value || '').trim();
+            const clientNotes = (clientNotesInput?.value || '').trim();
+            
+            if (!clientName) {
+                alert(document.documentElement.dir === 'rtl' ? 'يرجى كتابة اسمك الكريم أو اسم شركتك.' : 'Please enter your name or company name.');
+                if (clientNameInput) clientNameInput.focus();
+                return;
+            }
+            if (!clientPhone) {
+                alert(document.documentElement.dir === 'rtl' ? 'يرجى إدخال رقم هاتفك / الواتساب للتواصل.' : 'Please enter your phone/WhatsApp number.');
+                if (clientPhoneInput) clientPhoneInput.focus();
+                return;
+            }
+            
+            const typeText = typeSelect ? typeSelect.options[typeSelect.selectedIndex].text : 'Website';
+            const planText = planSelect ? planSelect.options[planSelect.selectedIndex].text : 'Installments';
+            const isMaint = maintCheck ? maintCheck.checked : true;
+            
+            const totalEl = document.getElementById('public-calc-total');
+            const downEl = document.getElementById('public-calc-downpayment');
+            const monthlyEl = document.getElementById('public-calc-monthly');
+            const maintEl = document.getElementById('public-calc-maint');
+            
+            const totalVal = totalEl?.textContent || '$350';
+            const downVal = downEl?.textContent || '$116';
+            const monthlyVal = monthlyEl?.textContent || '$116 / mo';
+            const maintVal = maintEl?.textContent || '$20 / mo';
+            
+            // Build WhatsApp Message
+            let msg = `🌐 *طلب تصميم وتطوير موقع إلكتروني جديد*\n`;
+            msg += `━━━━━━━━━━━━━━━━━━━━━\n`;
+            msg += `👤 *العميل:* ${clientName}\n`;
+            msg += `📞 *رقم الهاتف:* ${clientPhone}\n`;
+            msg += `💻 *نوع الموقع:* ${typeText}\n`;
+            msg += `💳 *خطة الدفع:* ${planText}\n`;
+            msg += `💰 *إجمالي التكلفة:* ${totalVal}\n`;
+            msg += `💵 *الدفعة الأولى:* ${downVal}\n`;
+            msg += `📅 *القسط الشهري:* ${monthlyVal}\n`;
+            msg += `🛠️ *الصيانة والدعم:* ${isMaint ? `نعم (${maintVal})` : 'بدون صيانة'}\n`;
+            if (clientNotes) {
+                msg += `📝 *ملاحظات وميزات إضافية:* ${clientNotes}\n`;
+            }
+            msg += `━━━━━━━━━━━━━━━━━━━━━\n`;
+            msg += `_تم إرسال هذا الطلب عبر حاسبة المواقع والأقساط._`;
+            
+            // Target Phone (store WhatsApp setting or fallback)
+            let targetPhone = localStorage.getItem('store_whatsapp_phone') || '96170123456';
+            let cleanPhone = targetPhone.replace(/[^0-9]/g, '');
+            if (!cleanPhone) cleanPhone = '96170123456';
+            
+            const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+            window.open(waUrl, '_blank');
+            
+            closeWebServicesModal();
+            showToast(document.documentElement.dir === 'rtl' ? 'جاري فتح الواتساب لمتابعة طلب موقعك...' : 'Opening WhatsApp to complete your website order...');
+        }
+        window.submitPublicWebOrder = submitPublicWebOrder;
+
+        // Web services modal overlay click listener
+        setTimeout(() => {
+            const webModal = document.getElementById('web-services-modal');
+            if (webModal) {
+                webModal.addEventListener('click', (e) => {
+                    if (e.target === webModal) closeWebServicesModal();
+                });
+            }
+        }, 100);
 
         const gridContainer = document.getElementById('product-grid');
         const cartBadge = document.getElementById('cart-badge');

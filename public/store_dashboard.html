@@ -1071,6 +1071,78 @@
             white-space: nowrap;
         }
 
+        /* ----------------------------------------
+           WEBSITES ARCHIVE & INSTALLMENTS STYLING
+           ---------------------------------------- */
+        .website-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+        }
+        .website-card:hover {
+            box-shadow: 0 10px 20px -3px rgba(0,0,0,0.06);
+            border-color: #cbd5e1;
+        }
+        .web-progress-container {
+            width: 100%;
+            background: #e2e8f0;
+            border-radius: 9999px;
+            height: 10px;
+            overflow: hidden;
+            position: relative;
+            margin-top: 6px;
+        }
+        .web-progress-bar {
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.4s ease;
+        }
+        .web-progress-bar.complete {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+        .web-progress-bar.in-progress {
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+        }
+        .web-progress-bar.low {
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+        }
+        .web-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .web-pill.cash { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .web-pill.installment { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .web-pill.in_dev { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+        .web-pill.active_site { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .web-pill.completed { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+        .web-pill.suspended { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+        .maintenance-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            color: var(--text-dark);
+        }
+        .maintenance-badge.active {
+            background: #ecfdf5;
+            color: #047857;
+            border-color: #a7f3d0;
+        }
+
     </style>
     <!-- Tesseract.js for Free Local OCR -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -1091,6 +1163,7 @@
         <ul class="sidebar-menu" id="sidebar-menu">
             <li data-tab="dashboard" class="active"><i class="fa-solid fa-chart-pie"></i> <span data-i18n="navDashboard">Dashboard</span></li>
             <li data-tab="products"><i class="fa-solid fa-boxes-stacked"></i> <span data-i18n="navProducts">Products</span></li>
+            <li data-tab="websites"><i class="fa-solid fa-laptop-code"></i> <span data-i18n="navWebsites">Websites & Installments</span></li>
             <li data-tab="scanner"><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="navScanner">AI Product Scanner</span></li>
             <li data-tab="orders"><i class="fa-solid fa-receipt"></i> <span data-i18n="navOrders">Orders</span></li>
             <li data-tab="analytics"><i class="fa-solid fa-chart-line"></i> <span data-i18n="navAnalytics">Analytics</span></li>
@@ -1293,6 +1366,123 @@
                             </thead>
                             <tbody id="products-table-body">
                                 <tr><td colspan="7" style="text-align:center;">Loading products...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2B. WEBSITES ARCHIVE & INSTALLMENTS TAB -->
+            <section id="tab-websites" class="tab-content">
+                <!-- Top Summary Cards -->
+                <div class="stats-grid" style="margin-bottom: 25px;">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fa-solid fa-globe"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label" data-i18n="statWebTotal">Total Websites</span>
+                            <span class="stat-value" id="stat-web-total">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fa-solid fa-file-signature"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label" data-i18n="statWebTotalValue">Total Contracts Value</span>
+                            <span class="stat-value" id="stat-web-value">$0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label" data-i18n="statWebPaid">Collected (Paid)</span>
+                            <span class="stat-value" id="stat-web-paid" style="color:var(--success-color);">$0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon yellow">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label" data-i18n="statWebRemaining">Remaining Installments</span>
+                            <span class="stat-value" id="stat-web-remaining" style="color:#d97706;">$0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon blue" style="background:#ecfeff; color:#0891b2;">
+                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label" data-i18n="statWebMaintenance">Monthly Maintenance</span>
+                            <span class="stat-value" id="stat-web-maintenance" style="color:#0891b2;">$0.00/mo</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:20px; border-bottom:1px solid var(--border-color); padding-bottom:15px;">
+                        <div>
+                            <h2 class="card-title" style="border:none; padding:0; margin:0;" data-i18n="websitesArchiveTitle">
+                                <i class="fa-solid fa-laptop-code" style="color:var(--primary-color);"></i> Websites & Installments Archive
+                            </h2>
+                            <p style="margin-top:6px; font-size:0.9rem; color:var(--text-light);" data-i18n="websitesArchiveSub">
+                                Manage client websites, track cash & installment payments, monthly maintenance subscriptions, and payment history.
+                            </p>
+                        </div>
+                        <button type="button" class="btn-submit" onclick="openAddWebsiteModal()" style="margin:0; width:auto; display:inline-flex; align-items:center; gap:8px;">
+                            <i class="fa-solid fa-plus"></i> <span data-i18n="btnAddWebsite">Add New Website</span>
+                        </button>
+                    </div>
+
+                    <!-- Search & Filter Bar -->
+                    <div style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; align-items:center; background:#f8fafc; padding:14px; border-radius:10px; border:1px solid var(--border-color);">
+                        <div style="flex:1; min-width:220px; position:relative;">
+                            <i class="fa-solid fa-magnifying-glass" style="position:absolute; top:50%; transform:translateY(-50%); left:12px; color:var(--text-light);"></i>
+                            <input type="text" id="website-search-input" placeholder="Search by client, website, phone, domain..." style="width:100%; padding:10px 14px 10px 38px; border:1px solid var(--border-color); border-radius:8px; outline:none; font-size:0.92rem; background:#fff;">
+                        </div>
+                        <select id="website-payment-filter" style="padding:10px 14px; border:1px solid var(--border-color); border-radius:8px; font-size:0.9rem; background:#fff; cursor:pointer; font-weight:500;">
+                            <option value="" data-i18n="allPaymentTypes">All Payment Types</option>
+                            <option value="cash" data-i18n="optPaymentCash">Cash Only</option>
+                            <option value="installment" data-i18n="optPaymentInstallment">Installment Plans</option>
+                        </select>
+                        <select id="website-debt-filter" style="padding:10px 14px; border:1px solid var(--border-color); border-radius:8px; font-size:0.9rem; background:#fff; cursor:pointer; font-weight:500;">
+                            <option value="" data-i18n="allDebtStatus">All Payment Statuses</option>
+                            <option value="paid" data-i18n="optFullyPaid">Fully Paid (خالص)</option>
+                            <option value="debt" data-i18n="optHasRemaining">Has Remaining Debt (متبقي أقساط)</option>
+                        </select>
+                        <select id="website-status-filter" style="padding:10px 14px; border:1px solid var(--border-color); border-radius:8px; font-size:0.9rem; background:#fff; cursor:pointer; font-weight:500;">
+                            <option value="" data-i18n="allSiteStatuses">All Site Statuses</option>
+                            <option value="in_dev" data-i18n="optStatusInDev">In Development (قيد التطوير)</option>
+                            <option value="active" data-i18n="optStatusActive">Active & Live (نشط)</option>
+                            <option value="completed" data-i18n="optStatusCompleted">Completed (مكتمل)</option>
+                            <option value="suspended" data-i18n="optStatusSuspended">Suspended (متوقف)</option>
+                        </select>
+                    </div>
+
+                    <!-- Websites Table -->
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="thClient">Client / Contact</th>
+                                    <th data-i18n="thWebsite">Website / Domain</th>
+                                    <th data-i18n="thPaymentType">Payment Plan</th>
+                                    <th data-i18n="thInstallmentProgress">Installment & Paid Progress</th>
+                                    <th data-i18n="thMaintenance">Monthly Maintenance</th>
+                                    <th data-i18n="thSiteStatus">Status</th>
+                                    <th data-i18n="thActions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="websites-table-body">
+                                <tr><td colspan="7" style="text-align:center; padding:30px;">Loading websites archive...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -2133,6 +2323,250 @@
 
 
 
+    <!-- Website Project Modal (Add / Edit) -->
+    <div class="modal-overlay" id="website-modal">
+        <div class="modal-content" style="max-width: 720px;">
+            <span class="close-modal" onclick="closeWebsiteModal()"><i class="fa-solid fa-xmark"></i></span>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px; border-bottom:1px solid var(--border-color); padding-bottom:12px;">
+                <div style="width:40px; height:40px; border-radius:8px; background:rgba(59,130,246,0.1); color:var(--primary-color); display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
+                    <i class="fa-solid fa-laptop-code"></i>
+                </div>
+                <div>
+                    <h2 class="card-title" style="border:none; padding:0; margin:0;" id="website-modal-title" data-i18n="addWebsiteTitle">Add New Website Project</h2>
+                    <p style="font-size:0.82rem; color:var(--text-light); margin-top:2px;" data-i18n="addWebsiteSub">Track website details, installment plan, payments & monthly maintenance.</p>
+                </div>
+            </div>
+
+            <form id="website-form" onsubmit="saveWebsiteProject(event)">
+                <input type="hidden" id="web-edit-id">
+                
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px;">
+                    <!-- Client Name -->
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="web-client-name" style="font-weight:600;" data-i18n="labelClientName">Client Name (اسم العميل) *</label>
+                        <input type="text" id="web-client-name" required placeholder="e.g. John Doe / شركة الأفق">
+                    </div>
+
+                    <!-- Client Phone -->
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="web-client-phone" style="font-weight:600;" data-i18n="labelClientPhone">Phone / WhatsApp (الهاتف والواتساب) *</label>
+                        <input type="tel" id="web-client-phone" required placeholder="e.g. +961 70 123456">
+                    </div>
+
+                    <!-- Website Name -->
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="web-name" style="font-weight:600;" data-i18n="labelWebsiteName">Website Name (اسم الموقع) *</label>
+                        <input type="text" id="web-name" required placeholder="e.g. Al-Ofok Store / متجر السعادة">
+                    </div>
+
+                    <!-- Domain URL -->
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="web-domain" style="font-weight:600;" data-i18n="labelDomainUrl">Domain / URL (رابط الموقع أو الدومين)</label>
+                        <input type="text" id="web-domain" placeholder="e.g. https://alofok.com">
+                    </div>
+
+                    <!-- Website Type -->
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="web-type" style="font-weight:600;" data-i18n="labelWebsiteType">Website Type (نوع الموقع)</label>
+                        <select id="web-type">
+                            <option value="ecommerce">E-Commerce Store (متجر إلكتروني)</option>
+                            <option value="corporate">Corporate / Business (موقع شركة تعريفي)</option>
+                            <option value="portfolio">Portfolio / Personal (بورتفوليو / شخصي)</option>
+                            <option value="custom_app">Custom Web System (نظام ويب مخصص / منصة)</option>
+                            <option value="landing">Landing Page (صفحة هبوط تسويقية)</option>
+                            <option value="other">Other (أخرى)</option>
+                        </select>
+                    </div>
+
+                    <!-- Pricing Currency -->
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="web-currency" style="font-weight:600;" data-i18n="labelCurrency">Pricing Currency (العملة)</label>
+                        <select id="web-currency">
+                            <option value="USD">USD ($)</option>
+                            <option value="LBP">LBP (ل.ل)</option>
+                        </select>
+                    </div>
+
+                    <!-- Total Amount -->
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="web-total-amount" style="font-weight:600;" data-i18n="labelTotalAmount">Total Amount (المبلغ الإجمالي للموقع) *</label>
+                        <input type="number" id="web-total-amount" required min="0" step="0.01" placeholder="e.g. 500" oninput="calculateWebsiteInstallmentPreview()">
+                    </div>
+
+                    <!-- Payment Plan Type -->
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="web-payment-type" style="font-weight:600;" data-i18n="labelPaymentType">Payment Plan (طريقة الدفع) *</label>
+                        <select id="web-payment-type" onchange="toggleInstallmentFields()">
+                            <option value="cash">Cash (كاش كامل)</option>
+                            <option value="installment">Installments (تقسيط مريح)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Installment Details Block (Expandable) -->
+                <div id="web-installment-box" style="display:none; background:#f8fafc; padding:15px; border-radius:10px; border:1px solid var(--border-color); margin-top:14px;">
+                    <h4 style="font-size:0.9rem; font-weight:700; color:var(--primary-color); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+                        <i class="fa-solid fa-calculator"></i> <span data-i18n="installmentSettingsTitle">Installment Plan Settings (تفاصيل التقسيط والأقساط)</span>
+                    </h4>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="web-months" style="font-size:0.85rem; font-weight:600;" data-i18n="labelInstallmentMonths">Number of Months (عدد أشهر التقسيط)</label>
+                            <input type="number" id="web-months" min="1" max="60" value="6" placeholder="e.g. 6" oninput="calculateWebsiteInstallmentPreview()">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="web-paid-amount" style="font-size:0.85rem; font-weight:600;" data-i18n="labelPaidSoFar">Paid Amount so far (المبلغ المدفوع حتى الآن)</label>
+                            <input type="number" id="web-paid-amount" min="0" step="0.01" value="0" placeholder="e.g. 100" oninput="calculateWebsiteInstallmentPreview()">
+                        </div>
+                    </div>
+
+                    <!-- Live Calculation Summary Card -->
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px; background:#fff; padding:10px 14px; border-radius:8px; border:1px solid #e2e8f0; font-size:0.85rem;">
+                        <div>
+                            <span style="color:var(--text-light);" data-i18n="labelRemainingAmount">Remaining to Pay (المبلغ المتبقي):</span>
+                            <strong id="web-calc-remaining" style="display:block; color:#dc2626; font-size:1rem; margin-top:2px;">$0.00</strong>
+                        </div>
+                        <div>
+                            <span style="color:var(--text-light);" data-i18n="labelMonthlyRate">Estimated Monthly Installment (القسط الشهري):</span>
+                            <strong id="web-calc-monthly" style="display:block; color:var(--primary-color); font-size:1rem; margin-top:2px;">$0.00 / mo</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Maintenance & Status Grid -->
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px; margin-top:14px;">
+                    <!-- Monthly Maintenance Fee -->
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="web-maintenance-fee" style="font-weight:600;" data-i18n="labelMaintenanceFee">Monthly Maintenance Fee (رسوم الصيانة والدعم شهرياً)</label>
+                        <input type="number" id="web-maintenance-fee" min="0" step="0.01" value="0" placeholder="e.g. 20 ($/month)">
+                    </div>
+
+                    <!-- Maintenance Status -->
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="web-maintenance-status" style="font-weight:600;" data-i18n="labelMaintenanceStatus">Maintenance Status (حالة الصيانة)</label>
+                        <select id="web-maintenance-status">
+                            <option value="active">Active Subscription (صيانة نشطة)</option>
+                            <option value="free_period">Free Warranty Period (فترة مجانية / ضمان)</option>
+                            <option value="pending">Pending Payment (بانتظار السداد)</option>
+                            <option value="stopped">Stopped / None (لا توجد صيانة)</option>
+                        </select>
+                    </div>
+
+                    <!-- Project Site Status -->
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="web-status" style="font-weight:600;" data-i18n="labelSiteStatus">Project Status (حالة الموقع)</label>
+                        <select id="web-status">
+                            <option value="in_dev">In Development (قيد التصميم والبرمجة)</option>
+                            <option value="active">Live & Active (نشط ومسلّم)</option>
+                            <option value="completed">Completed & Fully Paid (مكتمل وخالص)</option>
+                            <option value="suspended">Suspended (متوقف)</option>
+                        </select>
+                    </div>
+
+                    <!-- Expected Delivery Date -->
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="web-delivery-date" style="font-weight:600;" data-i18n="labelDeliveryDate">Delivery / Due Date (تاريخ التسليم)</label>
+                        <input type="date" id="web-delivery-date">
+                    </div>
+                </div>
+
+                <!-- Notes / Scope -->
+                <div class="form-group" style="margin-top:14px; margin-bottom:0;">
+                    <label for="web-notes" style="font-weight:600;" data-i18n="labelNotes">Notes & Specifications (ملاحظات ومواصفات الموقع)</label>
+                    <textarea id="web-notes" rows="2" placeholder="e.g. شامل الدومين والاستضافة والإيميلات الرسمية، لوحة تحكم عربية..."></textarea>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px; border-top:1px solid var(--border-color); padding-top:15px;">
+                    <button type="button" class="btn-secondary" onclick="closeWebsiteModal()" style="margin:0;" data-i18n="btnCancel">Cancel (إلغاء)</button>
+                    <button type="submit" class="btn-submit" id="btn-save-website" style="margin:0;">
+                        <i class="fa-solid fa-floppy-disk"></i> <span id="btn-save-website-text" data-i18n="btnSaveWebsite">Save Website Project</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Website Payment Modal (Record Installment / Maintenance Payment) -->
+    <div class="modal-overlay" id="website-payment-modal">
+        <div class="modal-content" style="max-width: 540px;">
+            <span class="close-modal" onclick="closeWebsitePaymentModal()"><i class="fa-solid fa-xmark"></i></span>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px; border-bottom:1px solid var(--border-color); padding-bottom:12px;">
+                <div style="width:40px; height:40px; border-radius:8px; background:rgba(16,185,129,0.1); color:var(--success-color); display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                </div>
+                <div>
+                    <h2 class="card-title" style="border:none; padding:0; margin:0;" data-i18n="recordPaymentTitle">Record Payment (تسجيل دفعة / قسط)</h2>
+                    <p style="font-size:0.82rem; color:var(--text-light); margin-top:2px;" id="payment-modal-subtitle">Log client payment and update remaining balance</p>
+                </div>
+            </div>
+
+            <!-- Client & Balance Overview Box -->
+            <div style="background:#f8fafc; padding:14px; border-radius:10px; border:1px solid var(--border-color); margin-bottom:15px; font-size:0.88rem;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                    <span style="color:var(--text-light);">Client (العميل):</span>
+                    <strong id="pay-modal-client-name">-</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                    <span style="color:var(--text-light);">Website (الموقع):</span>
+                    <strong id="pay-modal-web-name">-</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                    <span style="color:var(--text-light);">Total Value (الإجمالي):</span>
+                    <span id="pay-modal-total" style="font-weight:700;">$0.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                    <span style="color:var(--text-light);">Paid So Far (المدفوع):</span>
+                    <span id="pay-modal-paid" style="color:var(--success-color); font-weight:700;">$0.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; border-top:1px dashed var(--border-color); padding-top:6px;">
+                    <span style="font-weight:700; color:var(--text-dark);">Remaining (المتبقي):</span>
+                    <strong id="pay-modal-remaining" style="color:#dc2626; font-size:1rem;">$0.00</strong>
+                </div>
+            </div>
+
+            <form id="website-payment-form" onsubmit="saveRecordPayment(event)">
+                <input type="hidden" id="pay-target-website-id">
+                
+                <div style="display:flex; flex-direction:column; gap:14px;">
+                    <!-- Payment Category -->
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="pay-type" style="font-weight:600;" data-i18n="labelPaymentCategory">Payment Category (نوع الدفعة)</label>
+                        <select id="pay-type">
+                            <option value="installment">Installment Payment (دفعة قسط من قيمة الموقع)</option>
+                            <option value="maintenance">Monthly Maintenance (رسوم صيانة شهرية)</option>
+                            <option value="downpayment">Down Payment (دفعة أولى / مقدم)</option>
+                            <option value="other">Other / Custom Service (خدمة أخرى)</option>
+                        </select>
+                    </div>
+
+                    <!-- Payment Amount -->
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="pay-amount" style="font-weight:600;" data-i18n="labelPaymentAmount">Payment Amount (مبلغ الدفعة) *</label>
+                        <input type="number" id="pay-amount" required min="0.01" step="0.01" placeholder="e.g. 100">
+                    </div>
+
+                    <!-- Payment Date -->
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="pay-date" style="font-weight:600;" data-i18n="labelPaymentDate">Payment Date (تاريخ الدفع) *</label>
+                        <input type="date" id="pay-date" required>
+                    </div>
+
+                    <!-- Note / Receipt -->
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="pay-note" style="font-weight:600;" data-i18n="labelPaymentNote">Receipt # / Note (رقم الإيصال أو ملاحظة)</label>
+                        <input type="text" id="pay-note" placeholder="e.g. قسط شهر 3 / حوالة OMT">
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px; border-top:1px solid var(--border-color); padding-top:15px;">
+                    <button type="button" class="btn-secondary" onclick="closeWebsitePaymentModal()" style="margin:0;" data-i18n="btnCancel">Cancel</button>
+                    <button type="submit" class="btn-submit" style="margin:0; background-color:var(--success-color);">
+                        <i class="fa-solid fa-check"></i> <span data-i18n="btnConfirmPayment">Confirm & Record Payment</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Firebase SDK Compat -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -2304,10 +2738,118 @@
                  allStatuses:       "All Statuses",
                  navGuestOrders:     "Guest Orders",
                  guestOrdersTitle:   "Guest Orders Tracking",
+                navWebsites:        "Websites & Installments",
+                statWebTotal:       "Total Websites",
+                statWebTotalValue:  "Total Contracts Value",
+                statWebPaid:        "Collected (Paid)",
+                statWebRemaining:   "Remaining Installments",
+                statWebMaintenance: "Monthly Maintenance",
+                websitesArchiveTitle:"Websites & Installments Archive",
+                websitesArchiveSub: "Manage client websites, track cash & installment payments, monthly maintenance subscriptions, and payment history.",
+                btnAddWebsite:      "Add New Website",
+                addWebsiteTitle:    "Add New Website Project",
+                addWebsiteSub:      "Track website details, installment plan, payments & monthly maintenance.",
+                editWebsiteTitle:   "Edit Website Project",
+                thClient:           "Client / Contact",
+                thWebsite:          "Website / Domain",
+                thPaymentType:      "Payment Plan",
+                thInstallmentProgress:"Installment & Paid Progress",
+                thMaintenance:      "Monthly Maintenance",
+                thSiteStatus:       "Status",
+                allPaymentTypes:    "All Payment Types",
+                optPaymentCash:     "Cash Only",
+                optPaymentInstallment:"Installment Plans",
+                allDebtStatus:      "All Payment Statuses",
+                optFullyPaid:       "Fully Paid (خالص)",
+                optHasRemaining:    "Has Remaining Debt (متبقي أقساط)",
+                allSiteStatuses:    "All Site Statuses",
+                optStatusInDev:     "In Development",
+                optStatusActive:    "Active & Live",
+                optStatusCompleted: "Completed",
+                optStatusSuspended: "Suspended",
+                labelClientName:    "Client Name",
+                labelClientPhone:   "Phone / WhatsApp",
+                labelWebsiteName:   "Website Name",
+                labelDomainUrl:     "Domain / URL",
+                labelWebsiteType:   "Website Type",
+                labelTotalAmount:   "Total Amount",
+                labelPaymentType:   "Payment Plan",
+                installmentSettingsTitle:"Installment Plan Settings",
+                labelInstallmentMonths:"Installment Months",
+                labelPaidSoFar:     "Amount Paid so far",
+                labelRemainingAmount:"Remaining to Pay",
+                labelMonthlyRate:   "Estimated Monthly Installment",
+                labelMaintenanceFee:"Monthly Maintenance Fee",
+                labelMaintenanceStatus:"Maintenance Status",
+                labelSiteStatus:    "Project Status",
+                labelDeliveryDate:  "Delivery / Due Date",
+                labelNotes:         "Notes & Specifications",
+                btnSaveWebsite:     "Save Website Project",
+                btnCancel:          "Cancel",
+                recordPaymentTitle: "Record Payment",
+                labelPaymentCategory:"Payment Category",
+                labelPaymentAmount: "Payment Amount",
+                labelPaymentDate:   "Payment Date",
+                labelPaymentNote:   "Receipt / Note",
+                btnConfirmPayment:  "Confirm & Record Payment",
              },
              ar: {
                  storeName:          "متجر",
                  navDashboard:       "لوحة التحكم",
+                navWebsites:        "أرشيف المواقع والتقسيط",
+                statWebTotal:       "إجمالي المواقع",
+                statWebTotalValue:  "إجمالي قيمة العقود",
+                statWebPaid:        "المبالغ المحصلة",
+                statWebRemaining:   "المتبقي للأقساط",
+                statWebMaintenance: "دخل الصيانة الشهري",
+                websitesArchiveTitle:"أرشيف إدارة ومشاريع المواقع والتقسيط",
+                websitesArchiveSub: "متابعة مشاريع ومواقع العملاء، الدفع الكاش والتقسيط، رسوم الصيانة الشهرية وسجل الدفعات.",
+                btnAddWebsite:      "إضافة موقع جديد",
+                addWebsiteTitle:    "إضافة مشروع موقع عميل جديد",
+                addWebsiteSub:      "تسجيل بيانات الموقع، خطة التقسيط، المبالغ المحصلة والصيانة الشهرية.",
+                editWebsiteTitle:   "تعديل بيانات مشروع الموقع",
+                thClient:           "العميل والتواصل",
+                thWebsite:          "اسم الموقع والدومين",
+                thPaymentType:      "خطة الدفع",
+                thInstallmentProgress:"المدفوع ونسبة التقسيط",
+                thMaintenance:      "الصيانة الشهرية",
+                thSiteStatus:       "حالة الموقع",
+                allPaymentTypes:    "كل طرق الدفع",
+                optPaymentCash:     "كاش فقط",
+                optPaymentInstallment:"تقسيط",
+                allDebtStatus:      "حالة المستحقات",
+                optFullyPaid:       "مدفوع بالكامل (خالص)",
+                optHasRemaining:    "متبقي أقساط مستحقة",
+                allSiteStatuses:    "كل حالات المواقع",
+                optStatusInDev:     "قيد التطوير والبرمجة",
+                optStatusActive:    "نشط ومسلّم",
+                optStatusCompleted: "مكتمل وخالص",
+                optStatusSuspended: "متوقف",
+                labelClientName:    "اسم العميل",
+                labelClientPhone:   "رقم الهاتف / الواتساب",
+                labelWebsiteName:   "اسم الموقع",
+                labelDomainUrl:     "رابط الدومين / الموقع",
+                labelWebsiteType:   "نوع الموقع",
+                labelTotalAmount:   "المبلغ الإجمالي",
+                labelPaymentType:   "طريقة الدفع",
+                installmentSettingsTitle:"تفاصيل التقسيط والأقساط",
+                labelInstallmentMonths:"عدد أشهر التقسيط",
+                labelPaidSoFar:     "المبلغ المدفوع حتى الآن",
+                labelRemainingAmount:"المبلغ المتبقي",
+                labelMonthlyRate:   "القسط الشهري المقدر",
+                labelMaintenanceFee:"رسوم الصيانة الشهرية",
+                labelMaintenanceStatus:"حالة الصيانة",
+                labelSiteStatus:    "حالة المشروع",
+                labelDeliveryDate:  "تاريخ التسليم",
+                labelNotes:         "الملاحظات والمواصفات",
+                btnSaveWebsite:     "حفظ مشروع الموقع",
+                btnCancel:          "إلغاء",
+                recordPaymentTitle: "تسجيل دفعة / قسط جديد",
+                labelPaymentCategory:"نوع الدفعة",
+                labelPaymentAmount: "مبلغ الدفعة",
+                labelPaymentDate:   "تاريخ الدفع",
+                labelPaymentNote:   "رقم الإيصال أو الملاحظة",
+                btnConfirmPayment:  "تأكيد وتسجيل الدفعة",
                 navScanner:         "ماسح الصور الذكي",
                 scannerTitle:       "ماسح ومستخرج المنتجات الذكي من الصور",
                 scannerSubtitle:    "ارفع صور الأجهزة لاستخراج اسم الجهاز، السعر، وإضافة 15$ تلقائياً، والوصف في بطاقة مستقلة لكل صورة.",
@@ -2454,6 +2996,60 @@
                 allSuppliers:       "كل الموردين",
                 navGuestOrders:     "طلبات الضيوف",
                 guestOrdersTitle:   "تتبع طلبات الضيوف",
+                navWebsites:        "أرشيف المواقع والتقسيط",
+                statWebTotal:       "إجمالي المواقع",
+                statWebTotalValue:  "إجمالي قيمة العقود",
+                statWebPaid:        "المحصل (المدفوع)",
+                statWebRemaining:   "الأقساط المتبقية",
+                statWebMaintenance: "الصيانة الشهرية",
+                websitesArchiveTitle:"أرشيف وتتبع المواقع والتقسيط",
+                websitesArchiveSub: "إدارة مواقع العملاء، تتبع دفعات الكاش والأقساط، اشتراكات الصيانة الشهرية، وسجل السداد.",
+                btnAddWebsite:      "إضافة موقع جديد",
+                addWebsiteTitle:    "إضافة مشروع موقع إلكتروني",
+                addWebsiteSub:      "تتبع تفاصيل الموقع، خطة الأقساط، الدفعات والصيانة الشهرية.",
+                editWebsiteTitle:   "تعديل بيانات مشروع الموقع",
+                thClient:           "العميل / التواصل",
+                thWebsite:          "اسم الموقع / الدومين",
+                thPaymentType:      "طريقة الدفع",
+                thInstallmentProgress:"نسبة سداد الأقساط",
+                thMaintenance:      "الصيانة والدعم الشهري",
+                thSiteStatus:       "حالة الموقع",
+                allPaymentTypes:    "جميع طرق الدفع",
+                optPaymentCash:     "كاش كامل",
+                optPaymentInstallment:"أقساط شهرية",
+                allDebtStatus:      "جميع حالات السداد",
+                optFullyPaid:       "مسدد بالكامل (خالص)",
+                optHasRemaining:    "متبقي عليه أقساط",
+                allSiteStatuses:    "جميع حالات المواقع",
+                optStatusInDev:     "قيد التصميم والتطوير",
+                optStatusActive:    "نشط ومسلّم للعميل",
+                optStatusCompleted: "مكتمل ومسدد بالكامل",
+                optStatusSuspended: "متوقف مؤقتاً",
+                labelClientName:    "اسم العميل / الشركة",
+                labelClientPhone:   "رقم الهاتف / الواتساب",
+                labelWebsiteName:   "اسم الموقع",
+                labelDomainUrl:     "رابط الموقع / الدومين",
+                labelWebsiteType:   "نوع الموقع",
+                labelTotalAmount:   "المبلغ الإجمالي للتصميم",
+                labelPaymentType:   "طريقة الدفع",
+                installmentSettingsTitle:"تفاصيل وخطة التقسيط",
+                labelInstallmentMonths:"عدد أشهر التقسيط",
+                labelPaidSoFar:     "المبلغ المدفوع حتى الآن",
+                labelRemainingAmount:"المبلغ المتبقي للسداد",
+                labelMonthlyRate:   "القسط الشهري التقديري",
+                labelMaintenanceFee:"رسوم الصيانة الشهرية",
+                labelMaintenanceStatus:"حالة اشتراك الصيانة",
+                labelSiteStatus:    "حالة المشروع",
+                labelDeliveryDate:  "تاريخ التسليم المتوقع",
+                labelNotes:         "ملاحظات ومواصفات خاصة",
+                btnSaveWebsite:     "حفظ مشروع الموقع",
+                btnCancel:          "إلغاء",
+                recordPaymentTitle: "تسجيل دفعة / قسط",
+                labelPaymentCategory:"نوع الدفعة",
+                labelPaymentAmount: "قيمة الدفعة",
+                labelPaymentDate:   "تاريخ الدفعة",
+                labelPaymentNote:   "رقم الإيصال / ملاحظة",
+                btnConfirmPayment:  "تأكيد وتسجيل الدفعة",
             }
         };
 
@@ -3000,6 +3596,200 @@
                     localStorage.setItem('mock_orders', JSON.stringify(orders));
                     window.dispatchEvent(new Event('local_orders_changed'));
                 }
+            },
+
+            // WEBSITES & INSTALLMENTS ARCHIVE
+            subscribeToWebsites(callback) {
+                if (isFirebaseActive) {
+                    const cached = localStorage.getItem('cached_firestore_websites');
+                    if (cached) {
+                        try {
+                            callback(JSON.parse(cached));
+                        } catch (e) {
+                            console.warn("Failed to parse cached websites", e);
+                        }
+                    }
+
+                    return db.collection('websites').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+                        const websites = [];
+                        snapshot.forEach(doc => {
+                            websites.push({ id: doc.id, ...doc.data() });
+                        });
+                        localStorage.setItem('cached_firestore_websites', JSON.stringify(websites));
+                        callback(websites);
+                    }, error => {
+                        console.error("Error subscribing to websites:", error);
+                        this._fallbackWebsitesSubscribe(callback);
+                    });
+                } else {
+                    return this._fallbackWebsitesSubscribe(callback);
+                }
+            },
+
+            _fallbackWebsitesSubscribe(callback) {
+                const getAndCallback = () => {
+                    const websites = JSON.parse(localStorage.getItem('mock_websites')) || [];
+                    websites.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    callback(websites);
+                };
+                getAndCallback();
+                const listener = (e) => {
+                    if (e.key === 'mock_websites') getAndCallback();
+                };
+                window.addEventListener('storage', listener);
+                window.addEventListener('local_websites_changed', getAndCallback);
+                return () => {
+                    window.removeEventListener('storage', listener);
+                    window.removeEventListener('local_websites_changed', getAndCallback);
+                };
+            },
+
+            async addWebsiteProject(project) {
+                const total = Number(project.totalAmount) || 0;
+                const paid = Number(project.paidAmount) || 0;
+                const remaining = Math.max(0, total - paid);
+                const months = Number(project.installmentMonths) || 1;
+                const monthlyRate = months > 0 ? (total / months) : total;
+
+                const newProject = {
+                    clientName: project.clientName || "",
+                    clientPhone: project.clientPhone || "",
+                    clientEmail: project.clientEmail || "",
+                    websiteName: project.websiteName || "",
+                    domainUrl: project.domainUrl || "",
+                    websiteType: project.websiteType || "ecommerce",
+                    currency: project.currency || "USD",
+                    totalAmount: total,
+                    paymentType: project.paymentType || "cash",
+                    installmentMonths: months,
+                    paidAmount: paid,
+                    remainingAmount: remaining,
+                    monthlyInstallment: Number(monthlyRate.toFixed(2)),
+                    monthlyMaintenanceFee: Number(project.monthlyMaintenanceFee) || 0,
+                    maintenanceStatus: project.maintenanceStatus || "active",
+                    status: project.status || "in_dev",
+                    startDate: project.startDate || new Date().toISOString().slice(0, 10),
+                    deliveryDate: project.deliveryDate || "",
+                    notes: project.notes || "",
+                    payments: project.payments || (paid > 0 ? [{
+                        date: new Date().toISOString().slice(0, 10),
+                        amount: paid,
+                        type: project.paymentType === 'installment' ? 'downpayment' : 'cash',
+                        note: 'Initial payment / الدفعة الأولى'
+                    }] : []),
+                    createdAt: new Date().toISOString()
+                };
+
+                if (isFirebaseActive) {
+                    await db.collection('websites').add(newProject);
+                } else {
+                    const websites = JSON.parse(localStorage.getItem('mock_websites')) || [];
+                    newProject.id = Date.now().toString();
+                    websites.push(newProject);
+                    localStorage.setItem('mock_websites', JSON.stringify(websites));
+                    window.dispatchEvent(new Event('local_websites_changed'));
+                }
+            },
+
+            async updateWebsiteProject(id, projectData) {
+                const total = Number(projectData.totalAmount) || 0;
+                const paid = Number(projectData.paidAmount) || 0;
+                const remaining = Math.max(0, total - paid);
+                const months = Number(projectData.installmentMonths) || 1;
+                const monthlyRate = months > 0 ? (total / months) : total;
+
+                const updateData = {
+                    clientName: projectData.clientName,
+                    clientPhone: projectData.clientPhone,
+                    clientEmail: projectData.clientEmail || "",
+                    websiteName: projectData.websiteName,
+                    domainUrl: projectData.domainUrl || "",
+                    websiteType: projectData.websiteType || "ecommerce",
+                    currency: projectData.currency || "USD",
+                    totalAmount: total,
+                    paymentType: projectData.paymentType || "cash",
+                    installmentMonths: months,
+                    paidAmount: paid,
+                    remainingAmount: remaining,
+                    monthlyInstallment: Number(monthlyRate.toFixed(2)),
+                    monthlyMaintenanceFee: Number(projectData.monthlyMaintenanceFee) || 0,
+                    maintenanceStatus: projectData.maintenanceStatus || "active",
+                    status: projectData.status || "in_dev",
+                    deliveryDate: projectData.deliveryDate || "",
+                    notes: projectData.notes || ""
+                };
+
+                if (isFirebaseActive) {
+                    await db.collection('websites').doc(id).update(updateData);
+                } else {
+                    let websites = JSON.parse(localStorage.getItem('mock_websites')) || [];
+                    websites = websites.map(w => w.id === id ? { ...w, ...updateData } : w);
+                    localStorage.setItem('mock_websites', JSON.stringify(websites));
+                    window.dispatchEvent(new Event('local_websites_changed'));
+                }
+            },
+
+            async deleteWebsiteProject(id) {
+                if (isFirebaseActive) {
+                    await db.collection('websites').doc(id).delete();
+                } else {
+                    let websites = JSON.parse(localStorage.getItem('mock_websites')) || [];
+                    websites = websites.filter(w => w.id !== id);
+                    localStorage.setItem('mock_websites', JSON.stringify(websites));
+                    window.dispatchEvent(new Event('local_websites_changed'));
+                }
+            },
+
+            async recordWebsitePayment(id, paymentRecord) {
+                if (isFirebaseActive) {
+                    const docRef = db.collection('websites').doc(id);
+                    const doc = await docRef.get();
+                    if (!doc.exists) return;
+                    const data = doc.data();
+                    const newPayments = Array.isArray(data.payments) ? [...data.payments] : [];
+                    newPayments.push(paymentRecord);
+                    
+                    let newPaid = Number(data.paidAmount) || 0;
+                    if (paymentRecord.type === 'installment' || paymentRecord.type === 'downpayment' || paymentRecord.type === 'cash') {
+                        newPaid += Number(paymentRecord.amount) || 0;
+                    }
+                    const total = Number(data.totalAmount) || 0;
+                    const newRemaining = Math.max(0, total - newPaid);
+                    let newStatus = data.status;
+                    if (newRemaining === 0 && data.status === 'in_dev') {
+                        newStatus = 'active';
+                    }
+
+                    await docRef.update({
+                        payments: newPayments,
+                        paidAmount: newPaid,
+                        remainingAmount: newRemaining,
+                        status: newStatus
+                    });
+                } else {
+                    let websites = JSON.parse(localStorage.getItem('mock_websites')) || [];
+                    websites = websites.map(w => {
+                        if (w.id === id) {
+                            const newPayments = Array.isArray(w.payments) ? [...w.payments] : [];
+                            newPayments.push(paymentRecord);
+                            let newPaid = Number(w.paidAmount) || 0;
+                            if (paymentRecord.type === 'installment' || paymentRecord.type === 'downpayment' || paymentRecord.type === 'cash') {
+                                newPaid += Number(paymentRecord.amount) || 0;
+                            }
+                            const total = Number(w.totalAmount) || 0;
+                            const newRemaining = Math.max(0, total - newPaid);
+                            return {
+                                ...w,
+                                payments: newPayments,
+                                paidAmount: newPaid,
+                                remainingAmount: newRemaining
+                            };
+                        }
+                        return w;
+                    });
+                    localStorage.setItem('mock_websites', JSON.stringify(websites));
+                    window.dispatchEvent(new Event('local_websites_changed'));
+                }
             }
         };
 
@@ -3086,14 +3876,470 @@
         }
 
         // ----------------------------------------
+        // ----------------------------------------
         // TAB CONTROLLERS
         // ----------------------------------------
         let allProducts = [];
         let allOrders = [];
         let allCustomers = [];
         let allSuppliers = [];
+        let allWebsites = [];
         let currentLang = localStorage.getItem("store_lang") || "ar";
         let activeGatewaySettings = null;
+
+        // ----------------------------------------
+        // WEBSITES ARCHIVE & INSTALLMENTS CONTROLLER
+        // ----------------------------------------
+        function toggleInstallmentFields() {
+            const planType = document.getElementById('web-payment-type')?.value;
+            const installmentBox = document.getElementById('web-installment-box');
+            if (installmentBox) {
+                installmentBox.style.display = (planType === 'installment') ? 'block' : 'none';
+            }
+            calculateWebsiteInstallmentPreview();
+        }
+
+        function calculateWebsiteInstallmentPreview() {
+            const total = Number(document.getElementById('web-total-amount')?.value) || 0;
+            const planType = document.getElementById('web-payment-type')?.value;
+            const months = Math.max(1, Number(document.getElementById('web-months')?.value) || 1);
+            const paid = Number(document.getElementById('web-paid-amount')?.value) || 0;
+            const remaining = Math.max(0, total - paid);
+
+            let monthlyRate = 0;
+            if (planType === 'installment') {
+                monthlyRate = months > 0 ? (total / months) : total;
+            }
+
+            const calcRemainingEl = document.getElementById('web-calc-remaining');
+            const calcMonthlyEl = document.getElementById('web-calc-monthly');
+            if (calcRemainingEl) calcRemainingEl.textContent = `$${remaining.toFixed(2)}`;
+            if (calcMonthlyEl) calcMonthlyEl.textContent = `$${monthlyRate.toFixed(2)} / mo`;
+        }
+
+        function openAddWebsiteModal() {
+            const isAr = (currentLang === 'ar');
+            document.getElementById('web-edit-id').value = '';
+            document.getElementById('website-form').reset();
+            document.getElementById('website-modal-title').textContent = isAr ? 'إضافة مشروع موقع عميل جديد' : 'Add New Website Project';
+            document.getElementById('btn-save-website-text').textContent = isAr ? 'حفظ مشروع الموقع' : 'Save Website Project';
+            document.getElementById('web-payment-type').value = 'installment';
+            document.getElementById('web-months').value = '6';
+            document.getElementById('web-paid-amount').value = '0';
+            document.getElementById('web-maintenance-fee').value = '20';
+            document.getElementById('web-status').value = 'in_dev';
+            document.getElementById('web-maintenance-status').value = 'active';
+            
+            toggleInstallmentFields();
+            document.getElementById('website-modal').classList.add('active');
+        }
+
+        function openEditWebsiteModal(id) {
+            const project = allWebsites.find(w => w.id === id);
+            if (!project) return;
+            const isAr = (currentLang === 'ar');
+
+            document.getElementById('web-edit-id').value = project.id;
+            document.getElementById('web-client-name').value = project.clientName || '';
+            document.getElementById('web-client-phone').value = project.clientPhone || '';
+            document.getElementById('web-name').value = project.websiteName || '';
+            document.getElementById('web-domain').value = project.domainUrl || '';
+            document.getElementById('web-type').value = project.websiteType || 'ecommerce';
+            document.getElementById('web-currency').value = project.currency || 'USD';
+            document.getElementById('web-total-amount').value = project.totalAmount || 0;
+            document.getElementById('web-payment-type').value = project.paymentType || 'cash';
+            document.getElementById('web-months').value = project.installmentMonths || 6;
+            document.getElementById('web-paid-amount').value = project.paidAmount || 0;
+            document.getElementById('web-maintenance-fee').value = project.monthlyMaintenanceFee || 0;
+            document.getElementById('web-maintenance-status').value = project.maintenanceStatus || 'active';
+            document.getElementById('web-status').value = project.status || 'in_dev';
+            document.getElementById('web-delivery-date').value = project.deliveryDate || '';
+            document.getElementById('web-notes').value = project.notes || '';
+
+            document.getElementById('website-modal-title').textContent = isAr ? 'تعديل بيانات مشروع الموقع' : 'Edit Website Project';
+            document.getElementById('btn-save-website-text').textContent = isAr ? 'حفظ التعديلات' : 'Save Changes';
+
+            toggleInstallmentFields();
+            document.getElementById('website-modal').classList.add('active');
+        }
+
+        function closeWebsiteModal() {
+            document.getElementById('website-modal').classList.remove('active');
+        }
+
+        async function saveWebsiteProject(e) {
+            e.preventDefault();
+            const isAr = (currentLang === 'ar');
+            const editId = document.getElementById('web-edit-id').value;
+            const clientName = document.getElementById('web-client-name').value.trim();
+            const clientPhone = document.getElementById('web-client-phone').value.trim();
+            const websiteName = document.getElementById('web-name').value.trim();
+            const domainUrl = document.getElementById('web-domain').value.trim();
+            const websiteType = document.getElementById('web-type').value;
+            const currency = document.getElementById('web-currency').value;
+            const totalAmount = Number(document.getElementById('web-total-amount').value) || 0;
+            const paymentType = document.getElementById('web-payment-type').value;
+            const installmentMonths = Number(document.getElementById('web-months').value) || 1;
+            const paidAmount = Number(document.getElementById('web-paid-amount').value) || 0;
+            const monthlyMaintenanceFee = Number(document.getElementById('web-maintenance-fee').value) || 0;
+            const maintenanceStatus = document.getElementById('web-maintenance-status').value;
+            const status = document.getElementById('web-status').value;
+            const deliveryDate = document.getElementById('web-delivery-date').value;
+            const notes = document.getElementById('web-notes').value.trim();
+
+            const projectData = {
+                clientName,
+                clientPhone,
+                websiteName,
+                domainUrl,
+                websiteType,
+                currency,
+                totalAmount,
+                paymentType,
+                installmentMonths,
+                paidAmount,
+                monthlyMaintenanceFee,
+                maintenanceStatus,
+                status,
+                deliveryDate,
+                notes
+            };
+
+            const btnSave = document.getElementById('btn-save-website');
+            if (btnSave) btnSave.disabled = true;
+
+            try {
+                if (editId) {
+                    await DBService.updateWebsiteProject(editId, projectData);
+                    showToast(isAr ? 'تم تحديث بيانات الموقع بنجاح!' : 'Website project updated successfully!');
+                } else {
+                    await DBService.addWebsiteProject(projectData);
+                    showToast(isAr ? 'تمت إضافة مشروع الموقع إلى الأرشيف بنجاح!' : 'Website project added to archive!');
+                }
+                closeWebsiteModal();
+            } catch (err) {
+                console.error("Error saving website project:", err);
+                showToast(isAr ? `خطأ أثناء الحفظ: ${err.message}` : `Save error: ${err.message}`, 'error');
+            } finally {
+                if (btnSave) btnSave.disabled = false;
+            }
+        }
+
+        async function deleteWebsiteProjectAction(id) {
+            const project = allWebsites.find(w => w.id === id);
+            const name = project ? project.websiteName : 'هذا المشروع';
+            const isAr = (currentLang === 'ar');
+            const confirmMsg = isAr
+                ? `هل أنت متأكد من حذف موقع "${name}" من الأرشيف؟`
+                : `Are you sure you want to delete website project "${name}" from archive?`;
+            
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                await DBService.deleteWebsiteProject(id);
+                showToast(isAr ? 'تم حذف الموقع من الأرشيف!' : 'Website deleted from archive!');
+            } catch (err) {
+                console.error("Error deleting website:", err);
+                showToast('Failed to delete website', 'error');
+            }
+        }
+
+        // Quick Payment Modal
+        function openRecordPaymentModal(id) {
+            const project = allWebsites.find(w => w.id === id);
+            if (!project) return;
+
+            document.getElementById('pay-target-website-id').value = project.id;
+            document.getElementById('pay-modal-client-name').textContent = project.clientName || 'N/A';
+            document.getElementById('pay-modal-web-name').textContent = project.websiteName || 'N/A';
+            document.getElementById('pay-modal-total').textContent = `$${Number(project.totalAmount || 0).toFixed(2)}`;
+            document.getElementById('pay-modal-paid').textContent = `$${Number(project.paidAmount || 0).toFixed(2)}`;
+            
+            const remaining = Math.max(0, (Number(project.totalAmount || 0) - Number(project.paidAmount || 0)));
+            document.getElementById('pay-modal-remaining').textContent = `$${remaining.toFixed(2)}`;
+            
+            const suggestedAmount = project.paymentType === 'installment' ? (project.monthlyInstallment || remaining) : remaining;
+            document.getElementById('pay-amount').value = suggestedAmount > 0 ? suggestedAmount : '';
+            document.getElementById('pay-date').value = new Date().toISOString().slice(0, 10);
+            document.getElementById('pay-note').value = '';
+            document.getElementById('pay-type').value = 'installment';
+
+            document.getElementById('website-payment-modal').classList.add('active');
+        }
+
+        function closeWebsitePaymentModal() {
+            document.getElementById('website-payment-modal').classList.remove('active');
+        }
+
+        async function saveRecordPayment(e) {
+            e.preventDefault();
+            const isAr = (currentLang === 'ar');
+            const id = document.getElementById('pay-target-website-id').value;
+            const amount = Number(document.getElementById('pay-amount').value) || 0;
+            const date = document.getElementById('pay-date').value;
+            const type = document.getElementById('pay-type').value;
+            const note = document.getElementById('pay-note').value.trim();
+
+            if (amount <= 0) {
+                showToast(isAr ? 'الرجاء إدخال مبلغ صحيح' : 'Please enter a valid amount', 'warning');
+                return;
+            }
+
+            const paymentRecord = {
+                date: date || new Date().toISOString().slice(0, 10),
+                amount: amount,
+                type: type,
+                note: note || (type === 'installment' ? 'Installment payment' : 'Maintenance payment')
+            };
+
+            try {
+                await DBService.recordWebsitePayment(id, paymentRecord);
+                showToast(isAr ? `تم تسجيل دفعة بقيمة $${amount.toFixed(2)} بنجاح!` : `Payment of $${amount.toFixed(2)} recorded!`);
+                closeWebsitePaymentModal();
+            } catch (err) {
+                console.error("Error recording payment:", err);
+                showToast('Payment recording failed', 'error');
+            }
+        }
+
+        // Send WhatsApp Statement to Client
+        function sendWebsiteWhatsAppStatement(id) {
+            const project = allWebsites.find(w => w.id === id);
+            if (!project) return;
+            const isAr = (currentLang === 'ar');
+
+            const phone = normalizePhoneNumber(project.clientPhone);
+            if (!phone) {
+                showToast(isAr ? 'لا يوجد رقم هاتف صالح للعميل!' : 'No valid phone number for client!', 'warning');
+                return;
+            }
+
+            const total = Number(project.totalAmount || 0);
+            const paid = Number(project.paidAmount || 0);
+            const remaining = Math.max(0, total - paid);
+            const monthly = Number(project.monthlyInstallment || 0);
+            const maintenance = Number(project.monthlyMaintenanceFee || 0);
+
+            let msg = '';
+            if (isAr) {
+                msg = `👋 مرحباً ${project.clientName}،\nتحية طيبة من فريق الدعم والبرمجة.\n\n` +
+                      `📋 *كشف حساب وتفاصيل مشروع الموقع:*\n` +
+                      `🌐 *الموقع:* ${project.websiteName} ${project.domainUrl ? '(' + project.domainUrl + ')' : ''}\n` +
+                      `💰 *المبلغ الإجمالي للمشروع:* $${total.toFixed(2)}\n` +
+                      `💳 *خطة الدفع:* ${project.paymentType === 'installment' ? `تقسيط (${project.installmentMonths} أشهر)` : 'كاش'}\n` +
+                      `✅ *المبلغ المسدد حتى الآن:* $${paid.toFixed(2)}\n` +
+                      `⏳ *المبلغ المتبقي:* $${remaining.toFixed(2)}\n` +
+                      (project.paymentType === 'installment' && remaining > 0 ? `📅 *قيمة القسط الشهري:* $${monthly.toFixed(2)}\n` : '') +
+                      (maintenance > 0 ? `🛠️ *رسوم الصيانة والدعم الشهري:* $${maintenance.toFixed(2)}/شهرياً\n` : '') +
+                      `\nشكراً لتعاملك معنا! لأي استفسار لا تتردد بالتواصل معنا 🚀`;
+            } else {
+                msg = `👋 Hello ${project.clientName},\nGreetings from our Development & Support Team.\n\n` +
+                      `📋 *Website Project Statement & Balance:*\n` +
+                      `🌐 *Website:* ${project.websiteName} ${project.domainUrl ? '(' + project.domainUrl + ')' : ''}\n` +
+                      `💰 *Total Project Value:* $${total.toFixed(2)}\n` +
+                      `💳 *Payment Plan:* ${project.paymentType === 'installment' ? `Installments (${project.installmentMonths} mos)` : 'Cash'}\n` +
+                      `✅ *Paid so far:* $${paid.toFixed(2)}\n` +
+                      `⏳ *Remaining Balance:* $${remaining.toFixed(2)}\n` +
+                      (project.paymentType === 'installment' && remaining > 0 ? `📅 *Monthly Installment:* $${monthly.toFixed(2)}\n` : '') +
+                      (maintenance > 0 ? `🛠️ *Monthly Maintenance:* $${maintenance.toFixed(2)}/mo\n` : '') +
+                      `\nThank you for choosing us! Feel free to reach out anytime 🚀`;
+            }
+
+            const cleanDigits = phone.replace('+', '');
+            const waUrl = `https://wa.me/${cleanDigits}?text=${encodeURIComponent(msg)}`;
+            window.open(waUrl, '_blank');
+        }
+
+        // Render Websites Archive & Table
+        function renderWebsites(websites) {
+            const tbody = document.getElementById('websites-table-body');
+            if (!tbody) return;
+
+            const searchVal = (document.getElementById('website-search-input')?.value || '').toLowerCase().trim();
+            const payFilter = document.getElementById('website-payment-filter')?.value || '';
+            const debtFilter = document.getElementById('website-debt-filter')?.value || '';
+            const statusFilter = document.getElementById('website-status-filter')?.value || '';
+            const isAr = (currentLang === 'ar');
+
+            let filtered = (websites || []).filter(w => {
+                const cName = (w.clientName || '').toLowerCase();
+                const wName = (w.websiteName || '').toLowerCase();
+                const phone = (w.clientPhone || '').toLowerCase();
+                const domain = (w.domainUrl || '').toLowerCase();
+                
+                const matchesSearch = !searchVal || cName.includes(searchVal) || wName.includes(searchVal) || phone.includes(searchVal) || domain.includes(searchVal);
+                const matchesPay = !payFilter || w.paymentType === payFilter;
+                
+                const total = Number(w.totalAmount || 0);
+                const paid = Number(w.paidAmount || 0);
+                const remaining = Math.max(0, total - paid);
+                
+                let matchesDebt = true;
+                if (debtFilter === 'paid') matchesDebt = (remaining <= 0);
+                if (debtFilter === 'debt') matchesDebt = (remaining > 0);
+
+                const matchesStatus = !statusFilter || w.status === statusFilter;
+
+                return matchesSearch && matchesPay && matchesDebt && matchesStatus;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:35px; color:var(--text-light); font-size:0.95rem;">
+                    <i class="fa-solid fa-folder-open fa-2x" style="display:block; margin-bottom:10px; color:#cbd5e1;"></i>
+                    ${isAr ? 'لا توجد مشاريع مواقع مطابقة في الأرشيف.' : 'No website projects found in archive.'}
+                </td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(w => {
+                const total = Number(w.totalAmount || 0);
+                const paid = Number(w.paidAmount || 0);
+                const remaining = Math.max(0, total - paid);
+                const percentPaid = total > 0 ? Math.min(100, Math.round((paid / total) * 100)) : 100;
+                const monthly = Number(w.monthlyInstallment || 0);
+                const maintenance = Number(w.monthlyMaintenanceFee || 0);
+
+                let progressColorClass = 'in-progress';
+                if (percentPaid >= 100) progressColorClass = 'complete';
+                else if (percentPaid < 30) progressColorClass = 'low';
+
+                let statusBadge = `<span class="web-pill in_dev"><i class="fa-solid fa-code"></i> ${isAr ? 'قيد التطوير' : 'In Dev'}</span>`;
+                if (w.status === 'active') statusBadge = `<span class="web-pill active_site"><i class="fa-solid fa-circle-check"></i> ${isAr ? 'نشط ومسلّم' : 'Active'}</span>`;
+                if (w.status === 'completed') statusBadge = `<span class="web-pill completed"><i class="fa-solid fa-flag-checkered"></i> ${isAr ? 'مكتمل وخالص' : 'Completed'}</span>`;
+                if (w.status === 'suspended') statusBadge = `<span class="web-pill suspended"><i class="fa-solid fa-circle-pause"></i> ${isAr ? 'متوقف' : 'Suspended'}</span>`;
+
+                let payPlanBadge = (w.paymentType === 'installment')
+                    ? `<span class="web-pill installment"><i class="fa-solid fa-calendar-days"></i> ${isAr ? `تقسيط (${w.installmentMonths || 6} أشهر)` : `Installment (${w.installmentMonths || 6} mo)`}</span>`
+                    : `<span class="web-pill cash"><i class="fa-solid fa-money-bill"></i> ${isAr ? 'كاش كامل' : 'Cash'}</span>`;
+
+                let domainHtml = w.domainUrl ? `<a href="${w.domainUrl.startsWith('http') ? w.domainUrl : 'https://' + w.domainUrl}" target="_blank" style="color:var(--primary-color); font-size:0.82rem; text-decoration:underline; display:flex; align-items:center; gap:4px; margin-top:3px;"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75rem;"></i> ${escapeHtml(w.domainUrl)}</a>` : `<span style="font-size:0.8rem; color:var(--text-light);">${isAr ? 'بدون دومين محدد' : 'No domain'}</span>`;
+
+                return `
+                <tr>
+                    <!-- Client info -->
+                    <td>
+                        <div style="font-weight:700; color:var(--text-dark); font-size:0.95rem;">${escapeHtml(w.clientName || '-')}</div>
+                        <div style="display:flex; align-items:center; gap:6px; margin-top:4px;">
+                            <span style="font-size:0.82rem; color:var(--text-light);"><i class="fa-solid fa-phone" style="font-size:0.75rem;"></i> ${escapeHtml(w.clientPhone || '-')}</span>
+                            ${w.clientPhone ? `<button onclick="sendWebsiteWhatsAppStatement('${w.id}')" title="${isAr ? 'مراسلة العميل وإرسال كشف الحساب' : 'WhatsApp Statement'}" style="background:none; border:none; color:#25D366; cursor:pointer; font-size:0.95rem; padding:0 3px;"><i class="fa-brands fa-whatsapp"></i></button>` : ''}
+                        </div>
+                    </td>
+
+                    <!-- Website info -->
+                    <td>
+                        <div style="font-weight:700; color:var(--text-dark);">${escapeHtml(w.websiteName || '-')}</div>
+                        ${domainHtml}
+                    </td>
+
+                    <!-- Payment Plan -->
+                    <td>
+                        <div>${payPlanBadge}</div>
+                        <div style="font-size:0.82rem; color:var(--text-dark); font-weight:700; margin-top:4px;">
+                            ${isAr ? 'المبلغ:' : 'Total:'} $${total.toFixed(2)}
+                        </div>
+                    </td>
+
+                    <!-- Progress & Debt -->
+                    <td style="min-width:180px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:600; margin-bottom:2px;">
+                            <span style="color:var(--success-color);">${isAr ? 'المدفوع:' : 'Paid:'} $${paid.toFixed(2)}</span>
+                            <span style="color:${remaining > 0 ? '#dc2626' : '#10b981'};">${isAr ? 'المتبقي:' : 'Rem:'} $${remaining.toFixed(2)}</span>
+                        </div>
+                        <div class="web-progress-container">
+                            <div class="web-progress-bar ${progressColorClass}" style="width: ${percentPaid}%;"></div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:var(--text-light); margin-top:4px;">
+                            <span>${percentPaid}% ${isAr ? 'مسدد' : 'paid'}</span>
+                            ${w.paymentType === 'installment' && remaining > 0 ? `<span style="color:var(--primary-color); font-weight:600;">$${monthly.toFixed(2)}/mo</span>` : ''}
+                        </div>
+                    </td>
+
+                    <!-- Maintenance -->
+                    <td>
+                        <div class="maintenance-badge ${w.maintenanceStatus === 'active' ? 'active' : ''}">
+                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                            <span>$${maintenance.toFixed(2)}/mo</span>
+                        </div>
+                        <div style="font-size:0.75rem; color:var(--text-light); margin-top:4px;">
+                            ${w.maintenanceStatus === 'free_period' ? (isAr ? 'فترة ضمان مجانية' : 'Free Warranty') : (w.maintenanceStatus === 'active' ? (isAr ? 'اشتراك نشط' : 'Active') : (isAr ? 'متوقفة' : 'None'))}
+                        </div>
+                    </td>
+
+                    <!-- Status -->
+                    <td>
+                        ${statusBadge}
+                    </td>
+
+                    <!-- Actions -->
+                    <td>
+                        <div style="display:flex; gap:6px; align-items:center;">
+                            <button class="action-btn" onclick="openRecordPaymentModal('${w.id}')" title="${isAr ? 'تسجيل دفعة جديدة' : 'Record Payment'}" style="color:var(--success-color); background:rgba(16,185,129,0.1);">
+                                <i class="fa-solid fa-circle-plus"></i>
+                            </button>
+                            <button class="action-btn" onclick="sendWebsiteWhatsAppStatement('${w.id}')" title="${isAr ? 'إرسال كشف حساب واتساب' : 'WhatsApp Statement'}" style="color:#25D366; background:rgba(37,211,102,0.1);">
+                                <i class="fa-brands fa-whatsapp"></i>
+                            </button>
+                            <button class="action-btn edit" onclick="openEditWebsiteModal('${w.id}')" title="${isAr ? 'تعديل بيانات المشروع' : 'Edit Project'}">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteWebsiteProjectAction('${w.id}')" title="${isAr ? 'حذف من الأرشيف' : 'Delete'}">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        function renderWebsiteStats(websites) {
+            let totalWebsites = (websites || []).length;
+            let totalContractsValue = 0;
+            let totalPaid = 0;
+            let totalRemaining = 0;
+            let totalMonthlyMaintenance = 0;
+
+            (websites || []).forEach(w => {
+                const total = Number(w.totalAmount || 0);
+                const paid = Number(w.paidAmount || 0);
+                const remaining = Math.max(0, total - paid);
+                const maint = Number(w.monthlyMaintenanceFee || 0);
+
+                totalContractsValue += total;
+                totalPaid += paid;
+                totalRemaining += remaining;
+                if (w.maintenanceStatus === 'active') {
+                    totalMonthlyMaintenance += maint;
+                }
+            });
+
+            const elTotal = document.getElementById('stat-web-total');
+            const elValue = document.getElementById('stat-web-value');
+            const elPaid = document.getElementById('stat-web-paid');
+            const elRem = document.getElementById('stat-web-remaining');
+            const elMaint = document.getElementById('stat-web-maintenance');
+
+            if (elTotal) elTotal.textContent = totalWebsites;
+            if (elValue) elValue.textContent = `$${totalContractsValue.toFixed(2)}`;
+            if (elPaid) elPaid.textContent = `$${totalPaid.toFixed(2)}`;
+            if (elRem) elRem.textContent = `$${totalRemaining.toFixed(2)}`;
+            if (elMaint) elMaint.textContent = `$${totalMonthlyMaintenance.toFixed(2)}/mo`;
+        }
+
+        // Attach search & filter listeners for websites
+        setTimeout(() => {
+            const searchInput = document.getElementById('website-search-input');
+            const payFilter = document.getElementById('website-payment-filter');
+            const debtFilter = document.getElementById('website-debt-filter');
+            const statusFilter = document.getElementById('website-status-filter');
+
+            const reRender = () => renderWebsites(allWebsites);
+
+            if (searchInput) searchInput.addEventListener('input', reRender);
+            if (payFilter) payFilter.addEventListener('change', reRender);
+            if (debtFilter) debtFilter.addEventListener('change', reRender);
+            if (statusFilter) statusFilter.addEventListener('change', reRender);
+        }, 0);
 
         function normalizeGatewayUrl(url) {
             const cleaned = String(url || '').trim();
@@ -3240,6 +4486,13 @@
                 if (typeof renderPendingOrders === 'function') renderPendingOrders();
             });
             if (typeof unsubOrders === 'function') activeDbListeners.push(unsubOrders);
+
+            const unsubWebsites = DBService.subscribeToWebsites((websites) => {
+                allWebsites = websites || [];
+                renderWebsites(allWebsites);
+                renderWebsiteStats(allWebsites);
+            });
+            if (typeof unsubWebsites === 'function') activeDbListeners.push(unsubWebsites);
 
             const unsubSuppliers = DBService.subscribeToSuppliers((suppliers) => {
                 allSuppliers = suppliers;
