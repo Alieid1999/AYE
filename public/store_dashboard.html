@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Store Dashboard | Admin</title>
+    <title>A Lab Dashboard | Admin</title>
     <!-- Google Fonts: English + Arabic -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
@@ -1152,7 +1152,7 @@
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-header">
-            <img src="icon.svg" alt="Store Logo" style="height: 32px; width: 32px; border-radius: 6px; object-fit: contain;"> <span data-i18n="storeName">Store</span>
+            <img src="icon.svg" alt="A Lab Logo" style="height: 32px; width: 32px; border-radius: 6px; object-fit: contain;"> <span data-i18n="storeName">A Lab</span>
         </div>
         
         <div class="db-status-container">
@@ -1332,7 +1332,12 @@
                 </div>
 
                 <div class="dashboard-card">
-                    <h2 class="card-title" data-i18n="availableProducts">Available Products Record</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">
+                        <h2 class="card-title" style="margin: 0; padding: 0; border: none;" data-i18n="availableProducts">Available Products Record</h2>
+                        <button type="button" class="btn-submit" onclick="openAddLaptopModal()" style="margin: 0; width: auto; display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; font-size: 0.92rem; background: var(--primary-color); border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer;">
+                            <i class="fa-solid fa-laptop-medical"></i> <span>إضافة لابتوب جديد (Add New Laptop)</span>
+                        </button>
+                    </div>
                     
                     <!-- Filter Controls -->
                     <div style="display: flex; gap: 20px; margin-bottom: 20px; align-items: center; background: #f8fafc; padding: 12px 18px; border-radius: 8px; border: 1px solid var(--border-color); flex-wrap: wrap;">
@@ -1874,6 +1879,9 @@
                         <button id="btn-add-category" class="btn-submit" style="margin-top:0;">
                             <i class="fa-solid fa-plus"></i> <span data-i18n="btnAddCategory">Add</span>
                         </button>
+                        <button type="button" id="btn-reset-alab-categories" style="background: #e0f2fe; border: 1px solid #7dd3fc; color: #0284c7; padding: 10px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; margin-inline-start: 10px;">
+                            <i class="fa-solid fa-arrows-rotate"></i> <span>استعادة تصنيفات A Lab الرسمية على السيرفر</span>
+                        </button>
                     </div>
                     <div id="categories-tags-container" style="display: flex; flex-wrap: wrap; gap: 4px; min-height: 40px;">
                         <!-- Category tags rendered by JS -->
@@ -2176,6 +2184,129 @@
                             <button type="button" id="btn-quick-sup-cancel" class="btn-secondary" style="width: auto; margin: 0; padding: 6px 12px; font-size: 0.85rem; cursor: pointer;">Cancel</button>
                         </div>
                     </div>
+                    <!-- 💻 LAPTOP TECHNICAL SPECS BUILDER (جدول مواصفات اللابتوب الذكي) -->
+                    <div class="form-group full-width" style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 16px; margin: 8px 0 16px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+                            <label style="font-size: 0.98rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px; margin: 0; cursor: pointer;">
+                                <input type="checkbox" id="edit-enable-laptop-specs" style="width: 18px; height: 18px; accent-color: var(--primary-color); cursor: pointer;" checked onchange="toggleLaptopSpecsSection()">
+                                <i class="fa-solid fa-laptop" style="color: var(--primary-color);"></i>
+                                <span>جدول المواصفات الفنية للابتوب (Laptop Technical Specs)</span>
+                            </label>
+                            <span style="font-size: 0.75rem; background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 12px; font-weight: 700;">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> يُنشئ بطاقة مواصفات تظهر للزبون
+                            </span>
+                        </div>
+
+                        <div id="laptop-specs-container-body">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px;">
+                            <!-- Brand -->
+                            <div>
+                                <label style="font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px; display: block;">الماركة (Brand)</label>
+                                <select id="edit-spec-brand" style="width: 100%; padding: 8px 10px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; font-weight: 600;">
+                                    <option value="Apple">Apple (MacBook)</option>
+                                    <option value="ASUS">ASUS (ROG / ZenBook)</option>
+                                    <option value="Lenovo">Lenovo (Legion / ThinkPad)</option>
+                                    <option value="Dell">Dell (XPS / Latitude)</option>
+                                    <option value="HP">HP (Spectre / Omen / Pavilion)</option>
+                                    <option value="Acer">Acer (Predator / Swift)</option>
+                                    <option value="MSI">MSI Gaming</option>
+                                    <option value="Samsung">Samsung Galaxy Book</option>
+                                    <option value="Microsoft">Microsoft Surface</option>
+                                    <option value="Other">ماركة أخرى</option>
+                                </select>
+                            </div>
+
+                            <!-- RAM -->
+                            <div>
+                                <label style="font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px; display: block;">الرام (RAM)</label>
+                                <select id="edit-spec-ram" style="width: 100%; padding: 8px 10px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; font-weight: 600;">
+                                    <option value="8GB">8GB</option>
+                                    <option value="16GB" selected>16GB</option>
+                                    <option value="24GB">24GB</option>
+                                    <option value="32GB">32GB</option>
+                                    <option value="36GB">36GB (MacBook)</option>
+                                    <option value="48GB">48GB</option>
+                                    <option value="64GB">64GB</option>
+                                    <option value="128GB">128GB</option>
+                                    <option value="4GB">4GB</option>
+                                </select>
+                            </div>
+
+                            <!-- Storage Size -->
+                            <div>
+                                <label style="font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px; display: block;">سعة التخزين (Storage)</label>
+                                <select id="edit-spec-storage" style="width: 100%; padding: 8px 10px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; font-weight: 600;">
+                                    <option value="256GB">256GB</option>
+                                    <option value="512GB" selected>512GB</option>
+                                    <option value="1TB">1TB (1000GB)</option>
+                                    <option value="2TB">2TB</option>
+                                    <option value="4TB">4TB</option>
+                                    <option value="128GB">128GB</option>
+                                </select>
+                            </div>
+
+                            <!-- Storage Type (SSD or HDD) -->
+                            <div>
+                                <label style="font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px; display: block;">نوع التخزين (SSD أو HDD)</label>
+                                <select id="edit-spec-storage-type" style="width: 100%; padding: 8px 10px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; font-weight: 600;">
+                                    <option value="SSD NVMe" selected>SSD NVMe M.2 (فائق السرعة)</option>
+                                    <option value="SSD SATA">SSD SATA</option>
+                                    <option value="HDD">HDD (عادي)</option>
+                                    <option value="SSD + HDD">SSD + HDD هجين</option>
+                                </select>
+                            </div>
+
+                            <!-- Screen Size -->
+                            <div>
+                                <label style="font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px; display: block;">حجم الشاشة (Screen Size)</label>
+                                <select id="edit-spec-screen-size" style="width: 100%; padding: 8px 10px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; font-weight: 600;">
+                                    <option value='13.3"'>13.3 بوصة</option>
+                                    <option value='14.0"'>14.0 بوصة</option>
+                                    <option value='14.2"'>14.2 بوصة (MacBook)</option>
+                                    <option value='15.6"' selected>15.6 بوصة</option>
+                                    <option value='16.0"'>16.0 بوصة</option>
+                                    <option value='16.2"'>16.2 بوصة (MacBook)</option>
+                                    <option value='17.3"'>17.3 بوصة</option>
+                                    <option value='18.0"'>18.0 بوصة</option>
+                                </select>
+                            </div>
+
+                            <!-- Touchscreen -->
+                            <div>
+                                <label style="font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px; display: block;">الشاشة لمس؟ (Touchscreen)</label>
+                                <select id="edit-spec-touch" style="width: 100%; padding: 8px 10px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; font-weight: 600;">
+                                    <option value="false" selected>❌ لا - عادية (Non-Touch)</option>
+                                    <option value="true">🖐️ نعم - شاشة لمس (Touchscreen)</option>
+                                </select>
+                            </div>
+
+                            <!-- CPU -->
+                            <div>
+                                <label style="font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px; display: block;">المعالج (Processor / CPU)</label>
+                                <input type="text" id="edit-spec-cpu" placeholder="مثال: Core i7 أو Ryzen 7 أو M3 Max" style="width: 100%; padding: 8px 10px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 600;">
+                            </div>
+
+                            <!-- GPU -->
+                            <div>
+                                <label style="font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 4px; display: block;">كرت الشاشة (GPU / Graphics)</label>
+                                <input type="text" id="edit-spec-gpu" placeholder="مثال: RTX 4070 أو Iris Xe" style="width: 100%; padding: 8px 10px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 600;">
+                            </div>
+                        </div>
+
+                        <!-- Live Spec Card Preview inside Form -->
+                        <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #cbd5e1;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+                                <span style="font-size: 0.8rem; font-weight: 800; color: #475569;">
+                                    <i class="fa-solid fa-eye" style="color: var(--primary-color);"></i> معاينة بطاقة المواصفات أمام الزبون:
+                                </span>
+                            </div>
+                            <div id="spec-card-live-preview" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                                <!-- Live badges preview rendered here -->
+                            </div>
+                        </div>
+                        </div> <!-- end laptop-specs-container-body -->
+                    </div>
+
                     <div class="form-group full-width">
                         <label for="edit-description" data-i18n="labelDesc">Product Description</label>
                         <textarea id="edit-description" rows="2"></textarea>
@@ -2597,7 +2728,7 @@
                 supplierInfoMissing: "Contact info missing",
                 totalPurchasePrice: "Total Purchase",
                 totalSellingPrice:  "Total Selling",
-                storeName:          "Store",
+                storeName:          "A Lab",
                 navDashboard:       "Dashboard",
                 navScanner:         "AI Product Scanner",
                 scannerTitle:       "AI Image Product Scanner",
@@ -2794,7 +2925,7 @@
                 btnConfirmPayment:  "Confirm & Record Payment",
              },
              ar: {
-                 storeName:          "متجر",
+                 storeName:          "A Lab",
                  navDashboard:       "لوحة التحكم",
                 navWebsites:        "أرشيف المواقع والتقسيط",
                 statWebTotal:       "إجمالي المواقع",
@@ -3088,7 +3219,7 @@
         // ----------------------------------------
         // DATABASE INTEGRATION & Fallback Logic
         // ----------------------------------------
-        const DEFAULT_CATEGORIES = ['Keyboards', 'Mice & Mousepads', 'Laptops & PCs', 'Monitors & Displays', 'PC Components', 'Headsets & Audio', 'Desk & Setup', 'Cables & Adapters', 'Other'];
+        const DEFAULT_CATEGORIES = ['Gaming Laptops', 'Business & Ultrabooks', 'Laptop Bags & Sleeves', 'Cooling Pads & Stands', 'Chargers & Power Banks', 'Docks & Hubs', 'Laptop Mice & Keyboards', 'Storage & RAM', 'Headsets & Audio', 'Laptop Accessories'];
 
         const firebaseConfig = {
             apiKey: "AIzaSyDSIsmOtYSuQe7Y8XsUwfstc8UNQw2ykkM",
@@ -3454,13 +3585,15 @@
                     title: product.title,
                     image: product.image,
                     images: product.images || [product.image],
-                    costPrice: Number(product.costPrice),
-                    price: Number(product.price),
+                    costPrice: Number(product.costPrice) || 0,
+                    price: Number(product.price) || 0,
                     currency: product.currency || 'USD',
                     stock: Number(product.stock !== undefined ? product.stock : 10),
                     description: product.description || "",
                     category: product.category || "Other",
                     supplier: product.supplier || "",
+                    laptopSpecs: product.laptopSpecs || null,
+                    specs: product.specs || [],
                     createdAt: new Date().toISOString()
                 };
 
@@ -3484,33 +3617,61 @@
                     title: productData.title,
                     image: productData.image,
                     images: productData.images || [productData.image],
-                    costPrice: Number(productData.costPrice),
-                    price: Number(productData.price),
+                    costPrice: Number(productData.costPrice) || 0,
+                    price: Number(productData.price) || 0,
                     currency: productData.currency || 'USD',
                     stock: Number(productData.stock !== undefined ? productData.stock : 10),
                     description: productData.description || "",
                     category: productData.category || "Other",
-                    supplier: productData.supplier || ""
+                    supplier: productData.supplier || "",
+                    laptopSpecs: productData.laptopSpecs || null,
+                    specs: productData.specs || []
                 };
+
+                // Instant cache update
+                try {
+                    const cached = localStorage.getItem('cached_firestore_products');
+                    if (cached) {
+                        const list = JSON.parse(cached).map(p => p.id === id ? { ...p, ...updateData } : p);
+                        localStorage.setItem('cached_firestore_products', JSON.stringify(list));
+                    }
+                } catch (e) {}
+
+                try {
+                    const localMock = localStorage.getItem('mock_products');
+                    if (localMock) {
+                        const list = JSON.parse(localMock).map(p => p.id === id ? { ...p, ...updateData } : p);
+                        localStorage.setItem('mock_products', JSON.stringify(list));
+                        window.dispatchEvent(new Event('local_products_changed'));
+                    }
+                } catch (e) {}
 
                 if (isFirebaseActive) {
                     await db.collection('products').doc(id).update(updateData);
-                } else {
-                    let products = JSON.parse(localStorage.getItem('mock_products')) || [];
-                    products = products.map(p => p.id === id ? { ...p, ...updateData } : p);
-                    localStorage.setItem('mock_products', JSON.stringify(products));
-                    window.dispatchEvent(new Event('local_products_changed'));
                 }
             },
 
             async deleteProduct(id) {
+                // Immediate local cache cleanup
+                try {
+                    const cached = localStorage.getItem('cached_firestore_products');
+                    if (cached) {
+                        const list = JSON.parse(cached).filter(p => p.id !== id);
+                        localStorage.setItem('cached_firestore_products', JSON.stringify(list));
+                    }
+                } catch (e) {}
+
+                try {
+                    const localMock = localStorage.getItem('mock_products');
+                    if (localMock) {
+                        const list = JSON.parse(localMock).filter(p => p.id !== id);
+                        localStorage.setItem('mock_products', JSON.stringify(list));
+                        window.dispatchEvent(new Event('local_products_changed'));
+                    }
+                } catch (e) {}
+
                 if (isFirebaseActive) {
                     await db.collection('products').doc(id).delete();
-                } else {
-                    let products = JSON.parse(localStorage.getItem('mock_products')) || [];
-                    products = products.filter(p => p.id !== id);
-                    localStorage.setItem('mock_products', JSON.stringify(products));
-                    window.dispatchEvent(new Event('local_products_changed'));
                 }
             },
 
@@ -5374,12 +5535,24 @@
             container.querySelectorAll('.delete').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const id = e.currentTarget.dataset.id;
-                    if (confirm("Are you sure you want to delete this product?")) {
+                    const lang = localStorage.getItem('store_lang') || 'en';
+                    const confirmMsg = lang === 'ar'
+                        ? "هل أنت متأكد من حذف هذا المنتج نهائياً من السيرفر وقاعدة البيانات؟"
+                        : "Are you sure you want to permanently delete this product from the server?";
+                    if (confirm(confirmMsg)) {
+                        const originalHtml = btn.innerHTML;
+                        btn.disabled = true;
+                        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
                         try {
                             await DBService.deleteProduct(id);
-                            showToast("Product deleted successfully!");
+                            const tr = btn.closest('tr');
+                            if (tr) tr.remove();
+                            showToast(lang === 'ar' ? "تم حذف المنتج نهائياً من السيرفر بنجاح!" : "Product permanently deleted from server!");
                         } catch (err) {
-                            showToast("Failed to delete product", "error");
+                            console.error("Delete error:", err);
+                            btn.disabled = false;
+                            btn.innerHTML = originalHtml;
+                            showToast(lang === 'ar' ? "فشل حذف المنتج من السيرفر: " + (err.message || "") : "Failed to delete product: " + (err.message || ""), "error");
                         }
                     }
                 });
@@ -5525,11 +5698,205 @@
             });
         }
 
+        
+        // ─── Laptop Technical Specs Extractor & Live Preview ───
+        function extractLaptopSpecsDash(p) {
+            if (p.laptopSpecs && typeof p.laptopSpecs === 'object') {
+                return {
+                    brand: p.laptopSpecs.brand || 'Laptop',
+                    cpu: p.laptopSpecs.cpu || '',
+                    ram: p.laptopSpecs.ram || '16GB',
+                    storage: p.laptopSpecs.storage || '512GB',
+                    storageType: p.laptopSpecs.storageType || 'SSD NVMe',
+                    screenSize: p.laptopSpecs.screenSize || '15.6"',
+                    isTouch: Boolean(p.laptopSpecs.isTouch),
+                    gpu: p.laptopSpecs.gpu || ''
+                };
+            }
+
+            const text = ((p.title || '') + ' ' + (p.description || '') + ' ' + (Array.isArray(p.specs) ? p.specs.join(' ') : '')).toLowerCase();
+            const brands = ['Apple', 'ASUS', 'Lenovo', 'Dell', 'HP', 'Acer', 'MSI', 'Samsung', 'Microsoft', 'Razer', 'Gigabyte'];
+            let brand = 'Laptop';
+            if (/\b(macbook|apple)\b/i.test(p.title || '')) {
+                brand = 'Apple';
+            } else {
+                for (const b of brands) {
+                    if (new RegExp('\\b' + b + '\\b', 'i').test(p.title || '')) {
+                        brand = b;
+                        break;
+                    }
+                }
+            }
+
+            let ram = '16GB';
+            const ramM = text.match(/\b(4|8|12|16|24|32|36|48|64|128)\s*(?:gb|g)\b/i);
+            if (ramM) ram = ramM[0].toUpperCase();
+
+            let storage = '512GB';
+            const storageM = text.match(/\b(128|256|512|1|2|4)\s*(?:tb|gb)\b/i);
+            if (storageM) storage = storageM[0].toUpperCase();
+
+            const storageType = (text.includes('hdd') && !text.includes('ssd')) ? 'HDD' : 'SSD NVMe';
+
+            let screenSize = '15.6"';
+            const screenM = text.match(/\b(11\.6|12\.5|13\.3|13\.4|13\.5|14\.0|14\.2|14|15\.6|16\.0|16\.2|16|17\.3|17|18)\s*(?:"|'|-inch)/i);
+            if (screenM) screenSize = screenM[1] + '"';
+
+            const isTouch = /\b(touch|touchscreen|لمس)\b/i.test(text);
+
+            let cpu = '';
+            if (text.includes('core ultra 9')) cpu = 'Core Ultra 9';
+            else if (text.includes('core ultra 7')) cpu = 'Core Ultra 7';
+            else if (text.includes('core ultra 5')) cpu = 'Core Ultra 5';
+            else if (/\bi9\b/i.test(text) || text.includes('core i9')) cpu = 'Core i9';
+            else if (/\bi7\b/i.test(text) || text.includes('core i7')) cpu = 'Core i7';
+            else if (/\bi5\b/i.test(text) || text.includes('core i5')) cpu = 'Core i5';
+            else if (text.includes('ryzen 9')) cpu = 'Ryzen 9';
+            else if (text.includes('ryzen 7')) cpu = 'Ryzen 7';
+            else if (text.includes('ryzen 5')) cpu = 'Ryzen 5';
+            else if (text.includes('m3 max')) cpu = 'Apple M3 Max';
+            else if (text.includes('m3')) cpu = 'Apple M3';
+
+            let gpu = '';
+            const gpuM = text.match(/\b(rtx\s*4090|rtx\s*4080|rtx\s*4070|rtx\s*4060|rtx\s*4050|iris\s*xe|radeon)\b/i);
+            if (gpuM) gpu = gpuM[0].toUpperCase();
+
+            return {
+                brand, cpu, ram, storage, storageType, screenSize, isTouch, gpu
+            };
+        }
+
+        function updateSpecCardPreview() {
+            const previewEl = document.getElementById('spec-card-live-preview');
+            if (!previewEl) return;
+            const brand = document.getElementById('edit-spec-brand')?.value || 'Laptop';
+            const ram = document.getElementById('edit-spec-ram')?.value || '16GB';
+            const storage = document.getElementById('edit-spec-storage')?.value || '512GB';
+            const storageType = document.getElementById('edit-spec-storage-type')?.value || 'SSD NVMe';
+            const screenSize = document.getElementById('edit-spec-screen-size')?.value || '15.6"';
+            const isTouch = document.getElementById('edit-spec-touch')?.value === 'true';
+            const cpu = document.getElementById('edit-spec-cpu')?.value?.trim() || '';
+            const gpu = document.getElementById('edit-spec-gpu')?.value?.trim() || '';
+
+            const touchBadge = isTouch ? '<span style="background:#10b981; color:#fff; font-size:0.7rem; font-weight:800; padding:2px 7px; border-radius:4px; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-hand-pointer"></i> TOUCH</span>' : '';
+            const ssdBadge = storageType.includes('SSD') ? '<span style="background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; font-size:0.7rem; font-weight:700; padding:1px 5px; border-radius:4px;">SSD</span>' : '<span style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca; font-size:0.7rem; font-weight:700; padding:1px 5px; border-radius:4px;">HDD</span>';
+
+            previewEl.innerHTML = `
+                <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; width:100%;">
+                    <span style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:6px; padding:4px 8px; font-size:0.8rem; font-weight:700; color:#0f172a;"><i class="fa-solid fa-tag" style="color:var(--primary-color);"></i> ${brand}</span>
+                    ${cpu ? `<span style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:6px; padding:4px 8px; font-size:0.8rem; font-weight:700; color:#0f172a;"><i class="fa-solid fa-microchip" style="color:var(--primary-color);"></i> ${cpu}</span>` : ''}
+                    <span style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:6px; padding:4px 8px; font-size:0.8rem; font-weight:700; color:#0f172a;"><i class="fa-solid fa-memory" style="color:var(--primary-color);"></i> ${ram}</span>
+                    <span style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:6px; padding:4px 8px; font-size:0.8rem; font-weight:700; color:#0f172a;"><i class="fa-solid fa-hard-drive" style="color:var(--primary-color);"></i> ${storage} ${ssdBadge}</span>
+                    <span style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:6px; padding:4px 8px; font-size:0.8rem; font-weight:700; color:#0f172a;"><i class="fa-solid fa-display" style="color:var(--primary-color);"></i> ${screenSize} ${touchBadge}</span>
+                    ${gpu ? `<span style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:6px; padding:4px 8px; font-size:0.8rem; font-weight:700; color:#0f172a;"><i class="fa-solid fa-gamepad" style="color:var(--primary-color);"></i> ${gpu}</span>` : ''}
+                </div>
+            `;
+        }
+
+        
+        function toggleLaptopSpecsSection() {
+            const check = document.getElementById('edit-enable-laptop-specs');
+            const body = document.getElementById('laptop-specs-container-body');
+            if (body && check) {
+                body.style.display = check.checked ? 'block' : 'none';
+            }
+        }
+
+        function isLaptopDeviceDash(item) {
+            if (!item) return false;
+            if (item.laptopSpecs) return true;
+            const cat = (item.category || '').toLowerCase();
+            const title = (item.title || '').toLowerCase();
+
+            const isAccessory = /(bag|sleeve|case|cooling|pad|stand|charger|power bank|dock|hub|mouse|mice|keyboard|headset|audio|cable|adapter|حقيبة|شنطة|ماوس|كيبورد|شاحن|قاعدة|ستاند|سماعة|وصلة|محول)/i.test(cat + ' ' + title);
+            if (isAccessory && !item.laptopSpecs) return false;
+
+            if (cat === 'gaming laptops' || cat === 'business & ultrabooks' || cat === 'laptops' || cat === 'أجهزة اللابتوب' || cat === 'لابتوبات ألعاب' || cat === 'لابتوبات أعمال وألترا بوك') return true;
+
+            return /\b(laptop|macbook|ultrabook|thinkpad|legion|zenbook|spectre|xps|latitude|inspiron|elitebook|probook|vivobook|predator|rog strix|zephyrus|omen|pavilion|surface laptop|ai pc)\b/i.test(title);
+        }
+
+        function openAddLaptopModal() {
+            const editModal = document.getElementById('edit-product-modal');
+            if (!editModal) return;
+
+            document.getElementById('edit-id').value = '';
+            const modalTitle = editModal.querySelector('.card-title');
+            const isAr = (localStorage.getItem('store_lang') || 'en') === 'ar';
+            if (modalTitle) modalTitle.innerHTML = `<i class="fa-solid fa-laptop-medical" style="color:var(--primary-color);"></i> ${isAr ? 'إضافة لابتوب جديد للمتجر' : 'Add New Laptop'}`;
+
+            document.getElementById('edit-title').value = '';
+            
+            const catSelect = document.getElementById('edit-category');
+            if (catSelect) {
+                catSelect.value = catSelect.querySelector('option[value="Gaming Laptops"]') ? 'Gaming Laptops' : (catSelect.options[0]?.value || 'Laptops');
+            }
+
+            // Set image radios & inputs
+            const radioFile = document.querySelector('input[name="edit-img-src-type"][value="file"]');
+            if (radioFile) radioFile.checked = true;
+            if (typeof editImgFileWrapper !== 'undefined' && editImgFileWrapper) editImgFileWrapper.style.display = 'block';
+            if (typeof editImgUrlWrapper !== 'undefined' && editImgUrlWrapper) editImgUrlWrapper.style.display = 'none';
+
+            editModalImages = [];
+            renderEditModalGallery();
+
+            document.getElementById('edit-currency').value = 'USD';
+            document.getElementById('edit-cost-price').value = '';
+            document.getElementById('edit-price').value = '';
+            const editSupplierSelect = document.getElementById('edit-supplier');
+            if (editSupplierSelect) {
+                editSupplierSelect.innerHTML = getSupplierOptionsHtml('');
+            }
+            document.getElementById('edit-description').value = '';
+
+            // Specs enabled
+            const enableCheck = document.getElementById('edit-enable-laptop-specs');
+            if (enableCheck) {
+                enableCheck.checked = true;
+                toggleLaptopSpecsSection();
+            }
+
+            if (document.getElementById('edit-spec-brand')) document.getElementById('edit-spec-brand').value = 'ASUS';
+            if (document.getElementById('edit-spec-ram')) document.getElementById('edit-spec-ram').value = '16GB';
+            if (document.getElementById('edit-spec-storage')) document.getElementById('edit-spec-storage').value = '512GB';
+            if (document.getElementById('edit-spec-storage-type')) document.getElementById('edit-spec-storage-type').value = 'SSD NVMe';
+            if (document.getElementById('edit-spec-screen-size')) document.getElementById('edit-spec-screen-size').value = '15.6"';
+            if (document.getElementById('edit-spec-touch')) document.getElementById('edit-spec-touch').value = 'false';
+            if (document.getElementById('edit-spec-cpu')) document.getElementById('edit-spec-cpu').value = '';
+            if (document.getElementById('edit-spec-gpu')) document.getElementById('edit-spec-gpu').value = '';
+
+            updateSpecCardPreview();
+
+            // Bind live preview updating
+            ['edit-spec-brand', 'edit-spec-ram', 'edit-spec-storage', 'edit-spec-storage-type', 'edit-spec-screen-size', 'edit-spec-touch', 'edit-spec-cpu', 'edit-spec-gpu'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.oninput = updateSpecCardPreview;
+                    el.onchange = updateSpecCardPreview;
+                }
+            });
+
+            const saveBtn = document.getElementById('save-edit-btn');
+            if (saveBtn) {
+                saveBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> <span>${isAr ? 'حفظ وإضافة اللابتوب' : 'Save & Add Laptop'}</span>`;
+            }
+
+            editModal.classList.add('active');
+        }
+
         function openEditModal(id) {
             const product = allProducts.find(p => p.id === id);
             if (!product) return;
 
             document.getElementById('edit-id').value = product.id;
+            const modalTitle = editModal.querySelector('.card-title');
+            const isAr = (localStorage.getItem('store_lang') || 'en') === 'ar';
+            if (modalTitle) modalTitle.innerHTML = `<i class="fa-solid fa-pen-to-square" style="color:var(--primary-color);"></i> ${isAr ? 'تعديل بيانات اللابتوب' : 'Edit Product Details'}`;
+            const saveBtn = document.getElementById('save-edit-btn');
+            if (saveBtn) {
+                saveBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> <span>${isAr ? 'حفظ التغييرات' : 'Save Changes'}</span>`;
+            }
             document.getElementById('edit-title').value = product.title;
             document.getElementById('edit-category').value = product.category || 'Other';
             
@@ -5549,6 +5916,35 @@
                 editSupplierSelect.innerHTML = getSupplierOptionsHtml(product.supplier || '');
             }
             document.getElementById('edit-description').value = product.description || '';
+
+            // Populate Laptop Specs Table Fields
+            const isLap = isLaptopDeviceDash(product);
+            const enableCheck = document.getElementById('edit-enable-laptop-specs');
+            if (enableCheck) {
+                enableCheck.checked = isLap;
+                toggleLaptopSpecsSection();
+            }
+
+            const lSpecs = extractLaptopSpecsDash(product);
+            if (document.getElementById('edit-spec-brand')) document.getElementById('edit-spec-brand').value = lSpecs.brand;
+            if (document.getElementById('edit-spec-ram')) document.getElementById('edit-spec-ram').value = lSpecs.ram;
+            if (document.getElementById('edit-spec-storage')) document.getElementById('edit-spec-storage').value = lSpecs.storage;
+            if (document.getElementById('edit-spec-storage-type')) document.getElementById('edit-spec-storage-type').value = lSpecs.storageType;
+            if (document.getElementById('edit-spec-screen-size')) document.getElementById('edit-spec-screen-size').value = lSpecs.screenSize;
+            if (document.getElementById('edit-spec-touch')) document.getElementById('edit-spec-touch').value = lSpecs.isTouch ? 'true' : 'false';
+            if (document.getElementById('edit-spec-cpu')) document.getElementById('edit-spec-cpu').value = lSpecs.cpu;
+            if (document.getElementById('edit-spec-gpu')) document.getElementById('edit-spec-gpu').value = lSpecs.gpu;
+            
+            updateSpecCardPreview();
+
+            // Bind live preview updating
+            ['edit-spec-brand', 'edit-spec-ram', 'edit-spec-storage', 'edit-spec-storage-type', 'edit-spec-screen-size', 'edit-spec-touch', 'edit-spec-cpu', 'edit-spec-gpu'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.oninput = updateSpecCardPreview;
+                    el.onchange = updateSpecCardPreview;
+                }
+            });
 
             editModal.classList.add('active');
         }
@@ -5583,23 +5979,74 @@
 
             const existingProduct = allProducts.find(p => p.id === id) || {};
 
+            // Gather Laptop Specs Table Data if enabled
+            const specsEnabled = document.getElementById('edit-enable-laptop-specs')?.checked !== false;
+            let laptopSpecsData = null;
+            let autoSpecs = [];
+
+            if (specsEnabled) {
+                laptopSpecsData = {
+                    brand: document.getElementById('edit-spec-brand')?.value || 'Laptop',
+                    ram: document.getElementById('edit-spec-ram')?.value || '16GB',
+                    storage: document.getElementById('edit-spec-storage')?.value || '512GB',
+                    storageType: document.getElementById('edit-spec-storage-type')?.value || 'SSD NVMe',
+                    screenSize: document.getElementById('edit-spec-screen-size')?.value || '15.6"',
+                    isTouch: document.getElementById('edit-spec-touch')?.value === 'true',
+                    cpu: document.getElementById('edit-spec-cpu')?.value?.trim() || '',
+                    gpu: document.getElementById('edit-spec-gpu')?.value?.trim() || ''
+                };
+
+                autoSpecs = [
+                    laptopSpecsData.brand,
+                    laptopSpecsData.cpu,
+                    laptopSpecsData.ram,
+                    `${laptopSpecsData.storage} ${laptopSpecsData.storageType}`,
+                    `${laptopSpecsData.screenSize}${laptopSpecsData.isTouch ? ' Touch' : ''}`,
+                    laptopSpecsData.gpu
+                ].filter(Boolean);
+            }
+
             try {
-                await DBService.updateProduct(id, {
-                    title,
-                    category,
-                    image,
-                    images,
-                    currency,
-                    costPrice: Number(costPrice) || 0,
-                    price: Number(price),
-                    stock: 9999,
-                    description,
-                    supplier
-                });
-                showToast("Product updated successfully!");
+                if (id) {
+                    await DBService.updateProduct(id, {
+                        title,
+                        category,
+                        image,
+                        images,
+                        currency,
+                        costPrice: Number(costPrice) || 0,
+                        price: Number(price) || 0,
+                        stock: 9999,
+                        description,
+                        supplier,
+                        laptopSpecs: laptopSpecsData,
+                        specs: autoSpecs
+                    });
+                    const lang = localStorage.getItem('store_lang') || 'en';
+                    showToast(lang === 'ar' ? "تم تعديل اللابتوب وحفظ التغييرات على السيرفر بنجاح!" : "Product updated on server successfully!");
+                } else {
+                    await DBService.addProduct({
+                        title,
+                        category,
+                        image,
+                        images,
+                        currency,
+                        costPrice: Number(costPrice) || 0,
+                        price: Number(price) || 0,
+                        stock: 9999,
+                        description,
+                        supplier,
+                        laptopSpecs: laptopSpecsData,
+                        specs: autoSpecs
+                    });
+                    const lang = localStorage.getItem('store_lang') || 'en';
+                    showToast(lang === 'ar' ? "تمت إضافة اللابتوب الجديد وحفظه على السيرفر بنجاح!" : "Product added to server successfully!");
+                }
                 editModal.classList.remove('active');
             } catch (err) {
-                showToast("Failed to update product", "error");
+                console.error("Save product error:", err);
+                const lang = localStorage.getItem('store_lang') || 'en';
+                showToast(lang === 'ar' ? "فشل حفظ المنتج على السيرفر: " + (err.message || "") : "Failed to save product on server: " + (err.message || ""), "error");
             } finally {
                 saveBtn.innerHTML = originalText;
                 saveBtn.disabled = false;
@@ -6366,7 +6813,7 @@
                           const downloadAnchor = document.createElement('a');
                           const dateStr = new Date().toISOString().slice(0,10);
                           downloadAnchor.setAttribute('href', dataStr);
-                          downloadAnchor.setAttribute('download', 'aye_store_backup_' + dateStr + '.json');
+                          downloadAnchor.setAttribute('download', 'a_lab_store_backup_' + dateStr + '.json');
                           document.body.appendChild(downloadAnchor);
                           downloadAnchor.click();
                           downloadAnchor.remove();
@@ -6532,7 +6979,7 @@
 
             if (btnTestEmail) {
                 btnTestEmail.addEventListener('click', async () => {
-                    const testEmail = document.getElementById('test-email').value.trim();
+                    const testEmail = document.getElementById('test-email')?.value?.trim() || '';
                     if (!testEmail) {
                         showToast('Please enter a test email address first!', 'warning');
                         return;
@@ -7375,7 +7822,7 @@
 
         function populateCategorySelects(cats) {
             const optHtml = cats.map(c => `<option value="${c}">${c}</option>`).join('');
-            ['category', 'edit-category'].forEach(id => {
+            ['category', 'edit-category', 'import-category'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
                     const current = el.value;
@@ -7383,8 +7830,23 @@
                     if (cats.includes(current)) el.value = current;
                 }
             });
+            // Also sync filter-category-select
+            const filterCat = document.getElementById('filter-category-select');
+            if (filterCat) {
+                const current = filterCat.value;
+                const lang = localStorage.getItem('store_lang') || 'en';
+                const allLabel = (typeof dashTranslations !== 'undefined' && dashTranslations[lang]?.allCategories) || (lang === 'ar' ? 'جميع التصنيفات' : 'All Categories');
+                filterCat.innerHTML = `<option value="">${allLabel}</option>` + optHtml;
+                if (current) filterCat.value = current;
+            }
             // Also populate bulk categories
             document.querySelectorAll('.bulk-category').forEach(el => {
+                const current = el.value;
+                el.innerHTML = optHtml;
+                if (cats.includes(current)) el.value = current;
+            });
+            // Also populate scanner categories if open
+            document.querySelectorAll('[id^="cat-"]').forEach(el => {
                 const current = el.value;
                 el.innerHTML = optHtml;
                 if (cats.includes(current)) el.value = current;
@@ -7446,6 +7908,29 @@
             input.value = '';
             showToast(`Category "${name}" added!`);
         });
+
+        const btnResetAlabCats = document.getElementById('btn-reset-alab-categories');
+        if (btnResetAlabCats) {
+            btnResetAlabCats.addEventListener('click', async () => {
+                const lang = localStorage.getItem('store_lang') || 'en';
+                const confirmMsg = lang === 'ar'
+                    ? "هل تريد تحديث وحفظ تصنيفات A Lab الرسمية للابتوبات على السيرفر مباشرة؟"
+                    : "Reset and save official A Lab laptop categories to the server?";
+                if (!confirm(confirmMsg)) return;
+                const originalText = btnResetAlabCats.innerHTML;
+                btnResetAlabCats.disabled = true;
+                btnResetAlabCats.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving to server...';
+                try {
+                    await saveCategories([...DEFAULT_CATEGORIES]);
+                    showToast(lang === 'ar' ? "تم تحديث تصنيفات A Lab على السيرفر بنجاح!" : "Official A Lab categories saved to server!");
+                } catch (err) {
+                    showToast(lang === 'ar' ? "فشل الحفظ على السيرفر: " + err.message : "Failed to save: " + err.message, "error");
+                } finally {
+                    btnResetAlabCats.disabled = false;
+                    btnResetAlabCats.innerHTML = originalText;
+                }
+            });
+        }
 
         document.getElementById('new-category-input').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-add-category').click(); }
@@ -8710,7 +9195,7 @@
 • OS: Windows 11
 • Condition: Factory Refurbished
 • Warranty: 1 Year Warranty). Do NOT include any Arabic or non-English text.
-4. "category": Best matching category from: ["Keyboards", "Mice & Mousepads", "Laptops & PCs", "Monitors & Displays", "PC Components", "Headsets & Audio", "Desk & Setup", "Cables & Adapters", "Other"].
+4. "category": Best matching category from: ["Gaming Laptops", "Business & Ultrabooks", "Laptop Bags & Sleeves", "Cooling Pads & Stands", "Chargers & Power Banks", "Docks & Hubs", "Laptop Mice & Keyboards", "Storage & RAM", "Headsets & Audio", "Laptop Accessories"].
 
 Return ONLY valid JSON:
 {"title":"...","price":0.00,"description":"...","category":"..."}`;

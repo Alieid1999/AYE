@@ -1,7 +1,7 @@
 {
-  "name": "aye-market",
+  "name": "a-lab",
   "version": "1.0.0",
-  "description": "AYE Market Storefront & Admin Dashboard",
+  "description": "A Lab - Laptops & Laptop Accessories Store",
   "scripts": {
     "sync": "python sync.py"
   }

@@ -1,7 +1,7 @@
 {
-  "name": "CyberPC & Tech Store",
-  "short_name": "CyberPC",
-  "description": "CyberPC & Tech Store - High-Performance PCs, Keyboards, Mice & Gaming Gear",
+  "name": "A Lab - Laptops & Laptop Accessories",
+  "short_name": "A Lab",
+  "description": "A Lab - High-Performance Laptops, Ultrabooks, Docks, Chargers & Laptop Accessories",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0f172a",

@@ -11,7 +11,7 @@ public_dir = os.path.join(root_dir, 'public')
 
 os.makedirs(public_dir, exist_ok=True)
 
-files_to_sync = ['index.html', 'store_dashboard.html', 'icon.svg', 'manifest.json', 'sw.js']
+files_to_sync = ['index.html', 'store_dashboard.html', 'icon.svg', 'icon-192.png', 'icon-512.png', 'manifest.json', 'sw.js']
 
 print("Syncing project files to public directory...")
 synced_count = 0

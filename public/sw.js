@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aye-store-cache-v5';
+const CACHE_NAME = 'a-lab-cache-v1';
 const ASSETS = [
   './index.html',
   './manifest.json',
@@ -91,4 +91,4 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
-// v5.0
+// a-lab-v1.0
