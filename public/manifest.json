@@ -1,7 +1,7 @@
 {
-  "name": "A Lab - Laptops & Laptop Accessories",
-  "short_name": "A Lab",
-  "description": "A Lab - High-Performance Laptops, Ultrabooks, Docks, Chargers & Laptop Accessories",
+  "name": "ITech - Laptops & Electronics",
+  "short_name": "ITech",
+  "description": "ITech - High-Performance Laptops, Ultrabooks, Electronics & Accessories",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0f172a",

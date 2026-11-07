@@ -1,4 +1,4 @@
-const CACHE_NAME = 'a-lab-cache-v1';
+const CACHE_NAME = 'itech-cache-v2';
 const ASSETS = [
   './index.html',
   './manifest.json',
@@ -91,4 +91,4 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
-// a-lab-v1.0
+// itech-v2.0

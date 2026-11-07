@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Lab | Laptops &amp; Laptop Accessories</title>
-    <meta name="description" content="A Lab - Premier store for high-performance laptops, ultrabooks, docking stations, chargers, cooling stands, and laptop accessories.">
+    <title>ITech | Laptops &amp; Accessories</title>
+    <meta name="description" content="ITech - Premier store for high-performance laptops, ultrabooks, electronics, and laptop accessories.">
     <meta name="robots" content="index,follow">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="A Lab | Laptops &amp; Laptop Accessories">
+    <meta property="og:title" content="ITech | Laptops &amp; Accessories">
     <meta property="og:description" content="Discover top gaming laptops, ultrabooks, chargers, docking stations, and laptop accessories with warranty and fast delivery.">
     <meta property="og:image" content="icon.svg">
     <meta property="og:url" content="/">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="A Lab | Laptops &amp; Laptop Accessories">
+    <meta name="twitter:title" content="ITech | Laptops &amp; Accessories">
     <meta name="twitter:description" content="Discover top gaming laptops, ultrabooks, chargers, docking stations, and laptop accessories with warranty and fast delivery.">
     <meta name="twitter:image" content="icon.svg">
     <link rel="canonical" href="/">
@@ -29,7 +29,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="A Lab">
+    <meta name="apple-mobile-web-app-title" content="ITech">
     <link rel="apple-touch-icon" href="icon-512.png">
     <meta name="theme-color" content="#3b82f6">
     
@@ -135,17 +135,14 @@
             min-width: 160px;
             z-index: 9999;
             overflow: hidden;
-            animation: langDropFade 0.2s ease;
+            /* Direct display */
         }
         [dir="rtl"] .lang-dropdown {
             right: auto;
             left: 0;
         }
         .lang-dropdown.open { display: block; }
-        @keyframes langDropFade {
-            from { opacity: 0; transform: translateY(-6px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
+/* Clean instant display */
         .lang-dropdown-item {
             display: flex;
             align-items: center;
@@ -509,17 +506,13 @@
         .skeleton-img {
             width: 100%;
             height: 220px;
-            background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.4s infinite;
+            background: #e2e8f0;
         }
         .skeleton-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
         .skeleton-line {
             height: 14px;
             border-radius: 6px;
-            background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.4s infinite;
+            background: #e2e8f0;
         }
         .skeleton-line.short { width: 55%; }
         .skeleton-line.medium { width: 75%; }
@@ -527,13 +520,7 @@
             height: 40px;
             border-radius: 8px;
             margin-top: 6px;
-            background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.4s infinite;
-        }
-        @keyframes shimmer {
-            0%   { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+            background: #cbd5e1;
         }
 
         /* Product Card */
@@ -1724,50 +1711,105 @@
         }
 
     
-        /* ─── Laptop Technical Spec Card (بطاقة مواصفات اللابتوب) ─── */
+        /* ─── Laptop Technical Spec Card (بطاقة مواصفات اللابتوب المحسّنة) ─── */
+        .product-card.laptop-card {
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+        }
+        body.dark-mode .product-card.laptop-card {
+            border-color: #334155;
+            background: #1e293b;
+        }
+        .product-card.laptop-card .product-image {
+            object-fit: contain !important;
+            background-color: #ffffff;
+            padding: 10px;
+        }
+        body.dark-mode .product-card.laptop-card .product-image {
+            background-color: #0f172a;
+        }
         .laptop-spec-card {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 10px;
+            border-radius: 8px;
             padding: 8px 10px;
-            margin: 6px 0 10px 0;
+            margin: 8px 0 10px 0;
             display: flex;
             flex-direction: column;
-            gap: 4px;
-            transition: all 0.2s ease;
+            gap: 6px;
         }
         body.dark-mode .laptop-spec-card {
-            background: #1e293b;
+            background: #0f172a;
             border-color: #334155;
+        }
+        .laptop-spec-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 2px;
+        }
+        body.dark-mode .laptop-spec-header-row {
+            border-bottom-color: #334155;
+        }
+        .laptop-brand-tag {
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .laptop-spec-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 6px 10px;
+            gap: 6px 8px;
         }
         .laptop-spec-item {
             display: flex;
             align-items: center;
-            gap: 6px;
-            color: var(--text-dark);
-            font-weight: 600;
+            gap: 5px;
             font-size: 0.77rem;
-            white-space: nowrap;
+            color: var(--text-dark);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 4px 7px;
             overflow: hidden;
-            text-overflow: ellipsis;
         }
         body.dark-mode .laptop-spec-item {
+            background: #1e293b;
+            border-color: #334155;
             color: #f1f5f9;
         }
         .laptop-spec-item i {
             color: var(--primary-color);
-            font-size: 0.85rem;
-            width: 15px;
+            font-size: 0.8rem;
+            width: 14px;
             text-align: center;
             flex-shrink: 0;
         }
+        .laptop-spec-item .spec-label {
+            font-size: 0.68rem;
+            color: var(--text-light);
+            font-weight: 700;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+        .laptop-spec-item .spec-val {
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .laptop-spec-item.full-width {
+            grid-column: 1 / -1;
+        }
         .touch-badge {
-            background: linear-gradient(135deg, #10b981, #059669);
+            background: #10b981;
             color: #ffffff !important;
             font-size: 0.65rem;
             font-weight: 800;
@@ -1777,8 +1819,6 @@
             display: inline-flex;
             align-items: center;
             gap: 3px;
-            box-shadow: 0 1px 3px rgba(16,185,129,0.3);
-            vertical-align: middle;
         }
         .storage-ssd-badge {
             background: #eff6ff;
@@ -1874,11 +1914,11 @@
     <div class="pwa-top-bar" id="pwa-top-bar">
         <div class="pwa-top-left">
             <div class="pwa-top-icon">
-                <img src="icon.svg" alt="A Lab Icon">
+                <img src="icon.svg" alt="ITech Icon">
             </div>
             <div class="pwa-top-info">
-                <span class="pwa-top-title" id="pwa-top-title">Install A Lab App Online Free</span>
-                <span class="pwa-top-sub" id="pwa-top-domain">alab.shop</span>
+                <span class="pwa-top-title" id="pwa-top-title">Install ITech App Online Free</span>
+                <span class="pwa-top-sub" id="pwa-top-domain">itech.store</span>
             </div>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
@@ -1903,8 +1943,8 @@
     </div>
     <nav class="navbar">
         <div class="logo">
-            <img src="icon.svg" alt="A Lab Logo">
-            <span class="logo-text">A Lab</span>
+            <img src="icon.svg" alt="ITech Logo">
+            <span class="logo-text">ITech</span>
         </div>
 
         <div class="navbar-actions">
@@ -1946,7 +1986,7 @@
     <!-- Hero Banner -->
     <header class="hero">
         <div class="hero-content">
-            <h1 data-i18n="heroTitle">A Lab - Premium Laptops &amp; Accessories</h1>
+            <h1 data-i18n="heroTitle">ITech - Premium Laptops &amp; Accessories</h1>
             <p data-i18n="heroSubtitle">Explore high-performance gaming laptops, business ultrabooks, docking stations, chargers, cooling pads &amp; sleeves at unbeatable prices.</p>
         </div>
     </header>
@@ -2092,7 +2132,7 @@
             <div class="footer-col">
                 <div class="logo" style="margin-bottom: 12px;">
                     <i class="fa-solid fa-laptop" style="font-size: 1.6rem; color: var(--primary-color);"></i>
-                    <span style="color: #fff; font-weight: 800; font-size: 1.3rem;">A Lab</span>
+                    <span style="color: #fff; font-weight: 800; font-size: 1.3rem;">ITech</span>
                 </div>
                 <p>Your premier destination for high-performance gaming laptops, professional ultrabooks, docking stations, chargers, protective sleeves, and premium laptop accessories.</p>
             </div>
@@ -2113,7 +2153,7 @@
                     <li><a onclick="document.getElementById('open-track-btn').click()">Track My Orders</a></li>
                     <li><a onclick="openShortcutsModal()">Keyboard Shortcuts (?)</a></li>
                     <li><a onclick="toggleTheme()">Toggle Dark Mode</a></li>
-                    <li><a href="mailto:support@alab.store">Technical Support</a></li>
+                    <li><a href="mailto:support@itech.store">Technical Support</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -2127,7 +2167,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <div>&copy; 2026 A Lab. All rights reserved.</div>
+            <div>&copy; 2026 ITech. All rights reserved.</div>
             <div style="display: flex; gap: 14px; align-items: center;">
                 <span>Designed for Laptop Excellence &amp; Portability</span>
                 <span>•</span>
@@ -2492,8 +2532,8 @@
     <script>
         const storeTranslations = {
             en: {
-                storeName:         "A Lab",
-                heroTitle:         "A Lab - Premium Laptops & Accessories",
+                storeName:         "ITech",
+                heroTitle:         "ITech - Premium Laptops & Accessories",
                 heroSubtitle:      "Explore high-performance gaming laptops, business ultrabooks, docking stations, chargers, cooling stands, and laptop accessories at unbeatable prices.",
                 trackOrder:        "Track Orders",
                 searchPlaceholder: "Search laptops, chargers, sleeves, cooling stands, docks... (Ctrl + K)",
@@ -2526,11 +2566,11 @@
                 checkoutSignInPrompt: "Please Sign In to complete your order.",
                 addressPlaceholder:"Detailed Address (City, Neighborhood, Street, House)",
                 confirmOrder:      "Confirm & Submit Order",
-                pwaTitle:          "Install A Lab App",
-                pwaDesc:           "Add A Lab to your home screen for quick access and offline shopping!",
+                pwaTitle:          "Install ITech App",
+                pwaDesc:           "Add ITech to your home screen for quick access and offline shopping!",
                 pwaInstall:        "Install",
-                pwaModalTitle:     "Install A Lab App",
-                pwaModalDesc:      "Install A Lab App on your home screen for faster browsing, lower data consumption, and easier laptop shopping!",
+                pwaModalTitle:     "Install ITech App",
+                pwaModalDesc:      "Install ITech App on your home screen for faster browsing, lower data consumption, and easier laptop shopping!",
                 btnContinueBrowser:"Continue in Browser",
                 iosInstallTitle:   "Install App",
                 trackTitle:        "Track Your Orders",
@@ -2586,11 +2626,11 @@
                 gmailPopupTitle:   "Save Your Laptops & Accessories!",
                 gmailPopupDesc:    "Register with Gmail to save your products and track orders anytime!",
                 googleModalTitle:  "Sign in with Google",
-                googleModalSubtitle:"to continue to A Lab",
+                googleModalSubtitle:"to continue to ITech",
                 googleUseAnother:  "Use another account",
                 googleFirstTime:   "Welcome! Since this is your first time, please provide delivery details.",
                 btnContinue:       "Next",
-                pwaDescInstall:    "Install this web app on your device to access A Lab anytime!",
+                pwaDescInstall:    "Install this web app on your device to access ITech anytime!",
                 iosStep1:          "Tap Safari's share button in navigation bar",
                 iosStep2:          "Scroll down and select 'Add to Home Screen'",
                 iosStep3:          "Tap 'Add' in the top-right corner to complete installation.",
@@ -2637,8 +2677,8 @@
                 catCables:         "Cables & Hubs",
             },
             ar: {
-                storeName:         "A Lab",
-                heroTitle:         "A Lab - أقوى اللابتوبات وإكسسواراتها الاحترافية",
+                storeName:         "ITech",
+                heroTitle:         "ITech - أقوى اللابتوبات وإكسسواراتها الاحترافية",
                 heroSubtitle:      "اكتشف أحدث لابتوبات القيمنق، أجهزة العمل الخفيفة Ultrabooks، محطات التوصيل، الشواحن السريعة، قواعد التبريد، وحقائب اللابتوب بأفضل الأسعار وبضمان حقيقي.",
                 trackOrder:        "تتبع طلباتي",
                 searchPlaceholder: "ابحث عن لابتوبات، شواحن، قواعد تبريد، حقائب، محولات... (Ctrl + K)",
@@ -2671,11 +2711,11 @@
                 checkoutSignInPrompt: "يرجى تسجيل الدخول لإتمام الطلب.",
                 addressPlaceholder:"العنوان التفصيلي (المدينة، الحي، الشارع، المنزل)",
                 confirmOrder:      "تأكيد وإرسال الطلب",
-                pwaTitle:          "تثبيت تطبيق A Lab",
-                pwaDesc:           "أضف متجر A Lab إلى شاشتك الرئيسية للوصول السريع والتسوق بدون إنترنت!",
+                pwaTitle:          "تثبيت تطبيق ITech",
+                pwaDesc:           "أضف متجر ITech إلى شاشتك الرئيسية للوصول السريع والتسوق بدون إنترنت!",
                 pwaInstall:        "تثبيت",
-                pwaModalTitle:     "تثبيت تطبيق متجر A Lab",
-                pwaModalDesc:      "ثبّت تطبيق متجر A Lab على شاشتك الرئيسية لتجربة تصفح فائقة السرعة، استهلاك أقل للبيانات، وتسوق أسهل للابتوبات وملحقاتها!",
+                pwaModalTitle:     "تثبيت تطبيق متجر ITech",
+                pwaModalDesc:      "ثبّت تطبيق متجر ITech على شاشتك الرئيسية لتجربة تصفح فائقة السرعة، استهلاك أقل للبيانات، وتسوق أسهل للابتوبات وملحقاتها!",
                 btnContinueBrowser:"المتابعة عبر المتصفح",
                 iosInstallTitle:   "تثبيت التطبيق",
                 trackTitle:        "تتبع طلباتك",
@@ -2731,11 +2771,11 @@
                 gmailPopupTitle:   "احفظ لابتوباتك ومنتجاتك المفضلة!",
                 gmailPopupDesc:    "سجّل دخولك بحساب Google لمتابعة طلباتك وتفضيلاتك في أي وقت بسهولة!",
                 googleModalTitle:  "تسجيل الدخول عبر Google",
-                googleModalSubtitle:"للمتابعة إلى متجر A Lab",
+                googleModalSubtitle:"للمتابعة إلى متجر ITech",
                 googleUseAnother:  "استخدام حساب آخر",
                 googleFirstTime:   "مرحباً بك! بما أن هذه زيارتك الأولى، يرجى تزويدنا بتفاصيل التوصيل.",
                 btnContinue:       "التالي",
-                pwaDescInstall:    "قم بتثبيت هذا التطبيق على هاتفك للوصول السريع إلى A Lab في أي وقت!",
+                pwaDescInstall:    "قم بتثبيت هذا التطبيق على هاتفك للوصول السريع إلى ITech في أي وقت!",
                 iosStep1:          "اضغط على زر المشاركة في متصفح سفاري بالأسفل",
                 iosStep2:          "مرر لأسفل واختر 'إضافة إلى الشاشة الرئيسية'",
                 iosStep3:          "اضغط 'إضافة' في الزاوية العلوية لإتمام التثبيت.",
@@ -2782,8 +2822,8 @@
                 catCables:         "الكابلات والمحولات",
             },
             fr: {
-                storeName:         "A Lab",
-                heroTitle:         "A Lab - PC Portables & Accessoires",
+                storeName:         "ITech",
+                heroTitle:         "ITech - PC Portables & Accessoires",
                 heroSubtitle:      "Découvrez nos PC portables gamer haute performance, ultrabooks pro, stations d'accueil, chargeurs, supports ventilés et accessoires au meilleur prix.",
                 trackOrder:        "Suivre mes Commandes",
                 searchPlaceholder: "Rechercher PC portables, chargeurs, housses, docks... (Ctrl + K)",
@@ -2816,11 +2856,11 @@
                 checkoutSignInPrompt: "Veuillez vous connecter pour valider la commande.",
                 addressPlaceholder:"Adresse Détaillée (Ville, Quartier, Rue, Bâtiment)",
                 confirmOrder:      "Confirmer la Commande",
-                pwaTitle:          "Installer A Lab",
-                pwaDesc:           "Ajoutez A Lab à votre écran d'accueil pour un accès instantané !",
+                pwaTitle:          "Installer ITech",
+                pwaDesc:           "Ajoutez ITech à votre écran d'accueil pour un accès instantané !",
                 pwaInstall:        "Installer",
-                pwaModalTitle:     "Installer l'application A Lab",
-                pwaModalDesc:      "Installez A Lab sur votre écran d'accueil pour une navigation ultra rapide et fluide !",
+                pwaModalTitle:     "Installer l'application ITech",
+                pwaModalDesc:      "Installez ITech sur votre écran d'accueil pour une navigation ultra rapide et fluide !",
                 btnContinueBrowser:"Continuer sur le navigateur",
                 iosInstallTitle:   "Installer l'Application",
                 trackTitle:        "Suivi de Commandes",
@@ -2876,11 +2916,11 @@
                 gmailPopupTitle:   "Sauvegardez vos Produits !",
                 gmailPopupDesc:    "Connectez-vous avec Google pour retrouver vos favoris et commandes !",
                 googleModalTitle:  "Se connecter avec Google",
-                googleModalSubtitle:"pour continuer sur A Lab",
+                googleModalSubtitle:"pour continuer sur ITech",
                 googleUseAnother:  "Utiliser un autre compte",
                 googleFirstTime:   "Bienvenue ! Veuillez renseigner vos coordonnées de livraison.",
                 btnContinue:       "Suivant",
-                pwaDescInstall:    "Installez l'application web pour un accès rapide à A Lab !",
+                pwaDescInstall:    "Installez l'application web pour un accès rapide à ITech !",
                 iosStep1:          "Appuyez sur l'icône de partage dans Safari",
                 iosStep2:          "Faites défiler et sélectionnez 'Sur l'écran d'accueil'",
                 iosStep3:          "Appuyez sur 'Ajouter' en haut à droite.",
@@ -4576,7 +4616,7 @@
             
             _fallbackProductsSubscribe(callback) {
                 const getAndCallback = () => {
-                    const MOCK_VERSION = 'alab_laptops_v3';
+                    const MOCK_VERSION = 'itech_laptops_v4';
                     if (localStorage.getItem('mock_version') !== MOCK_VERSION) {
                         localStorage.removeItem('mock_products');
                         localStorage.removeItem('cached_firestore_products');
@@ -4586,7 +4626,7 @@
 
                     let products = JSON.parse(localStorage.getItem('mock_products'));
                     
-                    // Seed default A Lab Laptop & Laptop Accessories products
+                    // Seed default ITech Laptop & Laptop Accessories products
                     if (!products || products.length === 0) {
                         products = [
                             {
@@ -4683,7 +4723,7 @@
                             },
                             {
                                 id: '108',
-                                title: 'A Lab Heavy-Duty Aluminum 360° Swivel Laptop Stand',
+                                title: 'ITech Heavy-Duty Aluminum 360° Swivel Laptop Stand',
                                 price: 34.00,
                                 costPrice: 17.00,
                                 stock: 35,
@@ -4760,7 +4800,7 @@
                             },
                             {
                                 id: '115',
-                                title: 'A Lab 7-in-1 Precision Laptop Cleaning & Anti-Dust Kit',
+                                title: 'ITech 7-in-1 Precision Laptop Cleaning & Anti-Dust Kit',
                                 price: 18.00,
                                 costPrice: 7.00,
                                 stock: 40,
@@ -5210,6 +5250,7 @@
                 const reviewBtnLabel = storeTranslations[currentLang]?.reviewWriteBtn || 'Write Review';
                 const quickViewLabel = storeTranslations[currentLang]?.quickView || 'Quick View';
                 const displayCategory = getCategoryDisplayName(product.category || 'Other', currentLang);
+                const isLaptop = isLaptopDevice(product);
 
                 let buttonDisabled = false;
                 let buttonText = `<i class="fa-solid fa-cart-plus"></i> ${addToCartLabel}`;
@@ -5226,7 +5267,7 @@
                     let slidesHtml = '';
                     let dotsHtml = '';
                     product.images.forEach((imgSrc, idx) => {
-                        slidesHtml += `<img src="${imgSrc || 'https://placehold.co/400x300/e2e8f0/64748b?text=No+Image'}" class="product-carousel-slide" onerror="this.src='https://placehold.co/400x300/e2e8f0/64748b?text=No+Image'" loading="lazy">`;
+                        slidesHtml += `<img src="${imgSrc || ''}" class="product-carousel-slide" onerror="this.onerror=null; this.style.display='none';" loading="lazy">`;
                         dotsHtml += `<span class="carousel-dot ${idx === 0 ? 'active' : ''}" data-index="${idx}"></span>`;
                     });
 
@@ -5247,8 +5288,8 @@
                     `;
                 } else {
                     imgHtml = `
-                        <div style="position: relative; width: 100%; height: 250px; overflow: hidden;">
-                            <img src="${product.image || 'https://placehold.co/400x300/e2e8f0/64748b?text=No+Image'}" alt="${product.title}" class="product-image" onerror="this.src='https://placehold.co/400x300/e2e8f0/64748b?text=No+Image'" loading="eager" style="width:100%; height:100%; object-fit:cover;">
+                        <div class="product-img-wrapper" style="position: relative; width: 100%; height: 240px; overflow: hidden; background: #ffffff; display: flex; align-items: center; justify-content: center;">
+                            <img src="${product.image || ''}" alt="${product.title}" class="product-image" onerror="this.onerror=null; this.style.opacity='0.2';" loading="eager" style="width:100%; height:100%; object-fit: ${isLaptop ? 'contain' : 'cover'}; padding: ${isLaptop ? '8px' : '0'};">
                             <button type="button" class="product-quick-view-btn" data-qv-id="${product.id}">
                                 <i class="fa-solid fa-eye"></i> ${quickViewLabel}
                             </button>
@@ -5275,19 +5316,44 @@
 
                 // Generate Laptop Specs Card if it's a laptop or has specs
                 let specsHtml = '';
-                const isLaptop = isLaptopDevice(product);
                 if (isLaptop) {
+                    card.classList.add('laptop-card');
                     const lSpecs = extractLaptopSpecs(product);
                     const touchBadgeHtml = lSpecs.isTouch ? `<span class="touch-badge"><i class="fa-solid fa-hand-pointer"></i> TOUCH</span>` : '';
-                    const storageBadgeHtml = lSpecs.storageType.includes('SSD') ? `<span class="storage-ssd-badge">SSD</span>` : `<span class="storage-hdd-badge">HDD</span>`;
                     
                     specsHtml = `
                         <div class="laptop-spec-card">
+                            <div class="laptop-spec-header-row">
+                                <span class="laptop-brand-tag"><i class="fa-solid fa-laptop"></i> ${lSpecs.brand}</span>
+                                ${touchBadgeHtml}
+                            </div>
                             <div class="laptop-spec-grid">
-                                <div class="laptop-spec-item" title="RAM"><i class="fa-solid fa-memory"></i> <span>${lSpecs.ram}</span></div>
-                                <div class="laptop-spec-item" title="Storage"><i class="fa-solid fa-hard-drive"></i> <span>${lSpecs.storage} ${storageBadgeHtml}</span></div>
-                                <div class="laptop-spec-item" title="Screen"><i class="fa-solid fa-display"></i> <span>${lSpecs.screenSize} ${touchBadgeHtml}</span></div>
-                                <div class="laptop-spec-item" title="Processor"><i class="fa-solid fa-microchip"></i> <span>${lSpecs.cpu || lSpecs.brand}</span></div>
+                                <div class="laptop-spec-item" title="Processor: ${lSpecs.cpu || lSpecs.brand}">
+                                    <i class="fa-solid fa-microchip"></i>
+                                    <span class="spec-label">CPU:</span>
+                                    <span class="spec-val">${lSpecs.cpu || lSpecs.brand}</span>
+                                </div>
+                                ${lSpecs.gpu ? `
+                                <div class="laptop-spec-item" title="Graphics: ${lSpecs.gpu}">
+                                    <i class="fa-solid fa-vr-cardboard"></i>
+                                    <span class="spec-label">GPU:</span>
+                                    <span class="spec-val">${lSpecs.gpu}</span>
+                                </div>` : ''}
+                                <div class="laptop-spec-item" title="RAM: ${lSpecs.ram}">
+                                    <i class="fa-solid fa-memory"></i>
+                                    <span class="spec-label">RAM:</span>
+                                    <span class="spec-val">${lSpecs.ram}</span>
+                                </div>
+                                <div class="laptop-spec-item" title="Storage: ${lSpecs.storage} (${lSpecs.storageType})">
+                                    <i class="fa-solid fa-hard-drive"></i>
+                                    <span class="spec-label">SSD:</span>
+                                    <span class="spec-val">${lSpecs.storage} <span class="storage-ssd-badge">${lSpecs.storageType.includes('SSD') ? 'SSD' : 'HDD'}</span></span>
+                                </div>
+                                <div class="laptop-spec-item ${lSpecs.gpu ? '' : 'full-width'}" title="Screen: ${lSpecs.screenSize}">
+                                    <i class="fa-solid fa-display"></i>
+                                    <span class="spec-label">Screen:</span>
+                                    <span class="spec-val">${lSpecs.screenSize}</span>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -5435,7 +5501,7 @@
                 const itemDiv = document.createElement('div');
                 itemDiv.className = 'cart-item';
                 itemDiv.innerHTML = `
-                    <img src="${item.image || 'https://placehold.co/60x60/e2e8f0/64748b?text=Img'}" alt="${item.title}" onerror="this.src='https://placehold.co/60x60/e2e8f0/64748b?text=Img'">
+                    <img src="${item.image || ''}" alt="${item.title}" onerror="this.onerror=null; this.style.opacity='0.2';">
                     <div class="cart-item-info">
                         <div class="cart-item-title">${item.title}</div>
                         <div class="cart-item-price">${formatPrice(item.price, item.currency)}</div>
@@ -5591,7 +5657,7 @@
                     
                     const orderItemsHTML = order.items.map(item => `
                         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                            <img src="${item.image || 'https://placehold.co/40x40/e2e8f0/64748b?text=Img'}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;" onerror="this.src='https://placehold.co/40x40/e2e8f0/64748b?text=Img'">
+                            <img src="${item.image || ''}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;" onerror="this.onerror=null; this.style.opacity='0.2';">
                             <div style="flex: 1;">
                                 <div style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">${item.title}</div>
                                 <div style="font-size: 0.8rem; color: var(--text-light);">${formatPrice(item.price, item.currency)} x ${item.quantity}</div>
@@ -6577,7 +6643,7 @@
                 }
             }
 
-            const defaultImg = p.image || (p.images && p.images[0]) || 'https://placehold.co/400x300/e2e8f0/64748b?text=No+Image';
+            const defaultImg = p.image || (p.images && p.images[0]) || '';
             if (mainImg) mainImg.src = defaultImg;
 
             if (thumbsRow) {
