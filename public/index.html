@@ -1364,48 +1364,95 @@
             border-color: #475569;
         }
 
-        /* Desktop Top Info Ribbon */
-        .desktop-top-ribbon {
-            background: #0f172a;
-            color: #94a3b8;
-            font-size: 0.8rem;
-            padding: 6px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #1e293b;
-            user-select: none;
+        /* Web Development Coming Soon Banner */
+        .web-coming-soon-wrapper {
+            padding: 0 5%;
+            margin-top: -15px;
+            margin-bottom: 25px;
         }
-        .ribbon-left, .ribbon-right {
+        .web-coming-soon-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 20px;
             display: flex;
             align-items: center;
             gap: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
         }
-        .ribbon-item {
+        body.dark-mode .web-coming-soon-card {
+            background: #1e293b;
+            border-color: #334155;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+        .web-coming-soon-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color);
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
         }
-        .ribbon-item i {
-            color: var(--primary-color);
+        body.dark-mode .web-coming-soon-icon {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
         }
-        .shortcuts-trigger-btn {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #e2e8f0;
-            padding: 3px 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            display: inline-flex;
+        .web-coming-soon-info {
+            display: flex;
             align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
+            gap: 16px;
+            flex-wrap: wrap;
+            flex: 1;
         }
-        .shortcuts-trigger-btn:hover {
-            background: var(--primary-color);
-            color: #ffffff;
-            border-color: var(--primary-color);
+        .web-coming-soon-badge-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .web-coming-soon-pill {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            white-space: nowrap;
+        }
+        body.dark-mode .web-coming-soon-pill {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        .web-coming-soon-title {
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            white-space: nowrap;
+        }
+        .web-coming-soon-desc {
+            margin: 0;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            line-height: 1.4;
+        }
+        @media (max-width: 768px) {
+            .web-coming-soon-card {
+                padding: 12px 16px;
+                gap: 12px;
+            }
+            .web-coming-soon-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
         }
 
         /* Search Hotkey Badge */
@@ -1927,20 +1974,7 @@
         </div>
     </div>
     
-    <!-- Desktop Top Notification / Hotkeys Bar -->
-    <div class="desktop-top-ribbon">
-        <div class="ribbon-left">
-            <span class="ribbon-item"><i class="fa-solid fa-laptop"></i> <span>Official Warranty &amp; Express Delivery on Laptops &amp; Accessories</span></span>
-            <span class="ribbon-item"><i class="fa-solid fa-headset"></i> <span>24/7 Tech Support &amp; Setup</span></span>
-        </div>
-        <div class="ribbon-right">
-            <button class="shortcuts-trigger-btn" id="open-shortcuts-btn" title="View Desktop Keyboard Shortcuts">
-                <i class="fa-solid fa-keyboard"></i>
-                <span data-i18n="keyboardShortcuts">Shortcuts</span>
-                <kbd>?</kbd>
-            </button>
-        </div>
-    </div>
+
     <nav class="navbar">
         <div class="logo">
             <img src="icon.svg" alt="ITech Logo">
@@ -1967,12 +2001,7 @@
                     </button>
                 </div>
             </div>
-            <button id="open-web-services-btn" onclick="openWebServicesModal()" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; transition: all 0.3s; box-shadow: 0 4px 10px rgba(59,130,246,0.3);">
-                <i class="fa-solid fa-laptop-code"></i> <span data-i18n="navWebServices">Web Development & Installments</span>
-            </button>
-            <button id="open-track-btn" style="background: none; border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-dark); transition: all 0.3s;">
-                <i class="fa-solid fa-truck-fast"></i> <span data-i18n="trackOrder">Track My Orders</span>
-            </button>
+
             
             <div id="auth-container" style="display: none;"></div>
             
@@ -1991,21 +2020,19 @@
         </div>
     </header>
 
-    <!-- Web Development Promotion Banner -->
-    <div style="padding: 0 5%; margin-top: -15px; margin-bottom: 25px;">
-        <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid rgba(59,130,246,0.3); border-radius: 16px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15); color: #fff;">
-            <div style="display: flex; align-items: center; gap: 16px;">
-                <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(59,130,246,0.2); border: 1px solid rgba(59,130,246,0.4); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #60a5fa; flex-shrink: 0;">
-                    <i class="fa-solid fa-laptop-code"></i>
-                </div>
-                <div>
-                    <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; color: #f8fafc;" data-i18n="webBannerTitle">نصمم ونطور مواقع إلكترونية بالتقسيط المريح والكاش</h3>
-                    <p style="font-size: 0.88rem; color: #94a3b8; line-height: 1.5;" data-i18n="webBannerSub">متاجر إلكترونية، مواقع شركات، وأنظمة مخصصة مع خطط تقسيط شهرية مرنة وصيانة دورية شاملة.</p>
-                </div>
+    <!-- Web Development Coming Soon Banner -->
+    <div class="web-coming-soon-wrapper">
+        <div class="web-coming-soon-card">
+            <div class="web-coming-soon-icon">
+                <i class="fa-solid fa-laptop-code"></i>
             </div>
-            <button onclick="openWebServicesModal()" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; border: none; padding: 12px 22px; border-radius: 10px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(37,99,235,0.4); transition: transform 0.2s;">
-                <i class="fa-solid fa-calculator"></i> <span data-i18n="btnCalculateInstallment">احسب قسطك واطلب موقعك</span>
-            </button>
+            <div class="web-coming-soon-info">
+                <div class="web-coming-soon-badge-row">
+                    <span class="web-coming-soon-pill" data-i18n="webDevComingSoonBadge">Coming Soon</span>
+                    <strong class="web-coming-soon-title" data-i18n="webDevComingSoonTitle">Web Development</strong>
+                </div>
+                <p class="web-coming-soon-desc" data-i18n="webDevComingSoonDesc">Custom web applications, e-commerce stores & digital platforms coming soon to ITech.</p>
+            </div>
         </div>
     </div>
 
@@ -2013,7 +2040,7 @@
     <div class="search-filter-container">
         <div class="search-box">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="search-input" data-i18n-placeholder="searchPlaceholder" placeholder="Search laptops, chargers, sleeves, cooling stands, docks... (Ctrl + K)">
+            <input type="text" id="search-input" data-i18n-placeholder="searchPlaceholder" placeholder="Search laptops, chargers, sleeves, cooling stands, docks...">
         </div>
         <div class="category-pills" id="category-pills">
             <!-- Category pills rendered dynamically by JS -->
@@ -2031,54 +2058,6 @@
             <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div><div class="skeleton-btn"></div></div></div>
         </div>
     </main>
-
-    <!-- Keyboard Shortcuts Guide Modal -->
-    <div class="modal-overlay" id="shortcuts-modal">
-        <div class="modal-content" style="max-width: 600px;">
-            <span class="close-modal" id="close-shortcuts-modal-btn"><i class="fa-solid fa-xmark"></i></span>
-            <h2 class="modal-title"><i class="fa-solid fa-keyboard" style="color: var(--primary-color);"></i> <span data-i18n="keyboardShortcuts">Keyboard Shortcuts</span></h2>
-            <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 15px;">Navigate the store blazing fast using your desktop keyboard:</p>
-            
-            <div class="shortcuts-grid">
-                <div class="shortcut-item">
-                    <span class="shortcut-desc">Focus Search Bar</span>
-                    <div><kbd>Ctrl</kbd> + <kbd>K</kbd> / <kbd>/</kbd></div>
-                </div>
-                <div class="shortcut-item">
-                    <span class="shortcut-desc">Close Open Modal / Dialog</span>
-                    <div><kbd>Esc</kbd></div>
-                </div>
-                <div class="shortcut-item">
-                    <span class="shortcut-desc">Open Shopping Cart</span>
-                    <div><kbd>Alt</kbd> + <kbd>C</kbd></div>
-                </div>
-                <div class="shortcut-item">
-                    <span class="shortcut-desc">Toggle Dark / Light Theme</span>
-                    <div><kbd>Alt</kbd> + <kbd>T</kbd></div>
-                </div>
-                <div class="shortcut-item">
-                    <span class="shortcut-desc">Jump to Products Grid</span>
-                    <div><kbd>Alt</kbd> + <kbd>P</kbd></div>
-                </div>
-                <div class="shortcut-item">
-                    <span class="shortcut-desc">Switch Categories</span>
-                    <div><kbd>1</kbd> - <kbd>8</kbd></div>
-                </div>
-                <div class="shortcut-item">
-                    <span class="shortcut-desc">Toggle Shortcuts Cheat-Sheet</span>
-                    <div><kbd>?</kbd></div>
-                </div>
-                <div class="shortcut-item">
-                    <span class="shortcut-desc">Next / Prev Gallery Image</span>
-                    <div><kbd>←</kbd> <kbd>→</kbd></div>
-                </div>
-            </div>
-            
-            <button type="button" class="btn-primary" id="shortcuts-modal-ok-btn" style="width: 100%; justify-content: center; margin-top: 20px; padding: 10px; border-radius: 10px;">
-                <i class="fa-solid fa-check"></i> <span>Got It! (فهمت ذلك)</span>
-            </button>
-        </div>
-    </div>
 
     <!-- Product Quick View Modal -->
     <div class="modal-overlay" id="quick-view-modal">
@@ -2126,53 +2105,10 @@
 
 
     
-    <!-- Tech & PC Store Footer -->
-    <footer class="tech-footer">
-        <div class="tech-footer-grid">
-            <div class="footer-col">
-                <div class="logo" style="margin-bottom: 12px;">
-                    <i class="fa-solid fa-laptop" style="font-size: 1.6rem; color: var(--primary-color);"></i>
-                    <span style="color: #fff; font-weight: 800; font-size: 1.3rem;">ITech</span>
-                </div>
-                <p>Your premier destination for high-performance gaming laptops, professional ultrabooks, docking stations, chargers, protective sleeves, and premium laptop accessories.</p>
-            </div>
-            <div class="footer-col">
-                <h4>Categories</h4>
-                <ul>
-                    <li><a onclick="filterByCategory('Gaming Laptops')">Gaming Laptops</a></li>
-                    <li><a onclick="filterByCategory('Business & Ultrabooks')">Business &amp; Ultrabooks</a></li>
-                    <li><a onclick="filterByCategory('Laptop Bags & Sleeves')">Bags &amp; Sleeves</a></li>
-                    <li><a onclick="filterByCategory('Cooling Pads & Stands')">Cooling Pads &amp; Stands</a></li>
-                    <li><a onclick="filterByCategory('Chargers & Power Banks')">Chargers &amp; Power Banks</a></li>
-                    <li><a onclick="filterByCategory('Docks & Hubs')">Docks &amp; USB-C Hubs</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Customer Care</h4>
-                <ul>
-                    <li><a onclick="document.getElementById('open-track-btn').click()">Track My Orders</a></li>
-                    <li><a onclick="openShortcutsModal()">Keyboard Shortcuts (?)</a></li>
-                    <li><a onclick="toggleTheme()">Toggle Dark Mode</a></li>
-                    <li><a href="mailto:support@itech.store">Technical Support</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Safe &amp; Fast Shopping</h4>
-                <p style="margin-bottom: 10px;">Express nationwide delivery, manufacturer warranty, and direct WhatsApp order confirmation.</p>
-                <div style="display: flex; gap: 10px; font-size: 1.4rem; color: #64748b;">
-                    <i class="fa-brands fa-whatsapp" style="color: #25D366;"></i>
-                    <i class="fa-solid fa-shield-halved" style="color: var(--primary-color);"></i>
-                    <i class="fa-solid fa-truck-fast" style="color: #f59e0b;"></i>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <div>&copy; 2026 ITech. All rights reserved.</div>
-            <div style="display: flex; gap: 14px; align-items: center;">
-                <span>Designed for Laptop Excellence &amp; Portability</span>
-                <span>•</span>
-                <a onclick="openShortcutsModal()" style="color: var(--primary-color); cursor: pointer; text-decoration: underline;">Press ? for Hotkeys</a>
-            </div>
+    <!-- Clean Minimal Footer -->
+    <footer class="tech-footer" style="padding: 24px 5%; margin-top: 40px; text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 0.88rem; color: #94a3b8;">
+            <span>&copy; 2026 <strong style="color: #f8fafc;">ITech</strong>. All rights reserved.</span>
         </div>
     </footer>
 
@@ -2214,29 +2150,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Tracking Modal -->
-    <div class="modal-overlay" id="tracking-modal">
-        <div class="modal-content">
-            <span class="close-modal" id="close-tracking-modal-btn"><i class="fa-solid fa-xmark"></i></span>
-            <h2 class="modal-title"><i class="fa-solid fa-truck-fast"></i> <span data-i18n="trackTitle">My Orders </span></h2>
-            <!-- Guest Search Container -->
-            <div id="guest-track-search-container" style="display: none; margin-bottom: 20px; gap: 8px;">
-                <input type="text" id="guest-track-input" placeholder="Enter your order tracking number..." style="flex: 1; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;">
-                <button type="button" id="guest-track-search-btn" class="btn-primary" style="padding: 10px 20px; border-radius: 8px;">Track</button>
-            </div>
-            <!-- Phone input hidden — used internally only -->
-            <input type="hidden" id="track-phone">
-            <div id="tracking-loading" style="text-align:center; padding:20px; display:none;">
-                <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem; color:var(--primary-color);"></i>
-            </div>
-            <div id="tracking-results-container" style="max-height:360px; overflow-y:auto;">
-                <p id="tracking-hint" style="text-align:center; color:var(--text-light); padding:20px;">
-                    <i class="fa-solid fa-circle-info"></i><br>
-                    <span data-i18n="trackHint">Your orders will appear here.</span>
-                </p>
-            </div>
-        </div>
     </div>
 
     <!-- Auth Modal -->
@@ -2410,21 +2323,6 @@
         </div>
     </div>
 
-    <!-- Web Development & Installment Services Modal -->
-    <div class="modal-overlay" id="web-services-modal">
-        <div class="modal-content" style="max-width: 740px;">
-            <span class="close-modal" onclick="closeWebServicesModal()"><i class="fa-solid fa-xmark"></i></span>
-            
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 14px;">
-                <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(59,130,246,0.1); color: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
-                    <i class="fa-solid fa-laptop-code"></i>
-                </div>
-                <div>
-                    <h2 class="modal-title" style="margin: 0; padding: 0; border: none; font-size: 1.4rem;" data-i18n="webModalTitle">خدمات إنشاء وتطوير المواقع بالتقسيط المريح</h2>
-                    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 2px;" data-i18n="webModalSub">حلول برمجية متكاملة لمشروعك مع خيارات دفع ميسرة (كاش أو تقسيط) وخدمات صيانة شهرية.</p>
-                </div>
-            </div>
-
             <!-- Features Highlights Grid -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;">
                 <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; text-align: center;">
@@ -2536,7 +2434,7 @@
                 heroTitle:         "ITech - Premium Laptops & Accessories",
                 heroSubtitle:      "Explore high-performance gaming laptops, business ultrabooks, docking stations, chargers, cooling stands, and laptop accessories at unbeatable prices.",
                 trackOrder:        "Track Orders",
-                searchPlaceholder: "Search laptops, chargers, sleeves, cooling stands, docks... (Ctrl + K)",
+                searchPlaceholder: "Search laptops, chargers, sleeves, cooling stands, docks...",
                 catAll:            "All Products",
                 catGamingLaptops:  "Gaming Laptops",
                 catUltrabooks:     "Business & Ultrabooks",
@@ -2645,27 +2543,9 @@
                 reviewPurchaseRequired: "You can only review products you already purchased.",
                 reviewEmpty:       "No reviews yet. Be the first to review this product.",
                 reviewSubmitted:   "Review submitted successfully!",
-                navWebServices:    "Web Development & Installments",
-                webBannerTitle:    "Custom Websites with Easy Monthly Installments & Cash",
-                webBannerSub:      "E-commerce stores, corporate sites, and custom web apps with flexible monthly installment plans & full maintenance.",
-                btnCalculateInstallment: "Calculate Installment & Order",
-                webModalTitle:     "Web Design & Development with Installments",
-                webModalSub:       "Turnkey web solutions for your business with easy payment plans (Cash / Installments) & monthly maintenance.",
-                webPkgStore:       "E-Commerce Stores",
-                webPkgStoreDesc:   "Shopping cart, checkout, admin dashboard & order tracking.",
-                webPkgCorp:        "Corporate & Portfolio",
-                webPkgCorpDesc:    "Service showcases, custom domain, work emails & ultra fast speed.",
-                webPkgMaint:       "Monthly Maintenance & Support",
-                webPkgMaintDesc:   "Automated backups, security patches & continuous updates.",
-                calcTitle:         "Interactive Pricing & Installment Calculator",
-                labelChooseType:   "Select Website Type:",
-                labelChoosePlan:   "Preferred Payment Plan:",
-                includeMaintenance:"Add Monthly Maintenance & Technical Support",
-                calcTotal:         "Total Project Cost:",
-                calcDownPayment:   "Required Down Payment:",
-                calcMonthly:       "Monthly Installment:",
-                calcMaint:         "Monthly Maintenance:",
-                btnOrderWebWhatsApp: "Order Website via WhatsApp",
+                webDevComingSoonBadge: "Coming Soon",
+                webDevComingSoonTitle: "Web Development",
+                webDevComingSoonDesc:  "Custom web applications, e-commerce stores & digital platforms coming soon to ITech.",
                 // Legacy category fallback
                 catKeyboards:      "Keyboards",
                 catMice:           "Mice & Pads",
@@ -2681,7 +2561,7 @@
                 heroTitle:         "ITech - أقوى اللابتوبات وإكسسواراتها الاحترافية",
                 heroSubtitle:      "اكتشف أحدث لابتوبات القيمنق، أجهزة العمل الخفيفة Ultrabooks، محطات التوصيل، الشواحن السريعة، قواعد التبريد، وحقائب اللابتوب بأفضل الأسعار وبضمان حقيقي.",
                 trackOrder:        "تتبع طلباتي",
-                searchPlaceholder: "ابحث عن لابتوبات، شواحن، قواعد تبريد، حقائب، محولات... (Ctrl + K)",
+                searchPlaceholder: "ابحث عن لابتوبات، شواحن، قواعد تبريد، حقائب، محولات...",
                 catAll:            "جميع المنتجات",
                 catGamingLaptops:  "لابتوبات ألعاب",
                 catUltrabooks:     "لابتوبات عمل وألترا بوك",
@@ -2790,27 +2670,9 @@
                 reviewPurchaseRequired: "يمكنك تقييم المنتجات التي اشتريتها فقط.",
                 reviewEmpty:       "لا توجد تقييمات بعد. كن أول من يقيّم هذا المنتج.",
                 reviewSubmitted:   "تم إرسال التقييم بنجاح!",
-                navWebServices:    "تصميم مواقع بالتقسيط",
-                webBannerTitle:    "نصمم ونطور مواقع إلكترونية بالتقسيط المريح والكاش",
-                webBannerSub:      "متاجر إلكترونية، مواقع شركات، وأنظمة مخصصة مع خطط تقسيط شهرية مرنة وصيانة دورية شاملة.",
-                btnCalculateInstallment: "احسب قسطك واطلب موقعك",
-                webModalTitle:     "خدمات إنشاء وتطوير المواقع بالتقسيط المريح",
-                webModalSub:       "حلول برمجية متكاملة لمشروعك مع خيارات دفع ميسرة (كاش أو تقسيط) وخدمات صيانة شهرية.",
-                webPkgStore:       "متاجر إلكترونية",
-                webPkgStoreDesc:   "سلة مشتريات، دفع أونلاين، لوحة تحكم، وإدارة طلبات.",
-                webPkgCorp:        "مواقع شركات وتعريفية",
-                webPkgCorpDesc:    "عرض الخدمات، دومين رسمي، إيميلات عمل، وسرعة فائقة.",
-                webPkgMaint:       "صيانة ودعم شهري",
-                webPkgMaintDesc:   "نسخ احتياطي دوري، حماية، وتحديثات مستمرة لضمان العمل.",
-                calcTitle:         "حاسبة الأسعار والأقساط التقديرية",
-                labelChooseType:   "نوع الموقع المطلوب:",
-                labelChoosePlan:   "خطة الدفع المفضلة:",
-                includeMaintenance:"إضافة باقة الصيانة والدعم الفني الشهري",
-                calcTotal:         "إجمالي تكلفة الموقع:",
-                calcDownPayment:   "الدفعة الأولى المطلوبة:",
-                calcMonthly:       "القسط الشهري:",
-                calcMaint:         "الصيانة الشهرية:",
-                btnOrderWebWhatsApp: "طلب الموقع والمتابعة عبر الواتساب فوراً",
+                webDevComingSoonBadge: "قريباً",
+                webDevComingSoonTitle: "تطوير وبرمجة المواقع",
+                webDevComingSoonDesc:  "خدمات تطوير المواقع الإلكترونية والحلول البرمجية المتكاملة ستتوفر قريباً عبر ITech.",
                 // Legacy category fallback
                 catKeyboards:      "لوحات المفاتيح",
                 catMice:           "الماوسات والماوس باد",
@@ -2826,7 +2688,7 @@
                 heroTitle:         "ITech - PC Portables & Accessoires",
                 heroSubtitle:      "Découvrez nos PC portables gamer haute performance, ultrabooks pro, stations d'accueil, chargeurs, supports ventilés et accessoires au meilleur prix.",
                 trackOrder:        "Suivre mes Commandes",
-                searchPlaceholder: "Rechercher PC portables, chargeurs, housses, docks... (Ctrl + K)",
+                searchPlaceholder: "Rechercher PC portables, chargeurs, housses, docks...",
                 catAll:            "Tous les Produits",
                 catGamingLaptops:  "PC Portables Gamer",
                 catUltrabooks:     "Ultrabooks & Business",
@@ -2935,27 +2797,9 @@
                 reviewPurchaseRequired: "Vous ne pouvez noter que les produits achetés.",
                 reviewEmpty:       "Aucun avis pour le moment.",
                 reviewSubmitted:   "Avis envoyé avec succès !",
-                navWebServices:    "Développement Web & Facilités",
-                webBannerTitle:    "Sites Web Sur Mesure au Comptant et par Facilités",
-                webBannerSub:      "Boutiques e-commerce, sites vitrines et applications web avec plans de paiement mensuels et maintenance incluse.",
-                btnCalculateInstallment: "Calculer les Facilités & Commander",
-                webModalTitle:     "Conception & Développement Web Sur Mesure",
-                webModalSub:       "Solutions web complètes pour votre entreprise avec facilités de paiement et maintenance mensuelle.",
-                webPkgStore:       "Boutiques E-Commerce",
-                webPkgStoreDesc:   "Panier, paiement en ligne, tableau de bord admin & suivi.",
-                webPkgCorp:        "Sites Entreprise & Vitrine",
-                webPkgCorpDesc:    "Présentation de services, nom de domaine, emails pro & ultra rapide.",
-                webPkgMaint:       "Support & Maintenance Mensuelle",
-                webPkgMaintDesc:   "Sauvegardes automatiques, sécurité et mises à jour continues.",
-                calcTitle:         "Calculateur Interactif de Tarifs & Mensualités",
-                labelChooseType:   "Type de Site Web :",
-                labelChoosePlan:   "Plan de Paiement :",
-                includeMaintenance:"Ajouter la maintenance mensuelle",
-                calcTotal:         "Coût Total du Projet :",
-                calcDownPayment:   "Acompte Initial Requis :",
-                calcMonthly:       "Mensualité :",
-                calcMaint:         "Maintenance Mensuelle :",
-                btnOrderWebWhatsApp: "Commander le Site via WhatsApp",
+                webDevComingSoonBadge: "Bientôt disponible",
+                webDevComingSoonTitle: "Développement Web",
+                webDevComingSoonDesc:  "Solutions web sur mesure, boutiques e-commerce et plateformes numériques bientôt disponibles chez ITech.",
                 // Legacy category fallback
                 catKeyboards:      "Claviers",
                 catMice:           "Souris & Tapis",
@@ -5844,39 +5688,23 @@
         // ----------------------------------------
         // Order Tracking Modal Logic
         // ----------------------------------------
-        openTrackBtn.addEventListener('click', () => {
-            const searchContainer = document.getElementById('guest-track-search-container');
-            const trackInput = document.getElementById('guest-track-input');
-            const hint = document.getElementById('tracking-hint');
-            const lang = localStorage.getItem('store_lang') || 'en';
-            
-            trackingResultsContainer.innerHTML = '';
-            const savedPhone = localStorage.getItem('saved_customer_phone') || '';
-            if (trackInput) trackInput.value = savedPhone;
-            
-            trackingModal.classList.add('active');
-            
-            if (searchContainer) searchContainer.style.display = 'flex';
-            if (hint) {
-                hint.style.display = 'block';
-                hint.innerHTML = `
-                    <i class="fa-solid fa-circle-info" style="font-size: 1.8rem; color: var(--primary-color); margin-bottom: 8px; display: block;"></i>
-                    <span>${lang === 'ar' ? 'أدخل رقم هاتفك أو رقم التتبع لمتابعة حالة طلباتك.' : 'Enter your phone number or tracking number to see order progress.'}</span>
-                `;
-            }
+        if (openTrackBtn) {
+            openTrackBtn.addEventListener('click', () => {
+                if (trackingModal) trackingModal.classList.add('active');
+            });
+        }
 
-            if (savedPhone) {
-                searchGuestOrder(savedPhone);
-            }
-        });
+        if (closeTrackingModalBtn) {
+            closeTrackingModalBtn.addEventListener('click', () => {
+                if (trackingModal) trackingModal.classList.remove('active');
+            });
+        }
 
-        closeTrackingModalBtn.addEventListener('click', () => {
-            trackingModal.classList.remove('active');
-        });
-
-        trackingModal.addEventListener('click', (e) => {
-            if (e.target === trackingModal) trackingModal.classList.remove('active');
-        });
+        if (trackingModal) {
+            trackingModal.addEventListener('click', (e) => {
+                if (e.target === trackingModal) trackingModal.classList.remove('active');
+            });
+        }
 
         function renderOrderInTracking(order) {
             const date = order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A';
@@ -6788,17 +6616,7 @@
                 return;
             }
 
-            // 3. '?' : Open Keyboard Shortcuts Modal
-            if (!isTyping && (e.key === '?' || (e.shiftKey && e.key === '/'))) {
-                e.preventDefault();
-                const modal = document.getElementById('shortcuts-modal');
-                if (modal && modal.classList.contains('active')) {
-                    closeShortcutsModal();
-                } else {
-                    openShortcutsModal();
-                }
-                return;
-            }
+
 
             // 4. Alt + C : Toggle / Open Shopping Cart
             if (e.altKey && (e.key === 'c' || e.key === 'C' || e.key === 'س' || e.key === 'ؤ')) {
