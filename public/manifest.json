@@ -1,7 +1,7 @@
 {
-  "name": "ITech - Laptops & Electronics",
-  "short_name": "ITech",
-  "description": "ITech - High-Performance Laptops, Ultrabooks, Electronics & Accessories",
+  "name": "A Laps - Laptops & Accessories",
+  "short_name": "A Laps",
+  "description": "A Laps - High-Performance Laptops, Ultrabooks, Electronics & Accessories",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0f172a",

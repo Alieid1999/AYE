@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ITech Dashboard | Admin</title>
+    <title>A Laps Dashboard | Admin</title>
     <!-- Google Fonts: English + Arabic -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
@@ -1150,7 +1150,7 @@
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-header">
-            <img src="icon.svg" alt="ITech Logo" style="height: 32px; width: 32px; border-radius: 6px; object-fit: contain;"> <span data-i18n="storeName">ITech</span>
+            <img src="icon.svg" alt="A Laps Logo" style="height: 32px; width: 32px; border-radius: 6px; object-fit: contain;"> <span data-i18n="storeName">A Laps</span>
         </div>
         
         <div class="db-status-container">
@@ -1161,13 +1161,13 @@
         <ul class="sidebar-menu" id="sidebar-menu">
             <li data-tab="dashboard" class="active"><i class="fa-solid fa-chart-pie"></i> <span data-i18n="navDashboard">Dashboard</span></li>
             <li data-tab="products"><i class="fa-solid fa-boxes-stacked"></i> <span data-i18n="navProducts">Products</span></li>
-            <li data-tab="websites"><i class="fa-solid fa-laptop-code"></i> <span data-i18n="navWebsites">Websites & Installments</span></li>
+            
             <li data-tab="scanner"><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="navScanner">AI Product Scanner</span></li>
             <li data-tab="orders"><i class="fa-solid fa-receipt"></i> <span data-i18n="navOrders">Orders</span></li>
             <li data-tab="analytics"><i class="fa-solid fa-chart-line"></i> <span data-i18n="navAnalytics">Analytics</span></li>
             <li data-tab="pending-orders"><i class="fa-solid fa-clock-rotate-left"></i> <span data-i18n="navPendingOrders">Pending Orders</span></li>
             <li data-tab="suppliers"><i class="fa-solid fa-truck-field"></i> <span data-i18n="navSuppliers">Suppliers</span></li>
-            <li data-tab="customers"><i class="fa-solid fa-users"></i> <span data-i18n="navCustomers">Customers</span></li>
+            
             <!-- <li data-tab="importer"><i class="fa-solid fa-cloud-arrow-down"></i> <span data-i18n="navImporter">Product Importer</span></li> -->
             <li data-tab="settings"><i class="fa-solid fa-gear"></i> <span data-i18n="navSettings">Settings</span></li>
         </ul>
@@ -1251,24 +1251,7 @@
                     </div>
                 </div>
 
-                <!-- Sales Chart -->
-                <div class="dashboard-card" style="margin-top: 10px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:18px;">
-                        <h2 class="card-title" style="border:none; padding:0; margin:0;" data-i18n="salesChartTitle">Sales Revenue Chart</h2>
-                        <div style="display:flex; gap:8px;">
-                            <button id="chart-type-line" onclick="setChartType('line')" class="btn-submit" style="margin:0; padding:7px 14px; font-size:0.82rem; background:var(--primary-color); border:none; border-radius:6px; color:white; cursor:pointer; display:inline-flex; align-items:center; gap:5px;"><i class="fa-solid fa-chart-line"></i> <span data-i18n="chartTypeLine">Line</span></button>
-                            <button id="chart-type-bar" onclick="setChartType('bar')" class="btn-secondary" style="margin:0; padding:7px 14px; font-size:0.82rem; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;"><i class="fa-solid fa-chart-column"></i> <span data-i18n="chartTypeBar">Bar</span></button>
-                        </div>
-                    </div>
-                    <div style="position:relative; height:280px;">
-                        <canvas id="sales-chart"></canvas>
-                    </div>
-                </div>
 
-                <div class="dashboard-card" style="margin-top: 10px;">
-                    <h2 class="card-title" data-i18n="lowStockTitle">Low Stock Alerts</h2>
-                    <div id="low-stock-list" style="display:flex; flex-direction:column; gap:10px;"></div>
-                </div>
 
                 <div class="dashboard-card">
                     <h2 class="card-title" data-i18n="recentOrders">Recent Orders Overview</h2>
@@ -1363,134 +1346,20 @@
                                     <th data-i18n="thCategory">Category</th>
                                     <th data-i18n="thCostPrice">Cost Price</th>
                                     <th data-i18n="thSellingPrice">Selling Price</th>
+                                    <th data-i18n="thStockStatus">Stock Status</th>
                                     <th data-i18n="thSupplier">Supplier</th>
                                     <th data-i18n="thActions">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="products-table-body">
-                                <tr><td colspan="7" style="text-align:center;">Loading products...</td></tr>
+                                <tr><td colspan="8" style="text-align:center;">Loading products...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </section>
 
-            <!-- 2B. WEBSITES ARCHIVE & INSTALLMENTS TAB -->
-            <section id="tab-websites" class="tab-content">
-                <!-- Top Summary Cards -->
-                <div class="stats-grid" style="margin-bottom: 25px;">
-                    <div class="stat-card">
-                        <div class="stat-icon blue">
-                            <i class="fa-solid fa-globe"></i>
-                        </div>
-                        <div class="stat-info">
-                            <span class="stat-label" data-i18n="statWebTotal">Total Websites</span>
-                            <span class="stat-value" id="stat-web-total">0</span>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon green">
-                            <i class="fa-solid fa-file-signature"></i>
-                        </div>
-                        <div class="stat-info">
-                            <span class="stat-label" data-i18n="statWebTotalValue">Total Contracts Value</span>
-                            <span class="stat-value" id="stat-web-value">$0.00</span>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon purple">
-                            <i class="fa-solid fa-circle-check"></i>
-                        </div>
-                        <div class="stat-info">
-                            <span class="stat-label" data-i18n="statWebPaid">Collected (Paid)</span>
-                            <span class="stat-value" id="stat-web-paid" style="color:var(--success-color);">$0.00</span>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon yellow">
-                            <i class="fa-solid fa-file-invoice-dollar"></i>
-                        </div>
-                        <div class="stat-info">
-                            <span class="stat-label" data-i18n="statWebRemaining">Remaining Installments</span>
-                            <span class="stat-value" id="stat-web-remaining" style="color:#d97706;">$0.00</span>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon blue" style="background:#ecfeff; color:#0891b2;">
-                            <i class="fa-solid fa-screwdriver-wrench"></i>
-                        </div>
-                        <div class="stat-info">
-                            <span class="stat-label" data-i18n="statWebMaintenance">Monthly Maintenance</span>
-                            <span class="stat-value" id="stat-web-maintenance" style="color:#0891b2;">$0.00/mo</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="dashboard-card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:20px; border-bottom:1px solid var(--border-color); padding-bottom:15px;">
-                        <div>
-                            <h2 class="card-title" style="border:none; padding:0; margin:0;" data-i18n="websitesArchiveTitle">
-                                <i class="fa-solid fa-laptop-code" style="color:var(--primary-color);"></i> Websites & Installments Archive
-                            </h2>
-                            <p style="margin-top:6px; font-size:0.9rem; color:var(--text-light);" data-i18n="websitesArchiveSub">
-                                Manage client websites, track cash & installment payments, monthly maintenance subscriptions, and payment history.
-                            </p>
-                        </div>
-                        <button type="button" class="btn-submit" onclick="openAddWebsiteModal()" style="margin:0; width:auto; display:inline-flex; align-items:center; gap:8px;">
-                            <i class="fa-solid fa-plus"></i> <span data-i18n="btnAddWebsite">Add New Website</span>
-                        </button>
-                    </div>
-
-                    <!-- Search & Filter Bar -->
-                    <div style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; align-items:center; background:#f8fafc; padding:14px; border-radius:10px; border:1px solid var(--border-color);">
-                        <div style="flex:1; min-width:220px; position:relative;">
-                            <i class="fa-solid fa-magnifying-glass" style="position:absolute; top:50%; transform:translateY(-50%); left:12px; color:var(--text-light);"></i>
-                            <input type="text" id="website-search-input" placeholder="Search by client, website, phone, domain..." style="width:100%; padding:10px 14px 10px 38px; border:1px solid var(--border-color); border-radius:8px; outline:none; font-size:0.92rem; background:#fff;">
-                        </div>
-                        <select id="website-payment-filter" style="padding:10px 14px; border:1px solid var(--border-color); border-radius:8px; font-size:0.9rem; background:#fff; cursor:pointer; font-weight:500;">
-                            <option value="" data-i18n="allPaymentTypes">All Payment Types</option>
-                            <option value="cash" data-i18n="optPaymentCash">Cash Only</option>
-                            <option value="installment" data-i18n="optPaymentInstallment">Installment Plans</option>
-                        </select>
-                        <select id="website-debt-filter" style="padding:10px 14px; border:1px solid var(--border-color); border-radius:8px; font-size:0.9rem; background:#fff; cursor:pointer; font-weight:500;">
-                            <option value="" data-i18n="allDebtStatus">All Payment Statuses</option>
-                            <option value="paid" data-i18n="optFullyPaid">Fully Paid (خالص)</option>
-                            <option value="debt" data-i18n="optHasRemaining">Has Remaining Debt (متبقي أقساط)</option>
-                        </select>
-                        <select id="website-status-filter" style="padding:10px 14px; border:1px solid var(--border-color); border-radius:8px; font-size:0.9rem; background:#fff; cursor:pointer; font-weight:500;">
-                            <option value="" data-i18n="allSiteStatuses">All Site Statuses</option>
-                            <option value="in_dev" data-i18n="optStatusInDev">In Development (قيد التطوير)</option>
-                            <option value="active" data-i18n="optStatusActive">Active & Live (نشط)</option>
-                            <option value="completed" data-i18n="optStatusCompleted">Completed (مكتمل)</option>
-                            <option value="suspended" data-i18n="optStatusSuspended">Suspended (متوقف)</option>
-                        </select>
-                    </div>
-
-                    <!-- Websites Table -->
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th data-i18n="thClient">Client / Contact</th>
-                                    <th data-i18n="thWebsite">Website / Domain</th>
-                                    <th data-i18n="thPaymentType">Payment Plan</th>
-                                    <th data-i18n="thInstallmentProgress">Installment & Paid Progress</th>
-                                    <th data-i18n="thMaintenance">Monthly Maintenance</th>
-                                    <th data-i18n="thSiteStatus">Status</th>
-                                    <th data-i18n="thActions">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="websites-table-body">
-                                <tr><td colspan="7" style="text-align:center; padding:30px;">Loading websites archive...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
+            
 
                         <!-- 2C. AI PRODUCT SCANNER TAB -->
             <section id="tab-scanner" class="tab-content">
@@ -1676,6 +1545,26 @@
                     </div>
                 </div>
 
+                <!-- Sales Revenue Chart -->
+                <div class="dashboard-card" style="margin-bottom: 20px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:18px;">
+                        <h2 class="card-title" style="border:none; padding:0; margin:0;" data-i18n="salesChartTitle">Sales Revenue Chart</h2>
+                        <div style="display:flex; gap:8px;">
+                            <button id="chart-type-line" onclick="setChartType('line')" class="btn-submit" style="margin:0; padding:7px 14px; font-size:0.82rem; background:var(--primary-color); border:none; border-radius:6px; color:white; cursor:pointer; display:inline-flex; align-items:center; gap:5px;"><i class="fa-solid fa-chart-line"></i> <span data-i18n="chartTypeLine">Line</span></button>
+                            <button id="chart-type-bar" onclick="setChartType('bar')" class="btn-secondary" style="margin:0; padding:7px 14px; font-size:0.82rem; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;"><i class="fa-solid fa-chart-column"></i> <span data-i18n="chartTypeBar">Bar</span></button>
+                        </div>
+                    </div>
+                    <div style="position:relative; height:300px;">
+                        <canvas id="sales-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Low Stock Alerts -->
+                <div class="dashboard-card" style="margin-bottom: 20px;">
+                    <h2 class="card-title" data-i18n="lowStockTitle">Low Stock Alerts</h2>
+                    <div id="low-stock-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+                </div>
+
                 <!-- Profit Report Per Product -->
                 <div class="dashboard-card">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
@@ -1772,33 +1661,7 @@
                 </div>
             </section>
 
-            <!-- 4. CUSTOMERS TAB -->
-            <section id="tab-customers" class="tab-content">
-                <!-- Customers Table Section -->
-                <div class="dashboard-card">
-                    <h2 class="card-title" data-i18n="customerContacts">Customer Contacts &amp; History</h2>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th data-i18n="thCustomerName">Customer Name</th>
-                                    <th data-i18n="thPhone">Phone Number</th>
-                                    <th data-i18n="thEmail">Email Address</th>
-                                    <th data-i18n="thAccountType">Account Type</th>
-                                    <th data-i18n="thPassword">Password</th>
-                                    <th data-i18n="thAddress">Detailed Address</th>
-                                    <th data-i18n="thOrdersPlaced">Orders Placed</th>
-                                    <th data-i18n="thTotalSpending">Total Spending</th>
-                                    <th data-i18n="thActions">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="customers-table-body">
-                                <tr><td colspan="9" style="text-align:center;">Loading customers...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
+            
 
             <!-- 6. SUPPLIERS TAB -->
             <section id="tab-suppliers" class="tab-content">
@@ -1878,7 +1741,7 @@
                             <i class="fa-solid fa-plus"></i> <span data-i18n="btnAddCategory">Add</span>
                         </button>
                         <button type="button" id="btn-reset-itech-categories" style="background: #e0f2fe; border: 1px solid #7dd3fc; color: #0284c7; padding: 10px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; margin-inline-start: 10px;">
-                            <i class="fa-solid fa-arrows-rotate"></i> <span>استعادة تصنيفات ITech الرسمية على السيرفر</span>
+                            <i class="fa-solid fa-arrows-rotate"></i> <span>استعادة تصنيفات A Laps الرسمية على السيرفر</span>
                         </button>
                     </div>
                     <div id="categories-tags-container" style="display: flex; flex-wrap: wrap; gap: 4px; min-height: 40px;">
@@ -2305,6 +2168,15 @@
                         </div> <!-- end laptop-specs-container-body -->
                     </div>
 
+                    <div class="form-group full-width" style="display:flex; align-items:center; gap:12px; background:#fff1f2; border:1px solid #fecdd3; padding:12px 16px; border-radius:8px; margin-top:5px;">
+                        <input type="checkbox" id="edit-out-of-stock" style="width:20px; height:20px; cursor:pointer; accent-color:#e11d48;">
+                        <div>
+                            <label for="edit-out-of-stock" style="margin:0; font-weight:700; color:#be123c; cursor:pointer; font-size:0.95rem; display:block;">
+                                Out of stock (نفذت الكمية)
+                            </label>
+                            <span style="font-size:0.8rem; color:#881337;">عند التفعيل: يظهر المنتج للزبائن دون إمكانية إضافته للسلة أو شرائه، ويختفي تلقائياً بعد 3 أيام.</span>
+                        </div>
+                    </div>
                     <div class="form-group full-width">
                         <label for="edit-description" data-i18n="labelDesc">Product Description</label>
                         <textarea id="edit-description" rows="2"></textarea>
@@ -2452,250 +2324,6 @@
 
 
 
-    <!-- Website Project Modal (Add / Edit) -->
-    <div class="modal-overlay" id="website-modal">
-        <div class="modal-content" style="max-width: 720px;">
-            <span class="close-modal" onclick="closeWebsiteModal()"><i class="fa-solid fa-xmark"></i></span>
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px; border-bottom:1px solid var(--border-color); padding-bottom:12px;">
-                <div style="width:40px; height:40px; border-radius:8px; background:rgba(59,130,246,0.1); color:var(--primary-color); display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
-                    <i class="fa-solid fa-laptop-code"></i>
-                </div>
-                <div>
-                    <h2 class="card-title" style="border:none; padding:0; margin:0;" id="website-modal-title" data-i18n="addWebsiteTitle">Add New Website Project</h2>
-                    <p style="font-size:0.82rem; color:var(--text-light); margin-top:2px;" data-i18n="addWebsiteSub">Track website details, installment plan, payments & monthly maintenance.</p>
-                </div>
-            </div>
-
-            <form id="website-form" onsubmit="saveWebsiteProject(event)">
-                <input type="hidden" id="web-edit-id">
-                
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px;">
-                    <!-- Client Name -->
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="web-client-name" style="font-weight:600;" data-i18n="labelClientName">Client Name (اسم العميل) *</label>
-                        <input type="text" id="web-client-name" required placeholder="e.g. John Doe / شركة الأفق">
-                    </div>
-
-                    <!-- Client Phone -->
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="web-client-phone" style="font-weight:600;" data-i18n="labelClientPhone">Phone / WhatsApp (الهاتف والواتساب) *</label>
-                        <input type="tel" id="web-client-phone" required placeholder="e.g. +961 70 123456">
-                    </div>
-
-                    <!-- Website Name -->
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="web-name" style="font-weight:600;" data-i18n="labelWebsiteName">Website Name (اسم الموقع) *</label>
-                        <input type="text" id="web-name" required placeholder="e.g. Al-Ofok Store / متجر السعادة">
-                    </div>
-
-                    <!-- Domain URL -->
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="web-domain" style="font-weight:600;" data-i18n="labelDomainUrl">Domain / URL (رابط الموقع أو الدومين)</label>
-                        <input type="text" id="web-domain" placeholder="e.g. https://alofok.com">
-                    </div>
-
-                    <!-- Website Type -->
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="web-type" style="font-weight:600;" data-i18n="labelWebsiteType">Website Type (نوع الموقع)</label>
-                        <select id="web-type">
-                            <option value="ecommerce">E-Commerce Store (متجر إلكتروني)</option>
-                            <option value="corporate">Corporate / Business (موقع شركة تعريفي)</option>
-                            <option value="portfolio">Portfolio / Personal (بورتفوليو / شخصي)</option>
-                            <option value="custom_app">Custom Web System (نظام ويب مخصص / منصة)</option>
-                            <option value="landing">Landing Page (صفحة هبوط تسويقية)</option>
-                            <option value="other">Other (أخرى)</option>
-                        </select>
-                    </div>
-
-                    <!-- Pricing Currency -->
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="web-currency" style="font-weight:600;" data-i18n="labelCurrency">Pricing Currency (العملة)</label>
-                        <select id="web-currency">
-                            <option value="USD">USD ($)</option>
-                            <option value="LBP">LBP (ل.ل)</option>
-                        </select>
-                    </div>
-
-                    <!-- Total Amount -->
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="web-total-amount" style="font-weight:600;" data-i18n="labelTotalAmount">Total Amount (المبلغ الإجمالي للموقع) *</label>
-                        <input type="number" id="web-total-amount" required min="0" step="0.01" placeholder="e.g. 500" oninput="calculateWebsiteInstallmentPreview()">
-                    </div>
-
-                    <!-- Payment Plan Type -->
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="web-payment-type" style="font-weight:600;" data-i18n="labelPaymentType">Payment Plan (طريقة الدفع) *</label>
-                        <select id="web-payment-type" onchange="toggleInstallmentFields()">
-                            <option value="cash">Cash (كاش كامل)</option>
-                            <option value="installment">Installments (تقسيط مريح)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Installment Details Block (Expandable) -->
-                <div id="web-installment-box" style="display:none; background:#f8fafc; padding:15px; border-radius:10px; border:1px solid var(--border-color); margin-top:14px;">
-                    <h4 style="font-size:0.9rem; font-weight:700; color:var(--primary-color); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
-                        <i class="fa-solid fa-calculator"></i> <span data-i18n="installmentSettingsTitle">Installment Plan Settings (تفاصيل التقسيط والأقساط)</span>
-                    </h4>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-                        <div class="form-group" style="margin-bottom:0;">
-                            <label for="web-months" style="font-size:0.85rem; font-weight:600;" data-i18n="labelInstallmentMonths">Number of Months (عدد أشهر التقسيط)</label>
-                            <input type="number" id="web-months" min="1" max="60" value="6" placeholder="e.g. 6" oninput="calculateWebsiteInstallmentPreview()">
-                        </div>
-                        <div class="form-group" style="margin-bottom:0;">
-                            <label for="web-paid-amount" style="font-size:0.85rem; font-weight:600;" data-i18n="labelPaidSoFar">Paid Amount so far (المبلغ المدفوع حتى الآن)</label>
-                            <input type="number" id="web-paid-amount" min="0" step="0.01" value="0" placeholder="e.g. 100" oninput="calculateWebsiteInstallmentPreview()">
-                        </div>
-                    </div>
-
-                    <!-- Live Calculation Summary Card -->
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px; background:#fff; padding:10px 14px; border-radius:8px; border:1px solid #e2e8f0; font-size:0.85rem;">
-                        <div>
-                            <span style="color:var(--text-light);" data-i18n="labelRemainingAmount">Remaining to Pay (المبلغ المتبقي):</span>
-                            <strong id="web-calc-remaining" style="display:block; color:#dc2626; font-size:1rem; margin-top:2px;">$0.00</strong>
-                        </div>
-                        <div>
-                            <span style="color:var(--text-light);" data-i18n="labelMonthlyRate">Estimated Monthly Installment (القسط الشهري):</span>
-                            <strong id="web-calc-monthly" style="display:block; color:var(--primary-color); font-size:1rem; margin-top:2px;">$0.00 / mo</strong>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Maintenance & Status Grid -->
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px; margin-top:14px;">
-                    <!-- Monthly Maintenance Fee -->
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="web-maintenance-fee" style="font-weight:600;" data-i18n="labelMaintenanceFee">Monthly Maintenance Fee (رسوم الصيانة والدعم شهرياً)</label>
-                        <input type="number" id="web-maintenance-fee" min="0" step="0.01" value="0" placeholder="e.g. 20 ($/month)">
-                    </div>
-
-                    <!-- Maintenance Status -->
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="web-maintenance-status" style="font-weight:600;" data-i18n="labelMaintenanceStatus">Maintenance Status (حالة الصيانة)</label>
-                        <select id="web-maintenance-status">
-                            <option value="active">Active Subscription (صيانة نشطة)</option>
-                            <option value="free_period">Free Warranty Period (فترة مجانية / ضمان)</option>
-                            <option value="pending">Pending Payment (بانتظار السداد)</option>
-                            <option value="stopped">Stopped / None (لا توجد صيانة)</option>
-                        </select>
-                    </div>
-
-                    <!-- Project Site Status -->
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="web-status" style="font-weight:600;" data-i18n="labelSiteStatus">Project Status (حالة الموقع)</label>
-                        <select id="web-status">
-                            <option value="in_dev">In Development (قيد التصميم والبرمجة)</option>
-                            <option value="active">Live & Active (نشط ومسلّم)</option>
-                            <option value="completed">Completed & Fully Paid (مكتمل وخالص)</option>
-                            <option value="suspended">Suspended (متوقف)</option>
-                        </select>
-                    </div>
-
-                    <!-- Expected Delivery Date -->
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="web-delivery-date" style="font-weight:600;" data-i18n="labelDeliveryDate">Delivery / Due Date (تاريخ التسليم)</label>
-                        <input type="date" id="web-delivery-date">
-                    </div>
-                </div>
-
-                <!-- Notes / Scope -->
-                <div class="form-group" style="margin-top:14px; margin-bottom:0;">
-                    <label for="web-notes" style="font-weight:600;" data-i18n="labelNotes">Notes & Specifications (ملاحظات ومواصفات الموقع)</label>
-                    <textarea id="web-notes" rows="2" placeholder="e.g. شامل الدومين والاستضافة والإيميلات الرسمية، لوحة تحكم عربية..."></textarea>
-                </div>
-
-                <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px; border-top:1px solid var(--border-color); padding-top:15px;">
-                    <button type="button" class="btn-secondary" onclick="closeWebsiteModal()" style="margin:0;" data-i18n="btnCancel">Cancel (إلغاء)</button>
-                    <button type="submit" class="btn-submit" id="btn-save-website" style="margin:0;">
-                        <i class="fa-solid fa-floppy-disk"></i> <span id="btn-save-website-text" data-i18n="btnSaveWebsite">Save Website Project</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Website Payment Modal (Record Installment / Maintenance Payment) -->
-    <div class="modal-overlay" id="website-payment-modal">
-        <div class="modal-content" style="max-width: 540px;">
-            <span class="close-modal" onclick="closeWebsitePaymentModal()"><i class="fa-solid fa-xmark"></i></span>
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px; border-bottom:1px solid var(--border-color); padding-bottom:12px;">
-                <div style="width:40px; height:40px; border-radius:8px; background:rgba(16,185,129,0.1); color:var(--success-color); display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
-                    <i class="fa-solid fa-money-bill-wave"></i>
-                </div>
-                <div>
-                    <h2 class="card-title" style="border:none; padding:0; margin:0;" data-i18n="recordPaymentTitle">Record Payment (تسجيل دفعة / قسط)</h2>
-                    <p style="font-size:0.82rem; color:var(--text-light); margin-top:2px;" id="payment-modal-subtitle">Log client payment and update remaining balance</p>
-                </div>
-            </div>
-
-            <!-- Client & Balance Overview Box -->
-            <div style="background:#f8fafc; padding:14px; border-radius:10px; border:1px solid var(--border-color); margin-bottom:15px; font-size:0.88rem;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                    <span style="color:var(--text-light);">Client (العميل):</span>
-                    <strong id="pay-modal-client-name">-</strong>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                    <span style="color:var(--text-light);">Website (الموقع):</span>
-                    <strong id="pay-modal-web-name">-</strong>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                    <span style="color:var(--text-light);">Total Value (الإجمالي):</span>
-                    <span id="pay-modal-total" style="font-weight:700;">$0.00</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                    <span style="color:var(--text-light);">Paid So Far (المدفوع):</span>
-                    <span id="pay-modal-paid" style="color:var(--success-color); font-weight:700;">$0.00</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; border-top:1px dashed var(--border-color); padding-top:6px;">
-                    <span style="font-weight:700; color:var(--text-dark);">Remaining (المتبقي):</span>
-                    <strong id="pay-modal-remaining" style="color:#dc2626; font-size:1rem;">$0.00</strong>
-                </div>
-            </div>
-
-            <form id="website-payment-form" onsubmit="saveRecordPayment(event)">
-                <input type="hidden" id="pay-target-website-id">
-                
-                <div style="display:flex; flex-direction:column; gap:14px;">
-                    <!-- Payment Category -->
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="pay-type" style="font-weight:600;" data-i18n="labelPaymentCategory">Payment Category (نوع الدفعة)</label>
-                        <select id="pay-type">
-                            <option value="installment">Installment Payment (دفعة قسط من قيمة الموقع)</option>
-                            <option value="maintenance">Monthly Maintenance (رسوم صيانة شهرية)</option>
-                            <option value="downpayment">Down Payment (دفعة أولى / مقدم)</option>
-                            <option value="other">Other / Custom Service (خدمة أخرى)</option>
-                        </select>
-                    </div>
-
-                    <!-- Payment Amount -->
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="pay-amount" style="font-weight:600;" data-i18n="labelPaymentAmount">Payment Amount (مبلغ الدفعة) *</label>
-                        <input type="number" id="pay-amount" required min="0.01" step="0.01" placeholder="e.g. 100">
-                    </div>
-
-                    <!-- Payment Date -->
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="pay-date" style="font-weight:600;" data-i18n="labelPaymentDate">Payment Date (تاريخ الدفع) *</label>
-                        <input type="date" id="pay-date" required>
-                    </div>
-
-                    <!-- Note / Receipt -->
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="pay-note" style="font-weight:600;" data-i18n="labelPaymentNote">Receipt # / Note (رقم الإيصال أو ملاحظة)</label>
-                        <input type="text" id="pay-note" placeholder="e.g. قسط شهر 3 / حوالة OMT">
-                    </div>
-                </div>
-
-                <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px; border-top:1px solid var(--border-color); padding-top:15px;">
-                    <button type="button" class="btn-secondary" onclick="closeWebsitePaymentModal()" style="margin:0;" data-i18n="btnCancel">Cancel</button>
-                    <button type="submit" class="btn-submit" style="margin:0; background-color:var(--success-color);">
-                        <i class="fa-solid fa-check"></i> <span data-i18n="btnConfirmPayment">Confirm & Record Payment</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- Firebase SDK Compat -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -2726,7 +2354,8 @@
                 supplierInfoMissing: "Contact info missing",
                 totalPurchasePrice: "Total Purchase",
                 totalSellingPrice:  "Total Selling",
-                storeName:          "ITech",
+                storeName:          "A Laps",
+                thStockStatus:      "Stock Status",
                 navDashboard:       "Dashboard",
                 navScanner:         "AI Product Scanner",
                 scannerTitle:       "AI Image Product Scanner",
@@ -2923,7 +2552,8 @@
                 btnConfirmPayment:  "Confirm & Record Payment",
              },
              ar: {
-                 storeName:          "ITech",
+                 storeName:          "A Laps",
+                 thStockStatus:      "حالة المخزون",
                  navDashboard:       "لوحة التحكم",
                 navWebsites:        "أرشيف المواقع والتقسيط",
                 statWebTotal:       "إجمالي المواقع",
@@ -3209,6 +2839,13 @@
                     tab.classList.add('active');
                 }
             });
+
+            if (tabName === 'analytics') {
+                updateDashboardStats();
+                setTimeout(() => {
+                    if (salesChartInstance) salesChartInstance.resize();
+                }, 50);
+            }
 
             // Update Header Title
             tabTitle.textContent = li.textContent.trim();
@@ -3592,6 +3229,8 @@
                     supplier: product.supplier || "",
                     laptopSpecs: product.laptopSpecs || null,
                     specs: product.specs || [],
+                    outOfStock: Boolean(product.outOfStock),
+                    outOfStockAt: product.outOfStock ? (product.outOfStockAt || new Date().toISOString()) : null,
                     createdAt: new Date().toISOString()
                 };
 
@@ -3623,7 +3262,9 @@
                     category: productData.category || "Other",
                     supplier: productData.supplier || "",
                     laptopSpecs: productData.laptopSpecs || null,
-                    specs: productData.specs || []
+                    specs: productData.specs || [],
+                    outOfStock: Boolean(productData.outOfStock),
+                    outOfStockAt: productData.outOfStock ? (productData.outOfStockAt || new Date().toISOString()) : null
                 };
 
                 // Instant cache update
@@ -4452,6 +4093,7 @@
         }
 
         function renderWebsiteStats(websites) {
+            if (!document.getElementById('stat-web-total')) return;
             let totalWebsites = (websites || []).length;
             let totalContractsValue = 0;
             let totalPaid = 0;
@@ -5308,6 +4950,12 @@
                             <label style="font-size: 0.8rem; margin-bottom: 4px;" data-i18n="labelDesc">Product Description</label>
                             <textarea class="bulk-description" rows="1" placeholder="Write description..." style="padding: 8px 12px; font-size: 0.9rem;">${item.description}</textarea>
                         </div>
+                        <div style="grid-column: 1 / -1; display:flex; align-items:center; gap:8px; background:#fff1f2; padding:8px 12px; border-radius:6px; border:1px solid #fecdd3; margin-top:4px;">
+                            <input type="checkbox" class="bulk-out-of-stock" id="bulk-oos-${item.id}" style="width:18px; height:18px; cursor:pointer; accent-color:#e11d48;">
+                            <label for="bulk-oos-${item.id}" style="margin:0; font-size:0.85rem; font-weight:700; color:#be123c; cursor:pointer;">
+                                Out of stock (نفذت الكمية - يمنع الشراء ويختفي بعد 3 أيام)
+                            </label>
+                        </div>
                     </div>
                 `;
 
@@ -5443,6 +5091,7 @@
                 } else {
                     card.style.borderColor = 'var(--border-color)';
                     const item = bulkItems.find(it => it.id === id);
+                    const isOOS = Boolean(card.querySelector('.bulk-out-of-stock')?.checked);
                     productsToSave.push({
                         title,
                         category,
@@ -5453,7 +5102,9 @@
                         price: Number(price),
                         stock: 9999,
                         description,
-                        supplier: supplier || ''
+                        supplier: supplier || '',
+                        outOfStock: isOOS,
+                        outOfStockAt: isOOS ? new Date().toISOString() : null
                     });
                 }
             });
@@ -5507,6 +5158,11 @@
                     <td><span class="status-badge category">${p.category || 'Other'}</span></td>
                     <td style="font-weight:bold; color:var(--text-light);">${formatPrice(p.costPrice || 0, p.currency)}</td>
                     <td style="font-weight:bold; color:var(--primary-color);">${formatPrice(p.price, p.currency)}</td>
+                    <td>
+                        <button class="action-btn toggle-stock-btn" data-id="${p.id}" title="${p.outOfStock ? 'انقر لتغيير الحالة إلى متوفر (In Stock)' : 'انقر لتغيير الحالة إلى نفذت الكمية (Out of stock)'}" style="width:auto; padding:5px 10px; font-size:0.8rem; font-weight:700; ${p.outOfStock ? 'background:#fef2f2; color:#dc2626; border:1px solid #fca5a5;' : 'background:#f0fdf4; color:#16a34a; border:1px solid #86efac;'} border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;">
+                            <i class="fa-solid ${p.outOfStock ? 'fa-ban' : 'fa-check'}"></i> <span>${p.outOfStock ? 'Out of stock' : 'In Stock'}</span>
+                        </button>
+                    </td>
                     <td><span style="font-weight:500; color:var(--text-light); font-size:0.9rem;">${p.supplier ? escapeHtml(p.supplier) : '—'}</span></td>
                     <td>
                         <button class="action-btn ig-post" data-id="${p.id}" title="Publish to Instagram (نشر على إنستغرام)" style="background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white;"><i class="fa-brands fa-instagram"></i></button>
@@ -5518,6 +5174,35 @@
             });
 
             // Add Actions Handlers
+            container.querySelectorAll('.toggle-stock-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = e.currentTarget.dataset.id;
+                    const p = allProducts.find(item => item.id === id);
+                    if (!p) return;
+                    const newOOS = !p.outOfStock;
+                    const newOOSAt = newOOS ? new Date().toISOString() : null;
+                    const origHtml = btn.innerHTML;
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                    try {
+                        await DBService.updateProduct(id, {
+                            ...p,
+                            outOfStock: newOOS,
+                            outOfStockAt: newOOSAt
+                        });
+                        p.outOfStock = newOOS;
+                        p.outOfStockAt = newOOSAt;
+                        renderProductsTable(allProducts);
+                        showToast(newOOS ? "تم تحديد الصنف كـ Out of stock (نفذت الكمية)" : "تم تحديد الصنف كـ In Stock (متوفر)");
+                    } catch (err) {
+                        console.error("Stock toggle error:", err);
+                        btn.disabled = false;
+                        btn.innerHTML = origHtml;
+                        showToast("فشل تحديث حالة المخزون: " + (err.message || ""), "error");
+                    }
+                });
+            });
+
             container.querySelectorAll('.ig-post').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const id = e.currentTarget.dataset.id;
@@ -5858,6 +5543,7 @@
                 editSupplierSelect.innerHTML = getSupplierOptionsHtml('');
             }
             document.getElementById('edit-description').value = '';
+            if (document.getElementById('edit-out-of-stock')) document.getElementById('edit-out-of-stock').checked = false;
 
             // Specs enabled
             const enableCheck = document.getElementById('edit-enable-laptop-specs');
@@ -5918,6 +5604,7 @@
             renderEditModalGallery();
 
             document.getElementById('edit-currency').value = product.currency || 'USD';
+            if (document.getElementById('edit-out-of-stock')) document.getElementById('edit-out-of-stock').checked = Boolean(product.outOfStock);
             document.getElementById('edit-cost-price').value = product.costPrice || '';
             document.getElementById('edit-price').value = product.price;
             const editSupplierSelect = document.getElementById('edit-supplier');
@@ -6015,6 +5702,14 @@
                 ].filter(Boolean);
             }
 
+            const outOfStock = Boolean(document.getElementById('edit-out-of-stock')?.checked);
+            let outOfStockAt = null;
+            if (outOfStock) {
+                outOfStockAt = (existingProduct && existingProduct.outOfStock && existingProduct.outOfStockAt)
+                    ? existingProduct.outOfStockAt
+                    : new Date().toISOString();
+            }
+
             try {
                 if (id) {
                     await DBService.updateProduct(id, {
@@ -6029,7 +5724,9 @@
                         description,
                         supplier,
                         laptopSpecs: laptopSpecsData,
-                        specs: autoSpecs
+                        specs: autoSpecs,
+                        outOfStock,
+                        outOfStockAt
                     });
                     const lang = localStorage.getItem('store_lang') || 'en';
                     showToast(lang === 'ar' ? "تم تعديل اللابتوب وحفظ التغييرات على السيرفر بنجاح!" : "Product updated on server successfully!");
@@ -6046,7 +5743,9 @@
                         description,
                         supplier,
                         laptopSpecs: laptopSpecsData,
-                        specs: autoSpecs
+                        specs: autoSpecs,
+                        outOfStock,
+                        outOfStockAt
                     });
                     const lang = localStorage.getItem('store_lang') || 'en';
                     showToast(lang === 'ar' ? "تمت إضافة اللابتوب الجديد وحفظه على السيرفر بنجاح!" : "Product added to server successfully!");
@@ -6235,6 +5934,7 @@
         // 5. Customers Directory Tab
         function renderCustomersTable() {
             const container = document.getElementById('customers-table-body');
+            if (!container) return;
             container.innerHTML = '';
 
             if (allCustomers.length === 0) {
@@ -7924,15 +7624,15 @@
             btnResetItechCats.addEventListener('click', async () => {
                 const lang = localStorage.getItem('store_lang') || 'en';
                 const confirmMsg = lang === 'ar'
-                    ? "هل تريد تحديث وحفظ تصنيفات ITech الرسمية للابتوبات على السيرفر مباشرة؟"
-                    : "Reset and save official ITech laptop categories to the server?";
+                    ? "هل تريد تحديث وحفظ تصنيفات A Laps الرسمية للابتوبات على السيرفر مباشرة؟"
+                    : "Reset and save official A Laps laptop categories to the server?";
                 if (!confirm(confirmMsg)) return;
                 const originalText = btnResetItechCats.innerHTML;
                 btnResetItechCats.disabled = true;
                 btnResetItechCats.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving to server...';
                 try {
                     await saveCategories([...DEFAULT_CATEGORIES]);
-                    showToast(lang === 'ar' ? "تم تحديث تصنيفات ITech على السيرفر بنجاح!" : "Official ITech categories saved to server!");
+                    showToast(lang === 'ar' ? "تم تحديث تصنيفات A Laps على السيرفر بنجاح!" : "Official A Laps categories saved to server!");
                 } catch (err) {
                     showToast(lang === 'ar' ? "فشل الحفظ على السيرفر: " + err.message : "Failed to save: " + err.message, "error");
                 } finally {
@@ -8446,6 +8146,7 @@
                                     <th data-i18n="thStock">Quantity</th>
                                     <th data-i18n="thCostPrice">Cost Price</th>
                                     <th data-i18n="thSellingPrice">Selling Price</th>
+                                    <th data-i18n="thStockStatus">Stock Status</th>
                                     <th data-i18n="totalPurchasePrice">Total Purchase</th>
                                     <th data-i18n="totalSellingPrice">Total Selling</th>
                                 </tr>

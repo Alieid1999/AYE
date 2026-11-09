@@ -38,7 +38,7 @@ describe('الفحص الشامل لمتجر AYE (واجهة الزبائن)', (
   })
 
   it('1. يتأكد من تحميل الموقع الأساسي واتصال Firebase', () => {
-    cy.contains('ITech').should('be.visible')
+    cy.contains('A Laps').should('be.visible')
   })
 
   it('2. يختبر مربع البحث وإضافة منتج إلى السلة', () => {
@@ -62,9 +62,8 @@ describe('الفحص الشامل لمتجر AYE (واجهة الزبائن)', (
     cy.get('#submit-order-btn').should('not.be.disabled').and('be.visible')
   })
 
-  it('4. يتأكد من ظهور بطاقة تطوير المواقع (Coming Soon) بشكل مرتب وغير معجق', () => {
-    cy.get('.web-coming-soon-card').should('be.visible')
-    cy.get('.web-coming-soon-pill').should('be.visible')
+  it('4. يتأكد من إزالة بطاقة تطوير المواقع وحاسبة الأسعار بناءً على طلب المستخدم', () => {
+    cy.get('.web-coming-soon-card').should('not.exist')
   })
 
 })

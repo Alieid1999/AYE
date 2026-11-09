@@ -41,9 +41,18 @@ describe('فحص لوحة تحكم الإدارة (الموظفين والمنت
     cy.get('#edit-product-modal').should('not.have.class', 'active')
   })
 
-  it('3. يختبر أرشيف المواقع والتقسيط (Websites)', () => {
+  it('3. يختبر قسم الموردين (Suppliers) وقسم التحليلات (Analytics)', () => {
     // تسجيل الدخول
     cy.get('#login-password-input', { timeout: 10000 }).type('admin123')
+    cy.get('#login-btn-el').click()
+
+    cy.get('li[data-tab="suppliers"]').click()
+    cy.get('#tab-title').should('contain', 'Suppliers')
+    
+    cy.get('li[data-tab="analytics"]').click()
+    cy.get('#tab-title').should('contain', 'Analytics')
+    cy.get('#sales-chart').should('exist')
+  }).type('admin123')
     cy.get('#login-btn-el').click()
 
     cy.get('li[data-tab="websites"]').click()

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'itech-cache-v2';
+const CACHE_NAME = 'alaps-cache-v3';
 const ASSETS = [
   './index.html',
   './manifest.json',

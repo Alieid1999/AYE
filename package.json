@@ -1,7 +1,7 @@
 {
-  "name": "a-lab",
+  "name": "a-laps",
   "version": "1.0.0",
-  "description": "A Lab - Laptops & Laptop Accessories Store",
+  "description": "A Laps - Laptops & Laptop Accessories Store",
   "scripts": {
     "sync": "python sync.py",
     "test:dead": "knip",
